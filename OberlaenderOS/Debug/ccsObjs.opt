@@ -1,1 +1,1 @@
-"./main_matthias.obj" "./main_martin.obj" "./main_manuel.obj" "./main_daniel.obj" "./main.obj" "../beagle.cmd" 
+"./kernel/generic/adt/list.obj" "./kernel/generic/scheduler/scheduler.obj" "./main_matthias.obj" "./main_martin.obj" "./main_manuel.obj" "./main_daniel.obj" "./main.obj" "../beagle.cmd" 

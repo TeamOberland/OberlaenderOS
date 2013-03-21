@@ -8,6 +8,8 @@ CG_TOOL_ROOT := C:/Program Files/CodeComposerStudio53/ccsv5/tools/compiler/arm_5
 
 ORDERED_OBJS += \
 $(GEN_CMDS__FLAG) \
+"./kernel/generic/adt/list.obj" \
+"./kernel/generic/scheduler/scheduler.obj" \
 "./main_matthias.obj" \
 "./main_martin.obj" \
 "./main_manuel.obj" \
@@ -23,7 +25,11 @@ RMDIR := RMDIR /S/Q
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir_vars.mk
+-include kernel/generic/scheduler/subdir_vars.mk
+-include kernel/generic/adt/subdir_vars.mk
 -include subdir_rules.mk
+-include kernel/generic/scheduler/subdir_rules.mk
+-include kernel/generic/adt/subdir_rules.mk
 -include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
@@ -125,8 +131,8 @@ OberlaenderOS.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(TMS470_EXECUTABLE_OUTPUTS__QUOTED) "OberlaenderOS.out"
-	-$(RM) "main.pp" "main_daniel.pp" "main_manuel.pp" "main_martin.pp" "main_matthias.pp" 
-	-$(RM) "main.obj" "main_daniel.obj" "main_manuel.obj" "main_martin.obj" "main_matthias.obj" 
+	-$(RM) "main.pp" "main_daniel.pp" "main_manuel.pp" "main_martin.pp" "main_matthias.pp" "kernel\generic\scheduler\scheduler.pp" "kernel\generic\adt\list.pp" 
+	-$(RM) "main.obj" "main_daniel.obj" "main_manuel.obj" "main_martin.obj" "main_matthias.obj" "kernel\generic\scheduler\scheduler.obj" "kernel\generic\adt\list.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

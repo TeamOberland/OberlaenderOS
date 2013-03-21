@@ -23,14 +23,11 @@ enum process_state : uchar_t
 	PROCESS_EXITING
 };
 
-typedef struct _process _process_t;
-struct _process
+typedef struct _process
 {
 	process_state state;
 	ushort_t id;
-
-
-
-};
+	uint32_t* context;
+} _process_t;
 
 #endif /* PROCESS_H_ */
