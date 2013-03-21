@@ -8,6 +8,10 @@ CG_TOOL_ROOT := C:/Program Files/CodeComposerStudio53/ccsv5/tools/compiler/arm_5
 
 ORDERED_OBJS += \
 $(GEN_CMDS__FLAG) \
+"./main_matthias.obj" \
+"./main_martin.obj" \
+"./main_manuel.obj" \
+"./main_daniel.obj" \
 "./main.obj" \
 "../beagle.cmd" \
 
@@ -114,15 +118,15 @@ all: OberlaenderOS.out
 OberlaenderOS.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: ARM Linker'
-	"C:/Program Files/CodeComposerStudio53/ccsv5/tools/compiler/arm_5.0.1/bin/armcl" -mv7A8 --code_state=32 --abi=eabi -me -g --define=omap3530 --diag_warning=225 --display_error_number -z --stack_size=0x800 -m"OberlaenderOS.map" --heap_size=0x800 -i"C:/Program Files/CodeComposerStudio53/ccsv5/tools/compiler/arm_5.0.1/lib" -i"C:/Program Files/CodeComposerStudio53/ccsv5/tools/compiler/arm_5.0.1/include" --reread_libs --warn_sections --display_error_number --rom_model -o "OberlaenderOS.out" $(ORDERED_OBJS)
+	"C:/Program Files/CodeComposerStudio53/ccsv5/tools/compiler/arm_5.0.1/bin/armcl" -mv7A8 --code_state=32 --abi=eabi -me -g --define=%OOS_USER% --define=omap3530 --diag_warning=225 --display_error_number -z --stack_size=0x800 -m"OberlaenderOS.map" --heap_size=0x800 -i"C:/Program Files/CodeComposerStudio53/ccsv5/tools/compiler/arm_5.0.1/lib" -i"C:/Program Files/CodeComposerStudio53/ccsv5/tools/compiler/arm_5.0.1/include" --reread_libs --warn_sections --display_error_number --rom_model -o "OberlaenderOS.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(TMS470_EXECUTABLE_OUTPUTS__QUOTED) "OberlaenderOS.out"
-	-$(RM) "main.pp" 
-	-$(RM) "main.obj" 
+	-$(RM) "main.pp" "main_daniel.pp" "main_manuel.pp" "main_martin.pp" "main_matthias.pp" 
+	-$(RM) "main.obj" "main_daniel.obj" "main_manuel.obj" "main_martin.obj" "main_matthias.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

@@ -1,3 +1,4 @@
+#include "default_types.h"
 /*
  * Thread.h
  *
@@ -8,7 +9,7 @@
 #ifndef PROCESS_H_
 #define PROCESS_H_
 
-enum process_state : unsigned char
+enum process_state : uchar_t
 {
 	//Process is put to the scheduler
 	PROCESS_ENTERING,
@@ -26,6 +27,9 @@ typedef struct _process _process_t;
 struct _process
 {
 	process_state state;
+	ushort_t id;
+
+
 
 };
 
