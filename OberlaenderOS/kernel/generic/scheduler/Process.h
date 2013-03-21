@@ -1,4 +1,4 @@
-#include "default_types.h"
+#include "stdint.h"
 /*
  * Thread.h
  *
