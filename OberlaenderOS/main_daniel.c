@@ -14,10 +14,9 @@
 
 void main_daniel(void)
 {
-
     *(GPIO5_DIR) |= (LED0_PIN | LED1_PIN);
     *(GPIO5_OUT) &= ~LED1_PIN;
-    int i;
+    int i = 0;
 
     while(1)
     {
