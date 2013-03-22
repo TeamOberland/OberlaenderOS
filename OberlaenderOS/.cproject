@@ -76,7 +76,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="OMAP3530.cmd|arch|kernel" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="kernel|OMAP3530.cmd|arch" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="kernel"/>
 					</sourceEntries>
 				</configuration>
@@ -151,7 +151,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="arch|kernel|beagle.cmd" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="beagle.cmd|kernel|arch" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry excluding="arch" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="kernel"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="kernel/arch"/>
 					</sourceEntries>
