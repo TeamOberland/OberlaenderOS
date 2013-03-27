@@ -3,9 +3,6 @@
 #define LISTHOWTO_H_
 
 #include "list.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include "stdint.h"
 /*
  * listHowTo.h
  *

@@ -8,7 +8,8 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 
-#include <inttypes.h>
+#include <stdint.h>
+
 
 typedef volatile unsigned int * memory_mapped_io_t;
 

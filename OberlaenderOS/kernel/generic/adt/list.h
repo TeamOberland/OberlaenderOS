@@ -8,9 +8,7 @@
 #ifndef LIST_H_
 #define LIST_H_
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
+#include "../../types.h"
 
 /** node in the double linked list */
 typedef struct node
@@ -82,7 +80,7 @@ node_t *list_first(const list_t *list);
 
 node_t *list_last(list_t *list);
 
-extern bool list_member(const node_t *, const list_t *);
+extern bool_t list_member(const node_t *, const list_t *);
 extern uint32_t list_count(const list_t *);
 
 #endif /* LIST_H_ */

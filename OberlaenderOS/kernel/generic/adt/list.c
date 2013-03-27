@@ -6,15 +6,15 @@
  */
 
 #include "list.h"
-
-bool list_member(const node_t *node, const list_t *list)
+#include "../../types.h"
+bool_t list_member(const node_t *node, const list_t *list)
 {
-    bool found = false;
+    bool_t found = FALSE;
     node_t *hlp = list->head.next;
 
     while (hlp != &list->head) {
         if (hlp == node) {
-            found = true;
+            found = TRUE;
             break;
         }
         hlp = hlp->next;

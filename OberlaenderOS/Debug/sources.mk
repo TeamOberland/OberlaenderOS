@@ -97,5 +97,7 @@ S64_DEPS__QUOTED :=
 SUBDIRS := \
 . \
 kernel/generic/scheduler \
+kernel/generic/io \
 kernel/generic/adt \
+kernel/arch/omap3530/gpio \
 
