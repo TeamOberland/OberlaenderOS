@@ -1,0 +1,25 @@
+/*
+ * arch.c
+ *
+ *  Created on: 27.03.2013
+ *      Author: Daniel
+ */
+
+#include "../../types.h"
+#include "../../genarch/arch.h"
+#include "gpio/gpio.h"
+
+#define CM_FCLKEN_WKUP 0x48004C00
+#define CM_ICLKEN_WKUP 0x48004C10
+
+void setup_arch()
+{
+    memory_mapped_io_t reg;
+    /* Enable Functional Clock of GPIO1 */
+    reg = (memory_mapped_io_t)CM_FCLKEN_WKUP;
+    *(reg) = (*(reg)) | (0x01 << 3);
+
+    /* Enable Interface Clock */
+   reg = (memory_mapped_io_t)CM_ICLKEN_WKUP;
+   *(reg) = (*(reg)) | (0x01 << 3);
+}
