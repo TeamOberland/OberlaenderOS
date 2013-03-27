@@ -6,23 +6,31 @@
  */
 #ifdef Daniel
 
-#define ADDRESS     volatile unsigned int*
-#define GPIO5_DIR   (ADDRESS) 0x49056094
-#define LED0_PIN    (1 << 21)
-#define LED1_PIN    (1 << 22)
-#define GPIO5_OUT   (ADDRESS) 0x4905603C
+#include "kernel/generic/io/gpio.h"
+
+/* beagleboard specific gpio pins */
+#define GPIO_USERLED0 149
+#define GPIO_USERLED1 150
+#define GPIO_MMC1_WP 23
+#define GPIO_DVI 170
+#define GPIO_USERBUTTON 7
+
 
 void main_daniel(void)
 {
-    *(GPIO5_DIR) |= (LED0_PIN | LED1_PIN);
-    *(GPIO5_OUT) &= ~LED1_PIN;
-    int i = 0;
+    gpio_direction_output(GPIO_USERLED0);
+    gpio_direction_output(GPIO_USERLED1);
 
+    int i, led0 = 0, led1 = 1;
     while(1)
     {
         for(i = 0; i < 300000; i++);
 
-        *(GPIO5_OUT) ^= (LED0_PIN | LED1_PIN);
+        gpio_set_value(GPIO_USERLED0, led0);
+        gpio_set_value(GPIO_USERLED1, led1);
+
+        led0 ^= 1;
+        led1 ^= 1;
     }
 }
 #endif
