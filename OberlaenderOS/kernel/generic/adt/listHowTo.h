@@ -32,8 +32,5 @@ void tutorial()
 
 }
 
-void main(void) {
-    tutorial();
-}
 
 #endif /* LISTHOWTO_H_ */
