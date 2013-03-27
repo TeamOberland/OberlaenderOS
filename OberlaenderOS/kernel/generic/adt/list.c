@@ -37,7 +37,7 @@ uint32_t list_count(const list_t *list)
 /*
  * Initalizes the node by setting its pointers to null
  */
-void link_initialize(node_t *node)
+void node_initialize(node_t *node)
 {
     node->next=NULL;
     node->prev=NULL;

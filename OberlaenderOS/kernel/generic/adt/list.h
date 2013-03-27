@@ -18,7 +18,7 @@ struct node *next; //following node
 } node_t;
 
 typedef struct list{
-    node_t head; //link head does not contain data just the pointer
+    node_t head; //node head does not contain data just the pointer
 } list_t;
 
 
@@ -30,18 +30,15 @@ typedef struct list{
                  } \
          }
 
-#define list_get_instance(node, type, member) \
-          ((type *) (((void *)(node)) - ((void *) &(((type *) NULL)->member))))
-
 #define list_foreach(list) \
         node_t* iterator;\
-          for(iterator=(list).head.next;iterator!=&(list).head;iterator=iterator->next)
+        for(iterator=(list).head.next;iterator!=&(list).head;iterator=iterator->next)
 
 
 /*
  * Initalizes the node by setting its pointers to null
  */
-void link_initialize(node_t *node);
+void node_initialize(node_t *node);
 
 /*
  * initializes the circulating list by setting the pointers to head
