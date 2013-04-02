@@ -11,6 +11,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
+
 typedef volatile unsigned int * memory_mapped_io_t;
 
 typedef int8_t bool_t;

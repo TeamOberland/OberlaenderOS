@@ -1,3 +1,5 @@
+
+
 /*
  * main_manuel.c
  *
@@ -6,9 +8,11 @@
  */
 #ifdef Manuel
 
+#include "kernel/generic/adt/listHowTo.h"
+
 void main_manuel(void)
 {
-
+    tutorial();
 }
 
 #endif
