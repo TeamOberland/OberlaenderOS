@@ -16,10 +16,10 @@ void setup_arch()
 {
     memory_mapped_io_t reg;
     /* Enable Functional Clock of GPIO1 */
-    reg = (memory_mapped_io_t)CM_FCLKEN_WKUP;
+    reg = (memory_mapped_io_t)(WKUP_CM + CM_FCLKEN);
     *(reg) = (*(reg)) | (0x01 << 3);
 
     /* Enable Interface Clock */
-   reg = (memory_mapped_io_t)CM_ICLKEN_WKUP;
-   *(reg) = (*(reg)) | (0x01 << 3);
+    reg = (memory_mapped_io_t)(WKUP_CM + CM_ICLKEN);
+    *(reg) = (*(reg)) | (0x01 << 3);
 }

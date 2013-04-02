@@ -18,11 +18,11 @@
 #define GPIO_DVI 170
 #define GPIO_USERBUTTON 7
 
-void main_daniel(void)
+/**
+ * A simple led GPIO test without interrupts
+ */
+void led_test1(void)
 {
-    printf("Setup kernel\n");
-    setup_kernel();
-
     printf("Setup GPIOs\n");
     gpio_direction_output(GPIO_USERLED0);
     gpio_direction_output(GPIO_USERLED1);
@@ -55,5 +55,15 @@ void main_daniel(void)
         led0 ^= led0Mask;
         led1 ^= led1Mask;
     }
+}
+
+void main_daniel(void)
+{
+    printf("Setup kernel\n");
+    setup_kernel();
+
+    led_test();
+
+    //
 }
 #endif
