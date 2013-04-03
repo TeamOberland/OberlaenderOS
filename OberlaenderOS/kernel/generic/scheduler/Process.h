@@ -1,4 +1,4 @@
-#include "stdint.h"
+
 /*
  * Thread.h
  *
@@ -8,8 +8,11 @@
 
 #ifndef PROCESS_H_
 #define PROCESS_H_
+#include "../../types.h"
 
-enum process_state : uchar_t
+typedef void (*callback_function)(void);
+
+typedef enum process_state
 {
 	//Process is put to the scheduler
 	PROCESS_ENTERING,
@@ -21,13 +24,15 @@ enum process_state : uchar_t
 	PROCESS_SLEEPING,
 	//Process will be stopped
 	PROCESS_EXITING
-};
+}process_state_t;
 
 typedef struct _process
 {
-	process_state state;
-	ushort_t id;
+    process_state_t state;
+	uint32_t id;
+	uint32_t priority;
 	uint32_t* context;
-} _process_t;
+	callback_function execute_test;
+} process_t;
 
 #endif /* PROCESS_H_ */

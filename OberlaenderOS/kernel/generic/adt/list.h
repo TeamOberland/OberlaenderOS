@@ -15,6 +15,7 @@ typedef struct node
 {
 struct node *prev; //previous node
 struct node *next; //following node
+void *member;
 } node_t;
 
 typedef struct list{
@@ -70,14 +71,17 @@ void list_remove(node_t *node);
  * checks if list is empty
  */
 int list_empty(const list_t *list);
-/*
- * counts all elements in this list
- */
+
 node_t *list_first(const list_t *list);
 
 node_t *list_last(list_t *list);
 
+node_t *node_next(node_t* node, list_t *);
+
 extern bool_t list_member(const node_t *, const list_t *);
+/*
+ * counts all elements in this list
+ */
 extern uint32_t list_count(const list_t *);
 
 #endif /* LIST_H_ */
