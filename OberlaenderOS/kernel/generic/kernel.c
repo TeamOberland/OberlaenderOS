@@ -5,8 +5,9 @@
  *      Author: Daniel
  */
 
-#include "boot.h"
+#include "kernel.h"
 #include "../genarch/arch.h"
+#include "interrupts/irq.h"
 
 void setup_kernel()
 {

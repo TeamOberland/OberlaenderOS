@@ -6,6 +6,7 @@
  */
 
 #include "timer.h"
+#include "../../../errno.h"
 #include "../../../genarch/interrupts/timer.h"
 
 static int gptimer_baseaddresses[GPTIMER_COUNT] = {
@@ -15,7 +16,7 @@ static int gptimer_baseaddresses[GPTIMER_COUNT] = {
         GPTIMER10_BASE, GPTIMER11_BASE
 };
 
-inline uint32_t omap_gptimer_get_baseaddress(uint32 timer)
+inline uint32_t omap_gptimer_get_baseaddress(uint32_t timer)
 {
     return gptimer_baseaddresses[timer];
 }
@@ -35,10 +36,12 @@ int __gptimer_init(uint32_t timer, int ticks, int loadTicks)
 {
     __gptimer_stop(timer);
 
+    __gptimer_clear(timer);
+
+
     /*
      * Set the registers according to 16.2.6.1 (2630)
      */
-
     switch(timer)
     {
         /*
@@ -48,39 +51,36 @@ int __gptimer_init(uint32_t timer, int ticks, int loadTicks)
         case 0: /* GPTIMER1 */
         case 1: /* GPTIMER2 */
         case 9: /* GPTIMER10 */
-            /* 1 MS Tick with 32.768Hz Clock - (page 2625) */
-            *(omap_gptimer_get_register(timer, GPTIMER_TLDR)) = 0xFFFFFFE0;
-            *(omap_gptimer_get_register(timer, GPTIMER_TCRR)) = 0xFFFFFFE0;
-            /* Positive increment and negative increment (page 2625)  */
-            *(omap_gptimer_get_register(timer, GPTIMER_TPIR)) = ((((int)(CLOCK_FREQUENZE*TICK_PERIOD))+1)*1e6)-(CLOCK_FREQUENZE*TICK_PERIOD*1e6);
-            *(omap_gptimer_get_register(timer, GPTIMER_TNIR)) = (((int)(CLOCK_FREQUENZE*TICK_PERIOD))*1e6)-(CLOCK_FREQUENZE*TICK_PERIOD*1e6);
+            *(omap_gptimer_get_register(timer, GPTIMER_TPIR)) = ((((int)(GPTIMER_FREQUENCY*TICK_PERIOD))+1)*1e6)-(GPTIMER_FREQUENCY*TICK_PERIOD*1e6);
+            *(omap_gptimer_get_register(timer, GPTIMER_TNIR)) = (( (int)(GPTIMER_FREQUENCY*TICK_PERIOD))   *1e6)-(GPTIMER_FREQUENCY*TICK_PERIOD*1e6);
 
+            *(omap_gptimer_get_register(timer, GPTIMER_TLDR)) = 0xFFFFFFE0;
+
+            *(omap_gptimer_get_register(timer, GPTIMER_TTGR)) = 0x01;
+
+            *(omap_gptimer_get_register(timer, GPTIMER_TOCR)) = 0;
+            *(omap_gptimer_get_register(timer, GPTIMER_TOWR)) = ticks;
+            *((memory_mapped_io_t)(PER_CM + CM_CLKSEL)) &= ~(1 << (timer-1));
             break;
         default:
-            *(omap_gptimer_get_register(timer, GPTIMER_TLDR)) = loadTicks;
-            *(omap_gptimer_get_register(timer, GPTIMER_TMAR)) = ticks;
+            *(omap_gptimer_get_register(timer, GPTIMER_TLDR)) = 0xFFFFFFFF - loadTicks;
+            *(omap_gptimer_get_register(timer, GPTIMER_TTGR)) = 0x01;
             break;
     }
 
-    /* clear all status bits */
-    *(omap_gptimer_get_register(timer, GPTIMER_TISR)) = 0xFFFFFFFF;
-    /* set overflow counter to zero */
-    *(omap_gptimer_get_register(timer, GPTIMER_TOCR)) = 0;
-    /* 10 overflows till interrupt */
-    *(omap_gptimer_get_register(timer, GPTIMER_TOWR)) = 10;
-    /* Enable Compare, Auto-Reload and trigger on overflow (0000 0000 0000 0000 0000 0110 0010 0001) */
-    *(omap_gptimer_get_register(timer, GPTIMER_TCLR)) |= 0x0621;
-    /* Disable prescale */
-    *(omap_gptimer_get_register(timer, GPTIMER_TCLR)) &= ~(1 << 5);
+    /* Enable Compare, Auto-Reload and trigger on overflow  */
+    *(omap_gptimer_get_register(timer, GPTIMER_TCLR)) = (1 << 11) | (1 << 6) | (1 << 1);
 
-    /* Set 32 KHz clock on this timer */
-    *(PER_CM + CM_CLKSEL) &= ~(1 << CM_CLKSEL_GPT2);
+    /* Enable Interrupts */
+    *(omap_gptimer_get_register(timer, GPTIMER_TIER)) = 0x01;
+
+    return E_SUCCESS;
 }
 
 int __gptimer_start(uint32_t timer)
 {
-    *(omap_gptimer_get_register(timer, GPTIMER_TIER)) = 0x01;  /* Enable Overflow Interrupts */
     *(omap_gptimer_get_register(timer, GPTIMER_TCLR)) |= 0x01; /* Start the Timer */
+    return E_SUCCESS;
 }
 
 int __gptimer_stop(uint32_t timer)
@@ -88,9 +88,19 @@ int __gptimer_stop(uint32_t timer)
     *(omap_gptimer_get_register(timer, GPTIMER_TIER)) &= 0x00;  /* Disable Interrupts */
     *(omap_gptimer_get_register(timer, GPTIMER_TCLR)) &= ~0x01; /* Stop the Timer */
     __gptimer_reset(timer);
+    return E_SUCCESS;
 }
 
 int __gptimer_reset(uint32_t timer)
 {
     *(omap_gptimer_get_register(timer, GPTIMER_TCRR)) = 0;
+    return E_SUCCESS;
+}
+
+
+int __gptimer_clear(uint32_t timer)
+{
+    *(omap_gptimer_get_register(timer, GPTIMER_TISR)) = (1 << 2) | (1 << 1) | (1 << 0);
+
+    return E_SUCCESS;
 }

@@ -11,6 +11,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
+typedef void (*irq_listener)(void);
 
 typedef volatile unsigned int * memory_mapped_io_t;
 

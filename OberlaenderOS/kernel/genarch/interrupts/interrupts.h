@@ -8,26 +8,38 @@
 #ifndef INTERRUPTS_H_
 #define INTERRUPTS_H_
 
+#include "../../types.h"
+
 /**
  * Enables global interrupts on the system.
  */
-void enable_interrupts();
+void __enable_interrupts();
 
 /**
  * Disables global interrupts on the system.
  */
-void disable_interrupts();
+void __disable_interrupts();
 
 
 /**
  * Enables IRQ.
  */
-void enable_irq();
+void __enable_irq();
 
 /**
  * Disables IRQ.
  */
-void disable_irq();
+void __disable_irq();
 
+/**
+ * Gets the current IRQ id if in IRQ mode.
+ */
+uint32_t __get_irqid();
+
+/**
+ * enables the interrupts of a specific irq
+ * @param irq the irq id
+ */
+void __enable_irqid(uint32_t irq);
 
 #endif /* INTERRUPTS_H_ */

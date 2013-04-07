@@ -42,11 +42,10 @@
 #define CM_CLKSEL_GPT9  7
 
 
-
 /* Technical Reference Manual, Chapter 16 - Timers */
 
 #define GPTIMER_COUNT 11
-#define GPTIMER_FREQUENCY 32.768 /* Hz */
+#define GPTIMER_FREQUENCY 32.768 /* kHz */
 
 /*
  * GPTIMER Base addresses according to Technical Reference Manual (page 2632)

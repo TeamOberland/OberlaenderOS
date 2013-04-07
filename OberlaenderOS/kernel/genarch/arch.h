@@ -5,8 +5,12 @@
  *      Author: Daniel
  */
 
-#ifndef ARCH_H_
-#define ARCH_H_
+#ifndef ARCH_GENARCH_H_
+#define ARCH_GENARCH_H_
+
+#ifdef omap3530
+#include "../arch/omap3530/arch.h"
+#endif
 
 void setup_arch();
 

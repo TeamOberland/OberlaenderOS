@@ -7,10 +7,8 @@
 
 #include "../../types.h"
 #include "../../genarch/arch.h"
-#include "gpio/gpio.h"
 
-#define CM_FCLKEN_WKUP 0x48004C00
-#define CM_ICLKEN_WKUP 0x48004C10
+#include "interrupts/timer.h"
 
 void setup_arch()
 {

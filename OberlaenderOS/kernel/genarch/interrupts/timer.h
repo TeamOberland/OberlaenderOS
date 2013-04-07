@@ -40,5 +40,12 @@ int __gptimer_stop(uint32_t timer);
  */
 int __gptimer_reset(uint32_t timer);
 
+/**
+ * Clears the interrupts of the timer.
+ * @param timer the timer to clear
+ */
+int __gptimer_clear(uint32_t timer);
+
+
 
 #endif /* TIMER_H_ */
