@@ -41,6 +41,7 @@ void node_initialize(node_t *node)
 {
     node->next=NULL;
     node->prev=NULL;
+    node->member=NULL;
 }
 
 /*
@@ -100,7 +101,7 @@ void list_remove(node_t *node)
         node->prev->next = node->next;
     }
 
-    link_initialize(node);
+    node_initialize(node);
 }
 
 /*
@@ -122,5 +123,17 @@ node_t *list_first(const list_t *list)
 node_t *list_last(list_t *list)
 {
     return ((list->head.prev == &list->head) ? NULL : list->head.prev);
+}
+
+node_t *node_next(node_t* node, list_t * list)
+{
+    node_t* temp = node->next;
+    if(temp==&list->head)
+    {
+        temp=temp->next;
+        if(temp==&list->head)
+            return NULL;
+    }
+    return temp;
 }
 
