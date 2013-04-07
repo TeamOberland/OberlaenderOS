@@ -13,6 +13,8 @@
 #include "kernel/generic/interrupts/irq.h"
 #include "kernel/generic/interrupts/timer.h"
 
+#include "api/system.h"
+
 #include <stdio.h>
 
 /* beagleboard specific gpio pins */
@@ -121,6 +123,23 @@ void gptimer_test()
     gptimer_reset(3);
 }
 
+void swi_test()
+{
+    irq_enable();
+    __enable_interrupts();
+
+    timestamp_t time;
+    char *strtime;
+    volatile int i = 0;
+    while(1)
+    {
+        time = sys_get_time();
+        strtime = sys_format_time(&time);
+        printf("%s", strtime);
+        for(i = 0; i < 1000; i++);
+    }
+}
+
 void idle_task()
 {
     while(1);
@@ -130,13 +149,15 @@ void main_daniel(void)
 {
     printf("Setup kernel\n");
     setup_kernel();
-    /* switch_to_user_mode(); */
+    switch_to_user_mode();
 
     /* led_test1(); */
 
     /* timer_test(); */
 
-    gptimer_test();
+    /* gptimer_test(); */
+
+    swi_test();
 
     printf("Moving to Idle\n");
     idle_task();

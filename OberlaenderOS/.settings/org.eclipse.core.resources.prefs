@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//Debug/api/subdir_rules.mk=UTF-8
+encoding//Debug/api/subdir_vars.mk=UTF-8
 encoding//Debug/kernel/arch/omap3530/gpio/subdir_rules.mk=UTF-8
 encoding//Debug/kernel/arch/omap3530/gpio/subdir_vars.mk=UTF-8
 encoding//Debug/kernel/arch/omap3530/interrupts/subdir_rules.mk=UTF-8

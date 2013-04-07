@@ -11,7 +11,8 @@ MEMORY
 {
    int_ram:  ORIGIN = 0x40200000  LENGTH = 0x0000FF4C
    //
-   // Interrupt Vector Adresses: (http://e2e.ti.com/support/dsp/omap_applications_processors/f/447/t/29274.aspx)
+   // Interrupt Vector Adresses:
+   // Technical Reference Manual (3438)
    //  - Reset 			: 0x4020FFC4
    //  - Undefined 		: 0x4020FFC8
    //  - SWI       		: 0x4020FFCC
@@ -27,29 +28,39 @@ MEMORY
 SECTIONS
 {
 	.intvecs   > int_vecs {
+		_intvecsStart = .;
 		*(.intvecs)
 	}
 
-   .const      > ext_ddr
-   .bss        > ext_ddr
-   .far        > ext_ddr
-   
-   .stack      > ext_ddr
-   .data       > ext_ddr
-   .cinit      > ext_ddr
-   .cio        > ext_ddr
-   
-   .text       > ext_ddr
-   .sysmem     > ext_ddr
-   .switch     > ext_ddr
+	// we need to relocate the swi and irq objects
+	// otherwise the linker will try to fit it into intvecs
+	.text2 		> int_ram {
+		swi.obj
+		irq.obj
+	}
 
-   .stackarea  > ext_ddr {
-		/* 4k stacks */
+    .const      > ext_ddr
+    .bss        > ext_ddr
+    .far        > ext_ddr
+
+    .stack      > ext_ddr
+    .data       > ext_ddr
+    .cinit      > ext_ddr
+    .cio        > ext_ddr
+
+    .text       > ext_ddr
+    .sysmem     > ext_ddr
+    .switch     > ext_ddr
+
+	.stackarea  > ext_ddr {
+		. = align(4);
 		. = . + (4 * 1024);
 		kernelStack = .;
 		. = . + (4 * 1024);
 		irqStack = .;
 		. = . + (4 * 1024);
 		systemStack = .;
-   }
+		. = . + (4 * 1024);
+		abortStack = .;
+	}
 }

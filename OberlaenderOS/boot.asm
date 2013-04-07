@@ -32,6 +32,12 @@ _c_int00: .asmfunc
         LDR     sp, c_sp_kernel
 
         ;*------------------------------------------------------
+        ;* Switch to ABT Mode and store stack-pointer
+        ;*------------------------------------------------------
+        CPS		0x17
+        LDR     sp, c_sp_abort
+
+        ;*------------------------------------------------------
         ;* Switch to System Mode and Store stack-pointer
         ;*------------------------------------------------------
         CPS		0x1F
@@ -77,6 +83,7 @@ c_STACK_SIZE    .long    __STACK_SIZE
 
 c_sp_irq		.long	irqStack
 c_sp_kernel		.long	kernelStack
+c_sp_abort		.long	abortStack
 c_sp_system		.long	systemStack
 
 ;******************************************************
@@ -85,9 +92,12 @@ c_sp_system		.long	systemStack
 	.global	__STACK_SIZE
 	.global ARGS_MAIN_RTN
 	.global MAIN_FUNC_SP
+
 	.global irqStack
 	.global kernelStack
+	.global abortStack
 	.global systemStack
+
 	.global	EXIT_RTN
 	.global __TI_auto_init
 
