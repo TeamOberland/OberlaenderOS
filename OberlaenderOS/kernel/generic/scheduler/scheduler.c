@@ -10,7 +10,7 @@
 
 
 #include "scheduler.h"
-
+#include <stdlib.h>
 
 /*
  * Initializes the scheduler, reserving place for queue etc.

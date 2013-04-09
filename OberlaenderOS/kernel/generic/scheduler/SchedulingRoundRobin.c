@@ -8,7 +8,8 @@
 
 #ifndef SCHEDULING_ROUND_ROBIN_C
 #define SCHEDULING_ROUND_ROBIN_C
-#include "SchedulingAlogirthm.h";
+#include "SchedulingAlogirthm.h"
+#include <stdlib.h>
 
 /*
  * Initalizes the node by setting its pointers to null

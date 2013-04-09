@@ -41,9 +41,10 @@ void irq_disable()
 }
 
 /**
- * Handles any notified IRQ
+ * Is called on any interrupt request.
  */
-void irq_handle()
+#pragma INTERRUPT(irq_handle, IRQ)
+interrupt void irq_handle()
 {
     int irq =__get_irqid();
     printf("[IRQ] %i Invoked\n", irq);
@@ -52,6 +53,36 @@ void irq_handle()
         printf("[IRQ] %i Handler available, calling it\n", irq);
         irq_listeners[irq]();
     }
+}
+
+/**
+ * Is called on any undefined error which caused an abort
+ */
+#pragma INTERRUPT(udef_handle, UDEF)
+interrupt void udef_handle()
+{
+    __disable_interrupts();
+    printf("Undefined Error occured");
+}
+
+/**
+ * Is called on any prefetch abort.
+ */
+#pragma INTERRUPT(pabt_handle, PABT)
+interrupt void pabt_handle()
+{
+    /* TODO: Tell MMU about prefetch abort */
+    printf("Prefetch abort");
+}
+
+/**
+ * Is called on any data abort.
+ */
+#pragma INTERRUPT(dabt_handle, DABT)
+interrupt void dabt_handle()
+{
+    /* TODO: Tell MMU about data abort */
+    printf("Data abort");
 }
 
 /**

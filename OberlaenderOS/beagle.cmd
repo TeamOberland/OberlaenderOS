@@ -28,7 +28,7 @@ MEMORY
 SECTIONS
 {
 	.intvecs   > int_vecs {
-		_intvecsStart = .;
+		_intvecs_start = .;
 		*(.intvecs)
 	}
 

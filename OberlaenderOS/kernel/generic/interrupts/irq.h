@@ -26,12 +26,6 @@ void irq_enable();
 void irq_disable();
 
 /**
- * Handles any notified IRQ
- */
-#pragma INTERRUPT(irq_handle, IRQ)
-void irq_handle();
-
-/**
  * Registers a new listener to an IRQ.
  * @param irq the irq to listen on
  * @param listener the listener function to call upon irq.

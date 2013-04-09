@@ -31,6 +31,7 @@ bool_t __gptimer_isvalid(uint32_t timer)
     return timer < 11;
 }
 
+
 #define TICK_PERIOD 1 /*< increase on each tick */
 int __gptimer_init(uint32_t timer, int ticks, int loadTicks)
 {

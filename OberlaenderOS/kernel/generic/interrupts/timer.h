@@ -10,6 +10,7 @@
 
 #include "../../types.h"
 #include "../../genarch/arch.h"
+#include "../../genarch/interrupts/timer.h"
 
 /* TODO: maybe we should use milliseconds instead of ticks, more user-friendly */
 

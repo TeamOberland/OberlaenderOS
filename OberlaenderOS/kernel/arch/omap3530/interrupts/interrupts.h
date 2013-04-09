@@ -57,20 +57,18 @@
 
 void inline __enable_interrupts()
 {
-    /* asm("\t CPSIE fi"); */
     _enable_interrupts();
 }
 
 void inline __disable_interrupts()
 {
-    /* asm("\t CPSID fi"); */
     _disable_interrupts();
 }
 
 
 void inline __enable_irq()
 {
-    asm("\t CPSIE i");
+    _enable_IRQ();
 }
 
 uint32_t inline __get_irqid()
@@ -81,7 +79,7 @@ uint32_t inline __get_irqid()
 
 void inline __disable_irq()
 {
-    asm("\t CPSIE f");
+    _disable_IRQ();
 }
 
 void inline __enable_irqid(uint32_t irq)

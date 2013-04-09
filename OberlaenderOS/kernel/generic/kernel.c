@@ -8,8 +8,15 @@
 #include "kernel.h"
 #include "../genarch/arch.h"
 #include "interrupts/irq.h"
+#include "interrupts/timer.h"
 
 void setup_kernel()
 {
     setup_arch();
+
+    /* Init IRQ and timer system */
+    irq_disable();
+    irq_init();
+    timer_init();
+    irq_enable();
 }

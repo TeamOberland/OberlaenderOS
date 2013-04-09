@@ -100,7 +100,6 @@ void timer_test()
 void gptimer_test()
 {
     printf("Setup IRQ\n");
-    irq_init();
     irq_add_listener(GPTIMER2_IRQ, timer_userled0);
     irq_add_listener(GPTIMER3_IRQ, timer_userled1);
 
@@ -115,19 +114,12 @@ void gptimer_test()
     gptimer_init(3, 20000, 0);
     gptimer_start(3);
 
-    printf("Enabling interrupts\n");
-    irq_enable();
-    __enable_interrupts();
-
     gptimer_reset(2);
     gptimer_reset(3);
 }
 
 void swi_test()
 {
-    irq_enable();
-    __enable_interrupts();
-
     timestamp_t time;
     char *strtime;
     volatile int i = 0;
@@ -153,9 +145,9 @@ void main_daniel(void)
 
     /* led_test1(); */
 
-    timer_test();
+    /* timer_test(); */
 
-    /* gptimer_test(); */
+    gptimer_test();
 
     /* swi_test(); */
 
