@@ -74,7 +74,7 @@ void timer_remove_listener(irq_listener listener);
  * @param timer the timer to initialize
  * @return the status code
  */
-int gptimer_init(uint32_t timer, int ticks, int loadTicks);
+int gptimer_init(uint32_t timer, int ticks);
 
 /**
  * Starts the given general purpose timer.
@@ -104,5 +104,12 @@ int gptimer_reset(uint32_t timer);
  * @return the status code
  */
 int gptimer_clear(uint32_t timer);
+
+/**
+ * Gets and returns the current counter value of the specified timer
+ * @param timer the timer to load the counter value from.
+ * @return the counter value of the timer
+ */
+int gptimer_getcounter(uint32_t timer);
 
 #endif /* TIMER_H_ */

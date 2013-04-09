@@ -19,8 +19,9 @@ bool_t __gptimer_isvalid(uint32_t timer);
 /**
  * Initializes a general purpose timer which is notifies as the given ticks are reached.
  * @param timer the timer to initialize
+ * @param ticks the tick interval after that the IRQ should raise
  */
-int __gptimer_init(uint32_t timer, int ticks, int loadTicks);
+int __gptimer_init(uint32_t timer, int ticks);
 
 /**
  * Starts the given general purpose timer.
@@ -46,6 +47,12 @@ int __gptimer_reset(uint32_t timer);
  */
 int __gptimer_clear(uint32_t timer);
 
+/**
+ * Loads the current counter value from the timer.
+ * @param timer the timer to load the data from.
+ * @return the counter value
+ */
+int __gptimer_getcounter(uint32_t timer);
 
 
 #endif /* TIMER_H_ */

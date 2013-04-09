@@ -15,8 +15,9 @@ void setup_kernel()
     setup_arch();
 
     /* Init IRQ and timer system */
+    __disable_interrupts();
     irq_disable();
     irq_init();
-    timer_init();
+    /* timer_init(); */
     irq_enable();
 }

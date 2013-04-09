@@ -99,23 +99,24 @@ void timer_test()
 /* GPTIMER TEST */
 void gptimer_test()
 {
+    int i;
     printf("Setup IRQ\n");
-    irq_add_listener(GPTIMER2_IRQ, timer_userled0);
-    irq_add_listener(GPTIMER3_IRQ, timer_userled1);
+    irq_add_listener(GPTIMER3_IRQ, timer_userled0);
 
     printf("Setup GPIOs\n");
     gpio_direction_output(GPIO_USERLED0);
-    gpio_direction_output(GPIO_USERLED1);
 
     printf("Starting timers\n");
-    gptimer_init(2, 10000, 0);
+    gptimer_init(2, 500); /* GPTIMER3 */
     gptimer_start(2);
 
-    gptimer_init(3, 20000, 0);
-    gptimer_start(3);
+    /* Check out the counter register */
+    while(1)
+    {
+        for(i = 0; i < 10000; i++);
 
-    gptimer_reset(2);
-    gptimer_reset(3);
+        printf("Counter: 0x%x\n", gptimer_getcounter(2));
+    }
 }
 
 void swi_test()
@@ -137,11 +138,13 @@ void idle_task()
     while(1);
 }
 
+
 void main_daniel(void)
 {
     printf("Setup kernel\n");
     setup_kernel();
-    switch_to_user_mode();
+
+    __enable_interrupts();
 
     /* led_test1(); */
 

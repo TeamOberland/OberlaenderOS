@@ -53,6 +53,7 @@ interrupt void irq_handle()
         printf("[IRQ] %i Handler available, calling it\n", irq);
         irq_listeners[irq]();
     }
+    *((memory_mapped_io_t)(MPU_INTC + INTCPS_CONTROL)) |= 0x01;
 }
 
 /**
@@ -62,7 +63,7 @@ interrupt void irq_handle()
 interrupt void udef_handle()
 {
     __disable_interrupts();
-    printf("Undefined Error occured");
+    printf("Undefined Error occured\n");
 }
 
 /**
@@ -72,7 +73,7 @@ interrupt void udef_handle()
 interrupt void pabt_handle()
 {
     /* TODO: Tell MMU about prefetch abort */
-    printf("Prefetch abort");
+    printf("Prefetch abort\n");
 }
 
 /**
@@ -82,7 +83,7 @@ interrupt void pabt_handle()
 interrupt void dabt_handle()
 {
     /* TODO: Tell MMU about data abort */
-    printf("Data abort");
+    printf("Data abort\n");
 }
 
 /**

@@ -43,7 +43,7 @@ void timer_init()
 
     // we'll use the GPTimer2 for our timer system
     irq_add_listener(GPTIMER2_IRQ, timer_irq_handler);
-    gptimer_init(GPTIMER_TIMER, TIMER_TICKS, 0);
+    gptimer_init(GPTIMER_TIMER, TIMER_TICKS);
     gptimer_start(GPTIMER_TIMER);
 }
 
@@ -80,27 +80,36 @@ void timer_remove_listener(irq_listener listener)
     }
 }
 
-int gptimer_init(uint32_t timer, int ticks, int loadTicks)
+int gptimer_init(uint32_t timer, int ticks)
 {
-    if(__gptimer_isvalid(timer))
+    if(!__gptimer_isvalid(timer))
     {
         return E_FAULT;
     }
-    return __gptimer_init(timer, ticks, loadTicks);
+    return __gptimer_init(timer, ticks);
 }
 
 int gptimer_start(uint32_t timer)
 {
-    if(__gptimer_isvalid(timer))
+    if(!__gptimer_isvalid(timer))
     {
         return E_FAULT;
     }
     return __gptimer_start(timer);
 }
 
+int gptimer_getcounter(uint32_t timer)
+{
+    if(!__gptimer_isvalid(timer))
+    {
+        return E_FAULT;
+    }
+    return __gptimer_getcounter(timer);
+}
+
 int gptimer_stop(uint32_t timer)
 {
-    if(__gptimer_isvalid(timer))
+    if(!__gptimer_isvalid(timer))
     {
         return E_FAULT;
     }
@@ -110,7 +119,7 @@ int gptimer_stop(uint32_t timer)
 
 int gptimer_reset(uint32_t timer)
 {
-    if(__gptimer_isvalid(timer))
+    if(!__gptimer_isvalid(timer))
     {
         return E_FAULT;
     }
@@ -120,7 +129,7 @@ int gptimer_reset(uint32_t timer)
 
 int gptimer_clear(uint32_t timer)
 {
-    if(__gptimer_isvalid(timer))
+    if(!__gptimer_isvalid(timer))
     {
         return E_FAULT;
     }
