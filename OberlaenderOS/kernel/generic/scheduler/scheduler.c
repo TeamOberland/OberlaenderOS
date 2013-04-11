@@ -12,6 +12,10 @@
 #include "scheduler.h"
 #include <stdlib.h>
 
+#include "../interrupts/irq.h"
+#include "../interrupts/timer.h"
+static scheduler_t* _scheduler;
+
 /*
  * Initializes the scheduler, reserving place for queue etc.
  */
@@ -26,11 +30,28 @@ scheduler_t* scheduler_init(schedulingAlgorithm_t* algorithm)
     return scheduler;
 }
 
+void scheduler_schedule()
+{
+    _scheduler->schedulingAlgorithm->get_next_process(_scheduler->schedulingAlgorithm)->execute_test();
+}
+
 void scheduler_start_scheduling(scheduler_t* scheduler)
 {
-    while(TRUE)
+    int i;
+    _scheduler=scheduler;
+    printf("Setup IRQ\n");
+    irq_add_listener(GPTIMER3_IRQ, scheduler_schedule);
+
+    printf("Starting timers\n");
+    gptimer_init(2, 500); /* GPTIMER3 */
+    gptimer_start(2);
+
+    /* Check out the counter register */
+    while(1)
     {
-        scheduler->schedulingAlgorithm->get_next_process(scheduler->schedulingAlgorithm)->execute_test();
+        for(i = 0; i < 10000; i++);
+
+        printf("Counter: 0x%x\n", gptimer_getcounter(2));
     }
 }
 

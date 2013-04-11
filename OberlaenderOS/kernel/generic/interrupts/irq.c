@@ -46,6 +46,7 @@ void irq_disable()
 #pragma INTERRUPT(irq_handle, IRQ)
 interrupt void irq_handle()
 {
+    *((memory_mapped_io_t)(MPU_INTC + INTCPS_CONTROL)) |= 0x01;
     int irq =__get_irqid();
     printf("[IRQ] %i Invoked\n", irq);
     if(irq_listeners[irq] != NULL)
@@ -53,7 +54,6 @@ interrupt void irq_handle()
         printf("[IRQ] %i Handler available, calling it\n", irq);
         irq_listeners[irq]();
     }
-    *((memory_mapped_io_t)(MPU_INTC + INTCPS_CONTROL)) |= 0x01;
 }
 
 /**
