@@ -94,7 +94,7 @@ void timer_test()
 
     printf("Init Listeners\n");
     timer_add_listener(timer_userled0, 500);
-    timer_add_listener(timer_userled1, 1);
+    timer_add_listener(timer_userled1, 1000);
 }
 
 
@@ -151,9 +151,9 @@ void main_daniel(void)
 
     /* led_test1(); */
 
-    /* timer_test(); */
+    timer_test();
 
-    gptimer_test();
+    /* gptimer_test(); */
 
     /* swi_test(); */
 
