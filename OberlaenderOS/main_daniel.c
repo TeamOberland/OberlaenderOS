@@ -13,9 +13,12 @@
 #include "kernel/generic/interrupts/irq.h"
 #include "kernel/generic/interrupts/timer.h"
 
+#include "kernel/generic/ipc/ipc.h"
+
 #include "api/system.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "kernel/arch/omap3530/arch.h"
 
@@ -26,10 +29,10 @@
 #define GPIO_DVI 170
 #define GPIO_USERBUTTON 7
 
-
 void idle_task()
 {
-    while(1);
+    while (1)
+        ;
 }
 
 /**
@@ -44,23 +47,25 @@ void led_test1(void)
 
     volatile int i, led0 = 0, led1 = 1, led0Mask = 0x00, led1Mask = 0x01;
 
-    while(1)
+    while (1)
     {
-        for(i = 0; i < 150000; i++);
+        for (i = 0; i < 150000; i++)
+            ;
 
-        if(gpio_get_value(GPIO_USERBUTTON) == 0x01) /* if button pressed */
+        if (gpio_get_value(GPIO_USERBUTTON) == 0x01) /* if button pressed */
         {
-           printf("Button Press detected, inverting LED masks\n");
-           /* invert leds to blink */
-           led0Mask ^= 1;
-           led1Mask ^= 1;
+            printf("Button Press detected, inverting LED masks\n");
+            /* invert leds to blink */
+            led0Mask ^= 1;
+            led1Mask ^= 1;
 
-           /* reset leds */
-           led0 = led0Mask;
-           led1 = led1Mask;
+            /* reset leds */
+            led0 = led0Mask;
+            led1 = led1Mask;
 
-           /* wait for button release */
-           while(gpio_get_value(GPIO_USERBUTTON) == 0x01);
+            /* wait for button release */
+            while (gpio_get_value(GPIO_USERBUTTON) == 0x01)
+                ;
         }
 
         gpio_set_value(GPIO_USERLED0, led0);
@@ -70,7 +75,6 @@ void led_test1(void)
         led1 ^= led1Mask;
     }
 }
-
 
 /* TIMER TEST */
 
@@ -97,8 +101,8 @@ void timer_test()
     timer_add_listener(timer_userled1, 1000);
 }
 
-
-void gptimer_test_handler() {
+void gptimer_test_handler()
+{
     gptimer_clear(1);
     uint32_t value = gpio_get_value(GPIO_USERLED0) ^ 0x01;
     gpio_set_value(GPIO_USERLED0, value);
@@ -119,7 +123,8 @@ void gptimer_test()
     gptimer_init(1, 50); /* GPTIMER2 */
     gptimer_start(1);
 
-    while(1);
+    while (1)
+        ;
     //{
     //    for(i = 0; i < 500; i++);
     //    printf("Coutner: %x\n", gptimer_getcounter(1));
@@ -132,15 +137,70 @@ void swi_test()
     timestamp_t time;
     char *strtime;
     volatile int i = 0;
-    while(1)
+    while (1)
     {
         time = sys_get_time();
         strtime = sys_format_time(&time);
         printf("%s", strtime);
-        for(i = 0; i < 1000; i++);
+        for (i = 0; i < 1000; i++)
+            ;
     }
 }
 
+void ipc_test()
+{
+    int i;
+    ipc_message_data_t test1;
+    ipc_message_data_t test2;
+    ipc_message_t* result[2];
+    int* v1;
+    float* v2;
+
+    // setup
+    ipc_init();
+    ipc_register("test", 1);
+
+    //
+    // send test messages
+
+    test1.messageCode = 4711;
+    test1.contentSize = sizeof(int);
+    v1 = malloc(sizeof(int));
+    *(v1) = 4712;
+    test1.content = v1;
+    ipc_send("test", 2, &test1);
+
+    test2.messageCode = 1234;
+    test2.contentSize = sizeof(float);
+    v2 = malloc(sizeof(float));
+    *(v2) = 12.34f;
+    test2.content = v2;
+    ipc_send("test", 2, &test2);
+
+    //
+    // receive messages
+    result[0] = ipc_receive("test", 1);
+    result[1] = ipc_receive("test", 1);
+
+    for (i = 0; i < 2; i++)
+    {
+        printf("IPC from Process %i to Process %i\n", result[i]->sender, result[i]->receiver);
+        switch (result[i]->data->messageCode)
+        {
+            case 4711:
+                printf("   [4711] %i\n", *((int*) result[i]->data->content));
+                break;
+            case 1234:
+                printf("   [1234] %f\n", *((float*) result[i]->data->content));
+                break;
+        }
+    }
+
+    ipc_free_message(result[0]);
+    ipc_free_message(result[1]);
+    free(v1);
+    free(v2);
+}
 
 void main_daniel(void)
 {
@@ -151,11 +211,13 @@ void main_daniel(void)
 
     /* led_test1(); */
 
-    timer_test();
+    /* timer_test(); */
 
     /* gptimer_test(); */
 
     /* swi_test(); */
+
+    ipc_test();
 
     printf("Moving to Idle\n");
     idle_task();

@@ -9,6 +9,7 @@
 #ifndef SCHEDULING_ROUND_ROBIN_C
 #define SCHEDULING_ROUND_ROBIN_C
 #include "SchedulingAlogirthm.h"
+#include "../../types.h"
 #include <stdlib.h>
 
 /*
@@ -22,7 +23,7 @@ process_t* scheduling_algorithm_get_next_process_round_robin(schedulingAlgorithm
     }
     else
     {
-        data->currentProcess= node_next(data->currentProcess,data->processList);
+        data->currentProcess= node_next(data->currentProcess,data->processList, TRUE);
     }
     return (process_t*)data->currentProcess->member;
 }

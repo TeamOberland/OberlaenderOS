@@ -125,13 +125,13 @@ node_t *list_last(list_t *list)
     return ((list->head.prev == &list->head) ? NULL : list->head.prev);
 }
 
-node_t *node_next(node_t* node, list_t * list)
+node_t *node_next(node_t* node, list_t * list, bool_t circular)
 {
     node_t* temp = node->next;
     if(temp==&list->head)
     {
         temp=temp->next;
-        if(temp==&list->head)
+        if(!circular || temp==&list->head)
             return NULL;
     }
     return temp;
