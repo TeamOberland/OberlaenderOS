@@ -18,13 +18,14 @@ process_t* scheduling_algorithm_get_next_process_round_robin(schedulingAlgorithm
 {
     if(data->currentProcess==NULL)
     {
-        data->currentProcess=list_first(data->processList);
+        data->currentProcessNode=list_first(data->processList);
     }
     else
     {
-        data->currentProcess= node_next(data->currentProcess,data->processList);
+        data->currentProcessNode= node_next(data->currentProcessNode,data->processList);
     }
-    return (process_t*)data->currentProcess->member;
+    data->currentProcess=(process_t*) data->currentProcessNode->member;
+    return (process_t*)data->currentProcess;
 }
 
 schedulingAlgorithm_t* scheduling_algorithm_initialize()

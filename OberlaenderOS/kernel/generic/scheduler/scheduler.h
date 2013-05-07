@@ -27,9 +27,9 @@ scheduler_t*  scheduler_init(schedulingAlgorithm_t* algorithm);
 
 void scheduler_start_scheduling(scheduler_t* scheduler);
 
-void scheduler_add_Process(scheduler_t* scheduler,uint32_t* context);
+void scheduler_add_Process(scheduler_t* scheduler,uint32_t context);
 
-void scheduler_add_Process_Test(scheduler_t* scheduler,callback_function);
+//void scheduler_add_Process_Test(scheduler_t* scheduler,callback_function);
 
 /*
  * Releases all the needed memory,

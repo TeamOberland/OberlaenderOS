@@ -18,7 +18,8 @@ typedef process_t* (*scheduling_algorithm_get_next_process)(schedulingAlgorithm_
 
 struct _schedulingAlgorithm
 {
-    node_t *currentProcess;
+    node_t *currentProcessNode;
+    process_t *currentProcess;
     list_t *processList;
     scheduling_algorithm_get_next_process get_next_process;
     void* additionalInfo;

@@ -13,6 +13,8 @@
 #include <stdlib.h>
 
 #include "../interrupts/irq.h"
+#include "../../arch/omap3530/interrupts/interrupts.h"
+#include "../../arch/omap3530/scheduler/pcb.h"
 #include "../interrupts/timer.h"
 static scheduler_t* _scheduler;
 
@@ -32,7 +34,11 @@ scheduler_t* scheduler_init(schedulingAlgorithm_t* algorithm)
 
 void scheduler_schedule()
 {
-    _scheduler->schedulingAlgorithm->get_next_process(_scheduler->schedulingAlgorithm)->execute_test();
+    asm("\t PUSH {r0} \n" \
+        "\t LDR r0, return_address \n" \
+        "\t STR lr, [r0] \n" \
+        "\t POP {r0}");
+    contextSwitch(&_scheduler->schedulingAlgorithm->currentProcess->pcb,&_scheduler->schedulingAlgorithm->get_next_process(_scheduler->schedulingAlgorithm)->pcb);
 }
 
 void scheduler_start_scheduling(scheduler_t* scheduler)
@@ -55,21 +61,22 @@ void scheduler_start_scheduling(scheduler_t* scheduler)
     }
 }
 
-void scheduler_add_Process(scheduler_t* scheduler,uint32_t* context)
-{
-    node_t* node = (node_t*)malloc(sizeof(node_t));
-    node_initialize(node);
-    node->member = (process_t*)malloc(sizeof(process_t));
-    ((process_t*)node->member)->context=context;
-    list_append(node,scheduler->processList);
-}
+//void scheduler_add_Process(scheduler_t* scheduler,uint32_t context)
+//{
+//    node_t* node = (node_t*)malloc(sizeof(node_t));
+//    node_initialize(node);
+//    node->member = (process_t*)malloc(sizeof(process_t));
+//    ((process_t*)node->member)->context=context;
+//    list_append(node,scheduler->processList);
+//}
 
-void scheduler_add_Process_Test(scheduler_t* scheduler,callback_function execute_test)
+void scheduler_add_Process_Test(scheduler_t* scheduler,uint32_t methodPointer)
 {
     node_t* node = (node_t*)malloc(sizeof(node_t));
     node_initialize(node);
     node->member = (process_t*)malloc(sizeof(process_t));
-    ((process_t*)node->member)->execute_test=execute_test;
+    pcb_init(&((process_t*)node->member)->pcb);
+    ((process_t*)node->member)->pcb.functionPointer = methodPointer;
     ((process_t*)node->member)->id=list_count(scheduler->processList);
     list_append(node,scheduler->processList);
 

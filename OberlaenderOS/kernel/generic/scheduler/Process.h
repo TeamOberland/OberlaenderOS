@@ -9,8 +9,7 @@
 #ifndef PROCESS_H_
 #define PROCESS_H_
 #include "../../types.h"
-
-typedef void (*callback_function)(void);
+#include "../../arch/omap3530/scheduler/pcb.h"
 
 typedef enum process_state
 {
@@ -31,8 +30,7 @@ typedef struct _process
     process_state_t state;
 	uint32_t id;
 	uint32_t priority;
-	uint32_t* context;
-	callback_function execute_test;
+	pcb_t pcb;
 } process_t;
 
 #endif /* PROCESS_H_ */

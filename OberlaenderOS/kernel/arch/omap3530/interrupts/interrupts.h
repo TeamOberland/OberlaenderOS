@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include "../../../genarch/interrupts/interrupts.h"
+#include "../scheduler/pcb.h"
 
 /* Some defines platform specific defines */
 #define GPTIMER1_IRQ  37
@@ -88,6 +89,8 @@ void inline __enable_irqid(uint32_t irq)
     printf("Enabling irq %i (reg: %i, bit %i)\n", irq, irq/32, irq%32);
     *((memory_mapped_io_t)(MPU_INTC + INTCPS_MIR_CLEAR(irq/32))) |= (1 << (irq % 32));
 }
+
+void contextSwitch(pcb_t* from, pcb_t* to);
 
 
 #endif /* INTERRUPTS_H_ */
