@@ -36,6 +36,12 @@ void __disable_irq();
  */
 uint32_t __get_irqid();
 
+
+/**
+ * Gets the current FIQ id if in FIQ mode.
+ */
+uint32_t __get_fiqid();
+
 /**
  * enables the interrupts of a specific irq
  * @param irq the irq id

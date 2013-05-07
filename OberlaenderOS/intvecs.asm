@@ -2,12 +2,14 @@
 ; Setup interrupt vectors (ARM Optimizing C/C++ Compiler User's Guide p.136)
 ;****************************************************************************
 	.asg swi_handle, C_INTSWI
+	.asg fiq_handle, C_INTFIQ
 	.asg irq_handle, C_INTIRQ
 	.asg udef_handle, C_INTUDEF
 	.asg pabt_handle, C_INTPABT
 	.asg dabt_handle, C_INTDABT
 
 	.global _c_int00
+	.global C_INTFIQ
 	.global C_INTIRQ
 	.global C_INTSWI
 	.global C_INTUDEF
@@ -22,4 +24,4 @@
 		B C_INTDABT	  ;  Data Abort		: 0x4020FFD4
 		.word 0       ;  Unused			: 0x4020FFD8
 		B C_INTIRQ    ;  IRQ			: 0x4020FFDC
-		.word 0       ;  FIQ			: 0x4020FFE0
+		B C_INTFIQ    ;  FIQ			: 0x4020FFE0

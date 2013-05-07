@@ -36,8 +36,8 @@ bool_t __gptimer_isvalid(uint32_t timer)
 int __gptimer_init(uint32_t timer, int ticks)
 {
     /* TRM p.2625 */
-    int posInc = ((((int)(GPTIMER_FREQUENCY*MS_TICK_PERIOD))+1)*1e6)-(GPTIMER_FREQUENCY*MS_TICK_PERIOD*1e6);
-    int negInc = (( (int)(GPTIMER_FREQUENCY*MS_TICK_PERIOD))   *1e6)-(GPTIMER_FREQUENCY*MS_TICK_PERIOD*1e6);
+    int posInc;
+    int negInc;
 
     __gptimer_stop(timer);
     __gptimer_clear(timer);
@@ -54,13 +54,15 @@ int __gptimer_init(uint32_t timer, int ticks)
         case 0: /* GPTIMER1 */
         case 1: /* GPTIMER2 */
         case 9: /* GPTIMER10 */
-            /* Set increment registers to use (1ms increment) */
+            posInc = ((((int)(GPTIMER_FREQUENCY * 1)) + 1) * 1000000) - (GPTIMER_FREQUENCY * 1 * 1000000);
+            negInc = (( (int)(GPTIMER_FREQUENCY * 1))      * 1000000) - (GPTIMER_FREQUENCY * 1 * 1000000);
+           /* Set increment registers to use (1ms increment) */
             *(omap_gptimer_get_register(timer, GPTIMER_TPIR)) = posInc;
             *(omap_gptimer_get_register(timer, GPTIMER_TNIR)) = negInc;
 
             /* Recommended Initialization for 1ms timer */
             *(omap_gptimer_get_register(timer, GPTIMER_TLDR)) = 0xFFFFFFE0;
-            *(omap_gptimer_get_register(timer, GPTIMER_TTGR)) = 0x01;
+            *(omap_gptimer_get_register(timer, GPTIMER_TTGR)) = (0x01<<1);
 
             *(omap_gptimer_get_register(timer, GPTIMER_TOCR)) = 0;
             *(omap_gptimer_get_register(timer, GPTIMER_TOWR)) = ticks;
@@ -74,6 +76,7 @@ int __gptimer_init(uint32_t timer, int ticks)
     }
 
     /* Enable Compare, Auto-Reload and trigger on overflow  */
+    *(omap_gptimer_get_register(timer, GPTIMER_TCLR)) &= 0;
     *(omap_gptimer_get_register(timer, GPTIMER_TCLR)) |= (1 << 11) | (1 << 10) | (1 << 6) | (1 << 1);
 
     /* Enable Interrupts */

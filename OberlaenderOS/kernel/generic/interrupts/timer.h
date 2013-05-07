@@ -24,7 +24,7 @@
 /**
  * How many ticks to wait on the GPTIMER before updating all timers
  */
-#define TIMER_TICKS 10
+#define TIMER_TICKS 1
 
 /**
  *  GPTIMER2 for our timer API

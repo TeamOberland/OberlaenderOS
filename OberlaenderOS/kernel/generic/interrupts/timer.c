@@ -114,7 +114,6 @@ int gptimer_stop(uint32_t timer)
         return E_FAULT;
     }
     return __gptimer_stop(timer);
-
 }
 
 int gptimer_reset(uint32_t timer)

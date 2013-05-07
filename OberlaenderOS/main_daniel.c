@@ -17,12 +17,20 @@
 
 #include <stdio.h>
 
+#include "kernel/arch/omap3530/arch.h"
+
 /* beagleboard specific gpio pins */
 #define GPIO_USERLED0 149
 #define GPIO_USERLED1 150
 #define GPIO_MMC1_WP 23
 #define GPIO_DVI 170
 #define GPIO_USERBUTTON 7
+
+
+void idle_task()
+{
+    while(1);
+}
 
 /**
  * A simple led GPIO test without interrupts
@@ -84,39 +92,39 @@ void timer_test()
     gpio_direction_output(GPIO_USERLED0);
     gpio_direction_output(GPIO_USERLED1);
 
-    printf("Init Timers\n");
-    timer_init();
-
     printf("Init Listeners\n");
-    timer_add_listener(timer_userled0, 2500);
-    timer_add_listener(timer_userled1, 5000);
-
-
-    __enable_interrupts();
+    timer_add_listener(timer_userled0, 500);
+    timer_add_listener(timer_userled1, 1);
 }
 
+
+void gptimer_test_handler() {
+    gptimer_clear(1);
+    uint32_t value = gpio_get_value(GPIO_USERLED0) ^ 0x01;
+    gpio_set_value(GPIO_USERLED0, value);
+}
 
 /* GPTIMER TEST */
 void gptimer_test()
 {
     int i;
     printf("Setup IRQ\n");
-    irq_add_listener(GPTIMER3_IRQ, timer_userled0);
+    gpio_direction_output(GPIO_USERLED0);
+    irq_add_listener(GPTIMER2_IRQ, gptimer_test_handler);
 
     printf("Setup GPIOs\n");
     gpio_direction_output(GPIO_USERLED0);
 
     printf("Starting timers\n");
-    gptimer_init(2, 500); /* GPTIMER3 */
-    gptimer_start(2);
+    gptimer_init(1, 50); /* GPTIMER2 */
+    gptimer_start(1);
 
-    /* Check out the counter register */
-    while(1)
-    {
-        for(i = 0; i < 10000; i++);
-
-        printf("Counter: 0x%x\n", gptimer_getcounter(2));
-    }
+    while(1);
+    //{
+    //    for(i = 0; i < 500; i++);
+    //    printf("Coutner: %x\n", gptimer_getcounter(1));
+    //    printf("OCR: %i\n", *((memory_mapped_io_t)(GPTIMER2_BASE + GPTIMER_TOCR)));
+    //}
 }
 
 void swi_test()
@@ -131,11 +139,6 @@ void swi_test()
         printf("%s", strtime);
         for(i = 0; i < 1000; i++);
     }
-}
-
-void idle_task()
-{
-    while(1);
 }
 
 
