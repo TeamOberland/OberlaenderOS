@@ -79,18 +79,23 @@ uint32_t inline __get_irqid()
 }
 
 
-void inline __disable_irq()
+uint32_t inline __get_fiqid()
 {
-    _disable_IRQ();
+    return *((memory_mapped_io_t)(MPU_INTC + INTCPS_SIR_FIQ));
 }
 
-void inline __enable_irqid(uint32_t irq)
+
+void inline __disable_irq()
 {
     printf("Enabling irq %i (reg: %i, bit %i)\n", irq, irq/32, irq%32);
     *((memory_mapped_io_t)(MPU_INTC + INTCPS_MIR_CLEAR(irq/32))) |= (1 << (irq % 32));
 }
 
 void contextSwitch(pcb_t* from, pcb_t* to);
+    _disable_IRQ();
+}
+
+void __enable_irqid(uint32_t irq);
 
 
 #endif /* INTERRUPTS_H_ */

@@ -76,7 +76,7 @@ node_t *list_first(const list_t *list);
 
 node_t *list_last(list_t *list);
 
-node_t *node_next(node_t* node, list_t *);
+node_t *node_next(node_t* node, list_t *, bool_t);
 
 extern bool_t list_member(const node_t *, const list_t *);
 /*
