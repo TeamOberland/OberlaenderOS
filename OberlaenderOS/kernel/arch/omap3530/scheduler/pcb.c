@@ -7,9 +7,6 @@
  *      Author: Manuel
  */
 
-#ifndef PCB_C_
-#define PCB_C_
-
 void pcb_init(pcb_t* t)
 {
 //    // init Task Control Block
@@ -33,4 +30,3 @@ void pcb_init(pcb_t* t)
     t->R14 = 0;
 }
 
-#endif PCB_C_

@@ -7,7 +7,7 @@
 
 #include "swi.h"
 #include "../../types.h"
-#include <stdio.h>
+
 
 #include <time.h>
 #include "../../../api/syscalls.h"

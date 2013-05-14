@@ -5,10 +5,6 @@
  *      Author: Manuel
  */
 
-#ifndef SCHEDULER_C_
-#define SCHEDULER_C_
-
-
 #include "scheduler.h"
 #include <stdlib.h>
 
@@ -16,7 +12,8 @@
 #include "../../arch/omap3530/interrupts/interrupts.h"
 #include "../../arch/omap3530/scheduler/pcb.h"
 #include "../interrupts/timer.h"
-static scheduler_t* _scheduler;
+
+extern scheduler_t* _scheduler=NULL;
 
 /*
  * Initializes the scheduler, reserving place for queue etc.
@@ -28,25 +25,17 @@ scheduler_t* scheduler_init(schedulingAlgorithm_t* algorithm)
     scheduler->schedulingAlgorithm=algorithm;
     algorithm->processList=scheduler->processList;
     init_list(scheduler->processList);
-
+    _scheduler = scheduler;
     return scheduler;
 }
 
-void scheduler_schedule()
-{
-    asm("\t PUSH {r0} \n" \
-        "\t LDR r0, return_address \n" \
-        "\t STR lr, [r0] \n" \
-        "\t POP {r0}");
-    contextSwitch(&_scheduler->schedulingAlgorithm->currentProcess->pcb,&_scheduler->schedulingAlgorithm->get_next_process(_scheduler->schedulingAlgorithm)->pcb);
-}
 
 void scheduler_start_scheduling(scheduler_t* scheduler)
 {
     int i;
     _scheduler=scheduler;
     printf("Setup IRQ\n");
-    irq_add_listener(GPTIMER3_IRQ, scheduler_schedule);
+    irq_add_listener(GPTIMER3_IRQ, context_switch);
 
     printf("Starting timers\n");
     gptimer_init(2, 500); /* GPTIMER3 */
@@ -90,5 +79,3 @@ void scheduler_destroy(scheduler_t* scheduler)
 
 }
 
-
-#endif /* SCHEDULER_C_ */

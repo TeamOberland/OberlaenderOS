@@ -10,6 +10,7 @@
 
 #include <inttypes.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 typedef void (*irq_listener)(void);
 
@@ -19,7 +20,5 @@ typedef int8_t bool_t;
 
 #define TRUE 1
 #define FALSE 0
-
-#define NULL ((void*)0)
 
 #endif /* TYPES_H_ */

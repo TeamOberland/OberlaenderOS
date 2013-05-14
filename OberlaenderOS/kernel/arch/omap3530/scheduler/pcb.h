@@ -15,8 +15,6 @@ typedef struct _pcb {
 
     // all registers
     int CPSR;
-    int restartAddress;
-    int functionPointer;
     int R0;
     int R1;
     int R2;
@@ -33,6 +31,8 @@ typedef struct _pcb {
     int R13;
     int R14;
     int stack_pointer;
+    int restartAddress;
+    int functionPointer;
 } pcb_t;
 
 void pcb_init(pcb_t* t);

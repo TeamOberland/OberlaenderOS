@@ -54,6 +54,21 @@
 #define INTCPS_ILR(m)           (0x0100 + (0x4 * (m)))
 
 
+
+
+
+
+/************** GLOBALS END **************/
+
+//extern int stack_pointer_kernel;
+//extern int stack_pointer_interrupted;
+//extern int stack_pointer_restored;
+//extern int return_address;
+//extern int function_pointer;
+//extern int stack_pointer_saved_context;
+
+
+
 /* Platform implementation */
 #define IRQ_COUNT     95
 
@@ -87,13 +102,10 @@ uint32_t inline __get_fiqid()
 
 void inline __disable_irq()
 {
-    printf("Enabling irq %i (reg: %i, bit %i)\n", irq, irq/32, irq%32);
-    *((memory_mapped_io_t)(MPU_INTC + INTCPS_MIR_CLEAR(irq/32))) |= (1 << (irq % 32));
-}
-
-void contextSwitch(pcb_t* from, pcb_t* to);
     _disable_IRQ();
 }
+
+void context_switch();
 
 void __enable_irqid(uint32_t irq);
 

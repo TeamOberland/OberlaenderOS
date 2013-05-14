@@ -8,7 +8,8 @@
 #include "../../types.h"
 #include "irq.h"
 #include "../../genarch/arch.h"
-#include <stdio.h>
+#include "../../genarch/interrupts/interrupts.h"
+
 
 static irq_listener irq_listeners[IRQ_COUNT];
 
@@ -55,8 +56,10 @@ interrupt void fiq_handle()
  * Is called on any interrupt request.
  */
 #pragma INTERRUPT(irq_handle, IRQ)
+#pragma TASK(irq_handle)
 interrupt void irq_handle()
 {
+//    SAVE_CONTEXT_IRQ;
     *((memory_mapped_io_t)(MPU_INTC + INTCPS_CONTROL)) |= 0x01;
     int irq =__get_irqid();
     //printf("[IRQ] %i Invoked\n", irq);
@@ -66,9 +69,8 @@ interrupt void irq_handle()
         irq_listeners[irq]();
     }
 
-
     *((memory_mapped_io_t)(MPU_INTC + INTCPS_CONTROL)) |= 0x01;
-
+//    RESTORE_AND_SWITCH_CONTEXT;
 }
 
 /**

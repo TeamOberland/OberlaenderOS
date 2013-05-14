@@ -13,12 +13,16 @@
 #include "scheduler.h"
 #include "SchedulingAlogirthm.h"
 #include "../adt/list.h"
+#include "../../arch/omap3530/interrupts/interrupts.h"
+
+
 
 typedef struct _scheduler
 {
     schedulingAlgorithm_t* schedulingAlgorithm;
     list_t* processList;
 }scheduler_t;
+
 
 /*
  * Initializes the scheduler, reserving place for queue etc.
