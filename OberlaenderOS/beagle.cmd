@@ -37,6 +37,7 @@ SECTIONS
 	.text2 		> int_ram {
 		swi.obj
 		irq.obj
+		interrupt_handle.obj
 	}
 
     .const      > ext_ddr

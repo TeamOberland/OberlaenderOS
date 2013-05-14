@@ -10,6 +10,8 @@
 
 #include "interrupts/timer.h"
 
+extern void* __stack;
+
 void setup_arch()
 {
     memory_mapped_io_t reg;

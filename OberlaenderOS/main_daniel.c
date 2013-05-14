@@ -14,6 +14,9 @@
 #include "kernel/generic/interrupts/timer.h"
 
 #include "kernel/generic/ipc/ipc.h"
+#include "kernel/generic/display/display.h"
+
+#include "kernel/generic/scheduler/scheduler.h"
 
 #include "api/system.h"
 
@@ -202,6 +205,49 @@ void ipc_test()
     free(v2);
 }
 
+//void display_test()
+//{
+//    display_init();
+//    display_setup(1024,768,32);
+//
+//    display_context_t *display = display_get_context();
+//
+//    display_set_color(255,0,0);
+//    display_move_to(10,10);
+//    display_fill_rect(100,100);
+//}
+
+void proc1()
+{
+    int i = 0;
+    while (TRUE)
+    {
+        printf("process1\n");
+        for (i = 0; i < 10000; i++)
+            ;
+    }
+}
+
+void proc2()
+{
+    int i = 0;
+    while (TRUE)
+    {
+        printf("process2\n");
+        for (i = 0; i < 10000; i++)
+            ;
+    }
+}
+
+void scheduler_test()
+{
+    scheduler_t* scheduler = scheduler_init(scheduling_algorithm_initialize());
+    scheduler_add_Process_Test(scheduler, (uint32_t)idle_task);
+    scheduler_add_Process_Test(scheduler, (uint32_t)proc1);
+    scheduler_add_Process_Test(scheduler, (uint32_t)proc2);
+    scheduler_start_scheduling(scheduler);
+}
+
 void main_daniel(void)
 {
     printf("Setup kernel\n");
@@ -213,11 +259,13 @@ void main_daniel(void)
 
     /* timer_test(); */
 
-    /* gptimer_test(); */
-
+//    gptimer_test();
     /* swi_test(); */
 
-    ipc_test();
+    /* ipc_test(); */
+
+//    display_test();
+    scheduler_test();
 
     printf("Moving to Idle\n");
     idle_task();
