@@ -11,33 +11,41 @@
 #include "../../types.h"
 #include "process.h"
 #include "scheduler.h"
-#include "SchedulingAlogirthm.h"
 #include "../adt/list.h"
-#include "../../arch/omap3530/interrupts/interrupts.h"
 
+typedef uint8_t process_id_t;
+
+struct _scheduler;
+typedef void (*scheduler_algorithm)(struct _scheduler* scheduler);
+
+#ifdef SCHEDULER_ROUND_ROBIN
+#define SCHEDULING_ALGORITHM scheduling_algorithm_round_robin
+#else
+#error Scheduling Algorithm not specified
+#endif
 
 
 typedef struct _scheduler
 {
-    schedulingAlgorithm_t* schedulingAlgorithm;
-    list_t* processList;
-}scheduler_t;
+    process_id_t nextProcessId;
+
+    list_t* processes;
+    node_t* currentProcess;
+
+    scheduler_algorithm algorithm;
+} scheduler_t;
+
+void SCHEDULING_ALGORITHM(scheduler_t* scheduler);
 
 
-/*
- * Initializes the scheduler, reserving place for queue etc.
- */
-scheduler_t*  scheduler_init(schedulingAlgorithm_t* algorithm);
+extern scheduler_t* global_scheduler;
 
-void scheduler_start_scheduling(scheduler_t* scheduler);
+void scheduler_init(uint32_t speed);
 
-void scheduler_add_Process(scheduler_t* scheduler,uint32_t context);
-void scheduler_add_Process_Test(scheduler_t* scheduler,uint32_t methodPointer);
+void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback);
 
-/*
- * Releases all the needed memory,
- */
-void scheduler_destroy(scheduler_t* scheduler);
+void scheduler_run(scheduler_t* scheduler);
 
+void scheduler_free(scheduler_t* scheduler);
 
 #endif /* SCHEDULER_H_ */

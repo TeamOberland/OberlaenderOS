@@ -49,7 +49,8 @@ void swi_format_time(timestamp_t *ts, char* target)
             ts->year);
 }
 
-bool_t swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
+#pragma INTERRUPT(swi_handle, SWI)
+bool_t swi_handle(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
 {
     printf("[SWI] SoftwareInterrupt: %i\n", swiNumber);
     switch(swiNumber)

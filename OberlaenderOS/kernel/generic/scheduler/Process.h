@@ -8,8 +8,11 @@
 
 #ifndef PROCESS_H_
 #define PROCESS_H_
+
 #include "../../types.h"
-#include "../../arch/omap3530/scheduler/pcb.h"
+#include "../../genarch/arch.h"
+
+typedef uint32_t (*process_callback_t)(void);
 
 typedef enum process_state
 {
@@ -23,14 +26,15 @@ typedef enum process_state
 	PROCESS_SLEEPING,
 	//Process will be stopped
 	PROCESS_EXITING
-}process_state_t;
+} process_state_t;
 
 typedef struct _process
 {
     process_state_t state;
 	uint32_t id;
 	uint32_t priority;
-	pcb_t pcb;
+	process_callback_t callback;
+	DECLARE_PROCESS_CONTEXT(context)
 } process_t;
 
 #endif /* PROCESS_H_ */

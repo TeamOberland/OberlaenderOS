@@ -114,8 +114,6 @@ void gptimer_test_handler()
 /* GPTIMER TEST */
 void gptimer_test()
 {
-    int i;
-    printf("Setup IRQ\n");
     gpio_direction_output(GPIO_USERLED0);
     irq_add_listener(GPTIMER2_IRQ, gptimer_test_handler);
 
@@ -217,7 +215,7 @@ void ipc_test()
 //    display_fill_rect(100,100);
 //}
 
-void proc1()
+uint32_t proc1(void)
 {
     int i = 0;
     while (TRUE)
@@ -228,7 +226,7 @@ void proc1()
     }
 }
 
-void proc2()
+uint32_t proc2(void)
 {
     int i = 0;
     while (TRUE)
@@ -241,11 +239,9 @@ void proc2()
 
 void scheduler_test()
 {
-    scheduler_t* scheduler = scheduler_init(scheduling_algorithm_initialize());
-    scheduler_add_Process_Test(scheduler, (uint32_t)idle_task);
-    scheduler_add_Process_Test(scheduler, (uint32_t)proc1);
-    scheduler_add_Process_Test(scheduler, (uint32_t)proc2);
-    scheduler_start_scheduling(scheduler);
+    scheduler_init(1000);
+    scheduler_add_process(global_scheduler, proc1);
+    scheduler_add_process(global_scheduler, proc2);
 }
 
 void main_daniel(void)
@@ -259,12 +255,14 @@ void main_daniel(void)
 
     /* timer_test(); */
 
-//    gptimer_test();
+    /* gptimer_test(); */
+
     /* swi_test(); */
 
     /* ipc_test(); */
 
-//    display_test();
+    /* display_test(); */
+
     scheduler_test();
 
     printf("Moving to Idle\n");

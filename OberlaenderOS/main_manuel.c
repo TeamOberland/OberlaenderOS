@@ -8,7 +8,6 @@
 //#include "kernel/generic/adt/listHowTo.h"
 #include "kernel/generic/scheduler/scheduler.h"
 #include "stdio.h"
-#include "kernel/generic/scheduler/SchedulingAlogirthm.h"
 
 #include "kernel/generic/kernel.h"
 
@@ -190,11 +189,11 @@ void main_manuel(void)
     setup_kernel();
 
     __enable_interrupts();
-    scheduler_t* scheduler = scheduler_init(scheduling_algorithm_initialize());
-    scheduler_add_Process_Test(scheduler, (uint32_t)process1);
-    scheduler_add_Process_Test(scheduler, (uint32_t)process2);
-    scheduler_start_scheduling(scheduler);
-    scheduler_destroy(scheduler);
+//    scheduler_t* scheduler = scheduler_init(scheduling_algorithm_initialize());
+//    scheduler_add_Process_Test(scheduler, (uint32_t)process1);
+//    scheduler_add_Process_Test(scheduler, (uint32_t)process2);
+//    scheduler_start_scheduling(scheduler);
+//    scheduler_destroy(scheduler);
 
 }
 

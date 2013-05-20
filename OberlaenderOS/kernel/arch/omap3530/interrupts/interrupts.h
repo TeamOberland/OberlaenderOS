@@ -10,7 +10,6 @@
 
 #include <stdio.h>
 #include "../../../genarch/interrupts/interrupts.h"
-#include "../scheduler/pcb.h"
 
 /* Some defines platform specific defines */
 #define GPTIMER1_IRQ  37
@@ -104,8 +103,6 @@ void inline __disable_irq()
 {
     _disable_IRQ();
 }
-
-void context_switch();
 
 void __enable_irqid(uint32_t irq);
 

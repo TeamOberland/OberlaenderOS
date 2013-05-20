@@ -11,6 +11,7 @@
 #include "gpio/gpio.h"
 #include "interrupts/interrupts.h"
 #include "interrupts/timer.h"
+#include "scheduler/context.h"
 
 inline void __switch_to_user_mode()
 {
