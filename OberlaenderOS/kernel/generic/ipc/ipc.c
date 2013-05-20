@@ -31,7 +31,7 @@ static node_t* ipc_get_namespace(const char* ns)
     return NULL ;
 }
 
-static ipc_receiver_t* ipc_get_recevier(ipc_namespace_t* namespace, uint32_t pid)
+static ipc_receiver_t* ipc_get_recevier(ipc_namespace_t* namespace, process_id_t pid)
 {
     node_t* r = list_first(&namespace->receivers);
     while (r != NULL )
@@ -70,7 +70,7 @@ static ipc_namespace_t* ipc_get_or_create_namespace(const char* ns)
     return namespace;
 }
 
-void ipc_register(const char* ns, uint32_t pid)
+void ipc_register(const char* ns, process_id_t pid)
 {
     ipc_namespace_t* namespace;
     ipc_receiver_t* receiver;
@@ -91,7 +91,7 @@ void ipc_register(const char* ns, uint32_t pid)
     }
 }
 
-static ipc_unregister_internal(node_t* nsNode, uint32_t pid)
+static ipc_unregister_internal(node_t* nsNode, process_id_t pid)
 {
     ipc_namespace_t* namespace;
     node_t* receiveNode;
@@ -130,7 +130,7 @@ static ipc_unregister_internal(node_t* nsNode, uint32_t pid)
     }
 }
 
-void ipc_unregister(const char* ns, uint32_t pid)
+void ipc_unregister(const char* ns, process_id_t pid)
 {
     node_t* namespace = ipc_get_namespace(ns);
 
@@ -140,7 +140,7 @@ void ipc_unregister(const char* ns, uint32_t pid)
     }
 }
 
-void ipc_unregister_all(uint32_t pid)
+void ipc_unregister_all(process_id_t pid)
 {
     node_t* nsNode;
     node_t* nextNs;
@@ -155,7 +155,7 @@ void ipc_unregister_all(uint32_t pid)
     }
 }
 
-void ipc_send(const char* ns, uint32_t sender, ipc_message_data_t* message)
+void ipc_send(const char* ns, process_id_t sender, ipc_message_data_t* message)
 {
     node_t* nsNode;
     ipc_namespace_t* namespace;
@@ -196,7 +196,7 @@ void ipc_send(const char* ns, uint32_t sender, ipc_message_data_t* message)
     }
 }
 
-ipc_message_t* ipc_receive(const char* ns, uint32_t pid)
+ipc_message_t* ipc_receive(const char* ns, process_id_t pid)
 {
     node_t* nsNode;
     ipc_namespace_t* namespace;

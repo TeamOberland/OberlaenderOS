@@ -10,6 +10,7 @@
 
 #include "../../types.h"
 #include "../adt/list.h"
+#include "../scheduler/process.h"
 
 /**
  * This is the data which can be sent from one process to all receivers
@@ -28,8 +29,8 @@ typedef struct
  */
 typedef struct
 {
-    uint32_t sender; /**< the process who sent this message */
-    uint32_t receiver; /**< the process who will receive this */
+    process_id_t sender; /**< the process who sent this message */
+    process_id_t receiver; /**< the process who will receive this */
     ipc_message_data_t* data; /**< the data of the ipc message */
 } ipc_message_t;
 
@@ -38,7 +39,7 @@ typedef struct
  */
 typedef struct
 {
-    uint32_t pid;
+    process_id_t pid;
     list_t messages; /**< the list of messages which the receivers will receive on read (ipc_message_t*) */
 } ipc_receiver_t;
 
@@ -63,19 +64,19 @@ void ipc_init();
  * @param ns the namespace to listen on
  * @param pid the process to add as receiver for messages
  */
-void ipc_register(const char* ns, uint32_t pid);
+void ipc_register(const char* ns, process_id_t pid);
 /**
  * Unregisters a process from receiving messages.
  * @param ns the namespace to unregister from
  * @param pid the process to unregister
  */
-void ipc_unregister(const char* ns, uint32_t pid);
+void ipc_unregister(const char* ns, process_id_t pid);
 
 /**
  * Untergisters a process from all his namespaces.
  * @param pid the process to unregister
  */
-void ipc_unregister_all(uint32_t pid);
+void ipc_unregister_all(process_id_t pid);
 
 /**
  * Sends a message to all receivers of a namespace. This task will not block the process.
@@ -84,7 +85,7 @@ void ipc_unregister_all(uint32_t pid);
  * @param pid the process sending the message
  * @param message the message to send
  */
-void ipc_send(const char* ns, uint32_t pid, ipc_message_data_t* message);
+void ipc_send(const char* ns, process_id_t pid, ipc_message_data_t* message);
 
 /**
  * Receives a message from a namespace. This task will block the process until a message is received.
@@ -92,7 +93,7 @@ void ipc_send(const char* ns, uint32_t pid, ipc_message_data_t* message);
  * @param pid the receiver PID to load the messages for.
  * @return
  */
-ipc_message_t* ipc_receive(const char* ns, uint32_t pid);
+ipc_message_t* ipc_receive(const char* ns, process_id_t pid);
 
 /**
  * Cleans up all resources allocated by this message

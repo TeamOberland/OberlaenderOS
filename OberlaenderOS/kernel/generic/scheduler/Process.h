@@ -12,6 +12,8 @@
 #include "../../types.h"
 #include "../../genarch/arch.h"
 
+typedef uint8_t process_id_t;
+
 typedef uint32_t (*process_callback_t)(void);
 
 typedef enum process_state
@@ -31,8 +33,8 @@ typedef enum process_state
 typedef struct _process
 {
     process_state_t state;
-	uint32_t id;
-	uint32_t priority;
+    process_id_t id;
+//	uint32_t priority;
 	process_callback_t callback;
 	DECLARE_PROCESS_CONTEXT(context)
 } process_t;

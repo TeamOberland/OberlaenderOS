@@ -13,7 +13,7 @@
 #include "scheduler.h"
 #include "../adt/list.h"
 
-typedef uint8_t process_id_t;
+
 
 struct _scheduler;
 typedef void (*scheduler_algorithm)(struct _scheduler* scheduler);
