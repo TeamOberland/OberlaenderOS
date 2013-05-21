@@ -17,6 +17,19 @@ void scheduling_algorithm_round_robin(scheduler_t* scheduler)
     }
     else
     {
-        scheduler->currentProcess = node_next(scheduler->currentProcess, scheduler->processes,TRUE);
+        node_t* current = scheduler->currentProcess;
+        node_t* next = node_next(scheduler->currentProcess, scheduler->processes,TRUE);
+        // try to find a new process which is ready
+        while(next != NULL && ((process_t*)next->member)->state != PROCESS_READY)
+        {
+            next = node_next(scheduler->currentProcess, scheduler->processes,TRUE);
+            // ensure we don't run in endless loops
+            if(current == next)
+            {
+                next = NULL;
+            }
+        }
+
+        scheduler->currentProcess = next;
     }
 }

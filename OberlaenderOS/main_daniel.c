@@ -239,9 +239,10 @@ uint32_t proc2(void)
 
 void scheduler_test()
 {
-    scheduler_init(1000);
+    scheduler_init();
     scheduler_add_process(global_scheduler, proc1);
     scheduler_add_process(global_scheduler, proc2);
+    scheduler_start(1000);
 }
 
 void main_daniel(void)
@@ -264,8 +265,5 @@ void main_daniel(void)
     /* display_test(); */
 
     scheduler_test();
-
-    printf("Moving to Idle\n");
-    idle_task();
 }
 #endif
