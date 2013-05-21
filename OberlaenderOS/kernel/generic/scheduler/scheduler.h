@@ -44,7 +44,7 @@ void scheduler_init();
 
 void scheduler_start(uint32_t speed);
 
-void scheduler_current_process(scheduler_t* scheduler);
+process_t* scheduler_current_process(scheduler_t* scheduler);
 
 void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback);
 
