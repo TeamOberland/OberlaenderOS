@@ -40,7 +40,11 @@ void SCHEDULING_ALGORITHM(scheduler_t* scheduler);
 
 extern scheduler_t* global_scheduler;
 
-void scheduler_init(uint32_t speed);
+void scheduler_init();
+
+void scheduler_start(uint32_t speed);
+
+void scheduler_current_process(scheduler_t* scheduler);
 
 void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback);
 

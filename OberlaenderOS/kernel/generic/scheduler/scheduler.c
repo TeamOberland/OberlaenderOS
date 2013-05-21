@@ -14,8 +14,11 @@
 #include "../interrupts/timer.h"
 
 scheduler_t* global_scheduler;
-void* current_context;
 
+static DECLARE_PROCESS_CONTEXT(tmp_context)
+void* process_context_pointer = tmp_context;
+
+void* current_context;
 
 #define GPTIMER_SCHEDULER 2
 
@@ -27,7 +30,7 @@ void global_scheduler_context_switch()
 }
 
 
-void scheduler_init(uint32_t speed)
+void scheduler_init()
 {
     if(global_scheduler != NULL)
     {
@@ -45,9 +48,18 @@ void scheduler_init(uint32_t speed)
     global_scheduler = scheduler;
 
     irq_add_listener(GPTIMER3_IRQ, global_scheduler_context_switch);
+}
 
+void scheduler_start(uint32_t speed)
+{
     gptimer_init(GPTIMER_SCHEDULER, speed);
     gptimer_start(GPTIMER_SCHEDULER);
+}
+
+process_t* scheduler_current_process(scheduler_t* scheduler)
+{
+    if(scheduler->currentProcess == NULL) return NULL;
+    return (process_t*)(scheduler->currentProcess->member);
 }
 
 void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback)
@@ -56,6 +68,8 @@ void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback)
     node_initialize(node);
 
     process_t* process = (process_t*) malloc(sizeof(process_t));
+    process->id = scheduler->nextProcessId;
+    scheduler->nextProcessId++;
     process->callback = callback;
     __context_init(process);
 
@@ -64,7 +78,20 @@ void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback)
 
 void scheduler_run(scheduler_t* scheduler)
 {
+    process_t* previous = scheduler_current_process(scheduler);
     scheduler->algorithm(scheduler);
+
+    process_t* current = scheduler_current_process(scheduler);
+    if(previous != NULL)
+    {
+        previous->state = PROCESS_READY;
+    }
+
+    if(current != NULL)
+    {
+        current_context = current->context;
+        current->state = PROCESS_RUNNING;
+    }
 }
 
 
