@@ -18,6 +18,6 @@ void setup_kernel()
     __disable_interrupts();
     irq_disable();
     irq_init();
-    timer_init();
+//    timer_init();
     irq_enable();
 }
