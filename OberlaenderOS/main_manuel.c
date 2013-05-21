@@ -240,15 +240,15 @@ uint32_t proc2(void)
 
 void scheduler_test()
 {
-    scheduler_init(1000);
+    scheduler_init();
     scheduler_add_process(global_scheduler, proc1);
     scheduler_add_process(global_scheduler, proc2);
+    scheduler_start(1000);
 }
 
 
 void main_manuel(void)
 {
-    scheduler_t* scheduler = (scheduler_t*) malloc(sizeof(scheduler_t));
     printf("Setup kernel\n");
     setup_kernel();
 
@@ -265,7 +265,6 @@ void main_manuel(void)
     /* ipc_test(); */
 
     /* display_test(); */
-    scheduler_t* scheduler1 = (scheduler_t*) malloc(sizeof(scheduler_t));
     scheduler_test();
 
     printf("Moving to Idle\n");
