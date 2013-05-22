@@ -70,11 +70,13 @@ void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback)
 
     process_t* process = (process_t*) malloc(sizeof(process_t));
     process->id = scheduler->nextProcessId;
-    scheduler->nextProcessId++;
     process->callback = callback;
+    node->member = process;
+
     __context_init(process);
 
-    node->member = (process_t*) malloc(sizeof(process_t));
+    scheduler->nextProcessId++;
+    list_append(node,scheduler->processes);
 }
 
 void scheduler_run(scheduler_t* scheduler)
