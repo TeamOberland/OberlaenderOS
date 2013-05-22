@@ -15,6 +15,7 @@
 
 scheduler_t* global_scheduler;
 
+// a temporary context to store the process for kernel-boot procedure
 static DECLARE_PROCESS_CONTEXT(tmp_context)
 void* process_context_pointer = tmp_context;
 
