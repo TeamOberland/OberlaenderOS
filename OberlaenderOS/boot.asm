@@ -8,12 +8,6 @@
     .asg	exit,         EXIT_RTN
     .asg    main_func_sp, MAIN_FUNC_SP
 
-	.global	__stack
-;***************************************************************
-;* DEFINE THE USER MODE STACK (DEFAULT SIZE IS 512)
-;***************************************************************
-__stack:.usect	".stack", 0, 4
-
 ;***************************************************************
 ;* FUNCTION DEF: _c_int00
 ;***************************************************************
@@ -46,9 +40,9 @@ _c_int00: .asmfunc
         ;*------------------------------------------------------
         ;* Initialize User-Mode Stack
         ;*------------------------------------------------------
-        LDR     sp, c_stack
-        LDR     r0, c_STACK_SIZE
-        ADD     sp, sp, r0
+        ; LDR     sp, c_stack
+        ; LDR     r0, c_STACK_SIZE
+        ; ADD     sp, sp, r0
 
         ;*------------------------------------------------------
         ;* Perform all the required initilizations:
@@ -78,9 +72,6 @@ L1:     B       L1
 ;***************************************************************
 ;* CONSTANTS USED BY THIS MODULE
 ;***************************************************************
-c_stack         .long    __stack
-c_STACK_SIZE    .long    __STACK_SIZE
-
 c_sp_irq		.long	irqStack
 c_sp_kernel		.long	kernelStack
 c_sp_abort		.long	abortStack

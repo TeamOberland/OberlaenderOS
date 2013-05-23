@@ -41,8 +41,8 @@ void timer_init()
         registered_timers[i].listener = NULL;
     }
 
-    // we'll use the GPTimer2 for our timer system
-    irq_add_listener(GPTIMER2_IRQ, timer_irq_handler);
+    // we'll use the GPTimer10 for our timer system
+    irq_add_listener(GPTIMER10_IRQ, timer_irq_handler);
     gptimer_init(GPTIMER_TIMER, TIMER_TICKS);
     gptimer_start(GPTIMER_TIMER);
 }

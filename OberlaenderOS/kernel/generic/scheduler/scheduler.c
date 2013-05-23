@@ -17,11 +17,9 @@ scheduler_t* global_scheduler;
 
 // a temporary context to store the process for kernel-boot procedure
 static DECLARE_PROCESS_CONTEXT(tmp_context)
-void* process_context_pointer = tmp_context;
+void* current_context = tmp_context;
 
-void* current_context;
-
-#define GPTIMER_SCHEDULER 2
+#define GPTIMER_SCHEDULER 1
 
 
 void global_scheduler_context_switch()
@@ -47,12 +45,11 @@ void scheduler_init()
     scheduler->algorithm = SCHEDULING_ALGORITHM;
 
     global_scheduler = scheduler;
-
-    irq_add_listener(GPTIMER3_IRQ, global_scheduler_context_switch);
 }
 
 void scheduler_start(uint32_t speed)
 {
+    irq_add_listener(GPTIMER2_IRQ, global_scheduler_context_switch);
     gptimer_init(GPTIMER_SCHEDULER, speed);
     gptimer_start(GPTIMER_SCHEDULER);
 }
@@ -65,6 +62,9 @@ process_t* scheduler_current_process(scheduler_t* scheduler)
 
 void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback)
 {
+    irq_disable();
+    __disable_interrupts();
+
     node_t* node = (node_t*) malloc(sizeof(node_t));
     node_initialize(node);
 
@@ -77,6 +77,9 @@ void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback)
 
     scheduler->nextProcessId++;
     list_append(node,scheduler->processes);
+
+    irq_enable();
+    __enable_interrupts();
 }
 
 void scheduler_run(scheduler_t* scheduler)

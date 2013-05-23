@@ -217,32 +217,39 @@ void ipc_test()
 
 uint32_t proc1(void)
 {
-    int i = 0;
+    volatile uint32_t i = 0;
+    uint32_t value = 0;
+
     while (TRUE)
     {
-        printf("process1\n");
-        for (i = 0; i < 10000; i++)
+        value ^= 0x01;
+        gpio_set_value(GPIO_USERLED0, value);
+        for (i = 0; i < 100000; i++)
             ;
     }
 }
 
 uint32_t proc2(void)
 {
-    int i = 0;
+    volatile uint32_t i = 0;
+    uint32_t value = 0;
+
     while (TRUE)
     {
-        printf("process2\n");
-        for (i = 0; i < 10000; i++)
+        value ^= 0x01;
+        gpio_set_value(GPIO_USERLED1, value);
+        for (i = 0; i < 50000; i++)
             ;
     }
 }
 
 void scheduler_test()
 {
-    scheduler_init();
+    gpio_direction_output(GPIO_USERLED0);
+    gpio_direction_output(GPIO_USERLED1);
     scheduler_add_process(global_scheduler, proc1);
     scheduler_add_process(global_scheduler, proc2);
-    scheduler_start(1000);
+    scheduler_start(200);
 }
 
 void main_daniel(void)
@@ -251,6 +258,10 @@ void main_daniel(void)
     setup_kernel();
 
     __enable_interrupts();
+    __switch_to_user_mode();
+    scheduler_test();
+
+
 
     /* led_test1(); */
 
@@ -263,7 +274,5 @@ void main_daniel(void)
     /* ipc_test(); */
 
     /* display_test(); */
-
-    scheduler_test();
 }
 #endif

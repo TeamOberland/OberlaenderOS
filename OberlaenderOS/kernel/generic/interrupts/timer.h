@@ -29,7 +29,7 @@
 /**
  *  GPTIMER2 for our timer API
  */
-#define GPTIMER_TIMER 1
+#define GPTIMER_TIMER 9
 
 /**
  * A timer wrapper for storing registered timers

@@ -89,13 +89,13 @@ void inline __enable_irq()
 
 uint32_t inline __get_irqid()
 {
-    return *((memory_mapped_io_t)(MPU_INTC + INTCPS_SIR_IRQ));
+    return (*((memory_mapped_io_t)(MPU_INTC + INTCPS_SIR_IRQ))) & 0x3F;
 }
 
 
 uint32_t inline __get_fiqid()
 {
-    return *((memory_mapped_io_t)(MPU_INTC + INTCPS_SIR_FIQ));
+    return (*((memory_mapped_io_t)(MPU_INTC + INTCPS_SIR_FIQ))) & 0x3F;
 }
 
 

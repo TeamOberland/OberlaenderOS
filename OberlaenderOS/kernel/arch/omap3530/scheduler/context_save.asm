@@ -6,7 +6,7 @@ _current_context: .field current_context, 32
 __context_save:
 	STMFD R13!, {R12, R14}
 	LDR R14, _current_context
-	; LDR R14, [R14]
+	LDR R14, [R14]
 
 	LDR R12, [R13, #8]
 	STMIA R14!, {R12}
