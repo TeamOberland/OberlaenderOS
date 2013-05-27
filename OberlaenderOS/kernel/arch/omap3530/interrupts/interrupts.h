@@ -92,10 +92,19 @@ uint32_t inline __get_irqid()
     return (*((memory_mapped_io_t)(MPU_INTC + INTCPS_SIR_IRQ))) & 0x3F;
 }
 
+inline void __mark_interrupts()
+{
+    *((memory_mapped_io_t) (MPU_INTC + INTCPS_CONTROL)) |= 0x01;
+}
 
 uint32_t inline __get_fiqid()
 {
     return (*((memory_mapped_io_t)(MPU_INTC + INTCPS_SIR_FIQ))) & 0x3F;
+}
+
+inline void __enable_irqid(uint32_t irq)
+{
+    *((memory_mapped_io_t)(MPU_INTC + INTCPS_MIR_CLEAR(irq/32))) |= (1 << (irq % 32));
 }
 
 
@@ -103,8 +112,6 @@ void inline __disable_irq()
 {
     _disable_IRQ();
 }
-
-void __enable_irqid(uint32_t irq);
 
 
 #endif /* INTERRUPTS_H_ */

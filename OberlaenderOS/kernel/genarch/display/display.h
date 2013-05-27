@@ -8,7 +8,7 @@
 #ifndef DISPLAY_GENARCH_H_
 #define DISPLAY_GENARCH_H_
 
-#include "../../types.h"
+#include "../../../lib/types.h"
 
 void __display_init(uint32_t width, uint32_t height);
 

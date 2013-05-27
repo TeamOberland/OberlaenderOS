@@ -6,14 +6,17 @@
  */
 
 #include "list.h"
-#include "../kernel/types.h"
+#include "types.h"
+
 bool_t list_member(const node_t *node, const list_t *list)
 {
     bool_t found = FALSE;
     node_t *hlp = list->head.next;
 
-    while (hlp != &list->head) {
-        if (hlp == node) {
+    while (hlp != &list->head)
+    {
+        if (hlp == node)
+        {
             found = TRUE;
             break;
         }
@@ -27,9 +30,10 @@ uint32_t list_count(const list_t *list)
 {
     uint32_t count = 0;
 
-        list_foreach(*list) {
-                count++;
-        }
+    list_foreach(*list)
+    {
+        count++;
+    }
 
     return count;
 }
@@ -39,9 +43,9 @@ uint32_t list_count(const list_t *list)
  */
 void node_initialize(node_t *node)
 {
-    node->next=NULL;
-    node->prev=NULL;
-    node->member=NULL;
+    node->next = NULL;
+    node->prev = NULL;
+    node->member = NULL;
 }
 
 /*
@@ -49,8 +53,8 @@ void node_initialize(node_t *node)
  */
 void init_list(list_t *list)
 {
-    list->head.next=&list->head;
-    list->head.prev=&list->head;
+    list->head.next = &list->head;
+    list->head.prev = &list->head;
 }
 
 /*
@@ -58,10 +62,10 @@ void init_list(list_t *list)
  */
 void list_insert_before(node_t *node_to_insert, node_t *node)
 {
-    node_to_insert->next=node;
-    node_to_insert->prev=node->prev;
-    node->prev->next=node_to_insert;
-    node->prev=node_to_insert;
+    node_to_insert->next = node;
+    node_to_insert->prev = node->prev;
+    node->prev->next = node_to_insert;
+    node->prev = node_to_insert;
 }
 
 /*
@@ -78,17 +82,17 @@ void list_insert_after(node_t *node_to_insert, node_t *node)
 /*
  * insert at the beginning of the list
  */
- void list_prepend(node_t *node_to_insert, list_t *list)
+void list_prepend(node_t *node_to_insert, list_t *list)
 {
-        list_insert_after(node_to_insert, &list->head);
+    list_insert_after(node_to_insert, &list->head);
 }
 
- /*
-  * insert at the end of the list
-  */
+/*
+ * insert at the end of the list
+ */
 void list_append(node_t *node_to_insert, list_t *list)
 {
-        list_insert_before(node_to_insert, &list->head);
+    list_insert_before(node_to_insert, &list->head);
 }
 
 /*
@@ -96,7 +100,8 @@ void list_append(node_t *node_to_insert, list_t *list)
  */
 void list_remove(node_t *node)
 {
-    if ((node->prev != NULL) && (node->next != NULL)) {
+    if ((node->prev != NULL) && (node->next != NULL))
+    {
         node->next->prev = node->prev;
         node->prev->next = node->next;
     }
@@ -128,10 +133,10 @@ node_t *list_last(list_t *list)
 node_t *node_next(node_t* node, list_t * list, bool_t circular)
 {
     node_t* temp = node->next;
-    if(temp==&list->head)
+    if (temp == &list->head)
     {
-        temp=temp->next;
-        if(!circular || temp==&list->head)
+        temp = temp->next;
+        if (!circular || temp == &list->head)
             return NULL;
     }
     return temp;

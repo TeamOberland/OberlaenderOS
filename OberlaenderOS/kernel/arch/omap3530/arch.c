@@ -5,12 +5,9 @@
  *      Author: Daniel
  */
 
-#include "../../types.h"
 #include "../../genarch/arch.h"
 
 #include "interrupts/timer.h"
-
-extern void* __stack;
 
 void setup_arch()
 {

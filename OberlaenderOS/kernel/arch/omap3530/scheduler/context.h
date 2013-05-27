@@ -12,5 +12,4 @@
 #define PROCESS_CONTEXT_SIZE 17
 #define DECLARE_PROCESS_CONTEXT(name) void* name[PROCESS_CONTEXT_SIZE];
 
-
-#endif /* CONTEXT_H_ */
+#endif /* CONTEXT_OMAP3530_H_ */

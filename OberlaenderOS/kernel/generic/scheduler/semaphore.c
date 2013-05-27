@@ -5,7 +5,7 @@
  *      Author: Daniel
  */
 
-#include "../../../api/semaphore.h"
+#include "../../../lib/semaphore.h"
 #include "semaphore.h"
 #include "scheduler.h"
 #include "../../genarch/interrupts/interrupts.h"
@@ -13,7 +13,6 @@
 
 void semaphore_wait(semaphore_t* semaphore)
 {
-    __disable_interrupts();
     semaphore->counter = semaphore->counter - 1;
     if(semaphore->counter < 0)
     {
@@ -26,13 +25,13 @@ void semaphore_wait(semaphore_t* semaphore)
         list_append(procNode, semaphore->waitingTasks);
         // suspend current process
         scheduler_suspend(proc);
+        // run scheduler
+        scheduler_run(global_scheduler);
     }
-    __enable_interrupts();
 }
 
 void semaphore_notify(semaphore_t* semaphore)
 {
-    __disable_interrupts();
     semaphore->counter = semaphore->counter + 1;
     if(semaphore->counter <= 0)
     {
@@ -45,6 +44,5 @@ void semaphore_notify(semaphore_t* semaphore)
             scheduler_resume(proc);
         }
     }
-    __enable_interrupts();
 }
 

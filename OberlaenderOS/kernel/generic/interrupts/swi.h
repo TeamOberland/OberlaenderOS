@@ -8,6 +8,5 @@
 #ifndef SWI_H_
 #define SWI_H_
 
-#include "../../types.h"
 
 #endif /* SWI_H_ */

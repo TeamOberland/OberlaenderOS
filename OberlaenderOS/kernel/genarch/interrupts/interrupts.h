@@ -8,7 +8,7 @@
 #ifndef INTERRUPTS_H_
 #define INTERRUPTS_H_
 
-#include "../../types.h"
+#include "../../../lib/types.h"
 
 /**
  * Enables global interrupts on the system.
@@ -41,6 +41,11 @@ uint32_t __get_irqid();
  * Gets the current FIQ id if in FIQ mode.
  */
 uint32_t __get_fiqid();
+
+/**
+ * Mark the interrupts as handled
+ */
+void __mark_interrupts();
 
 /**
  * enables the interrupts of a specific irq

@@ -8,7 +8,7 @@
 #ifndef GPIO_GENERIC_H_
 #define GPIO_GENERIC_H_
 
-#include "../../types.h"
+#include "../../../lib/types.h"
 
 /**
  * Configures the specified gpio pin to be an input

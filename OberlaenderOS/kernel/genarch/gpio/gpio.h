@@ -9,7 +9,7 @@
 #ifndef GPIO_GENARCH_H_
 #define GPIO_GENARCH_H_
 
-#include "../../types.h"
+#include "../../../lib/types.h"
 #include "../../errno.h"
 
 /**

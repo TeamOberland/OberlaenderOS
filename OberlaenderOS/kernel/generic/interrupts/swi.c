@@ -6,86 +6,81 @@
  */
 
 #include "swi.h"
-#include "../../types.h"
-
-
-#include <time.h>
-#include "../../../api/syscalls.h"
-#include "../../../api/system.h"
-#include "../../../api/semaphore.h"
+#include "../../../lib/types.h"
+#include "../../../lib/syscalls.h"
+#include "../../../lib/ipc.h"
+#include "../ipc/ipc.h"
+#include "../scheduler/scheduler.h"
 #include "../../genarch/scheduler/context.h"
-#include "../scheduler/semaphore.h"
 
-void swi_get_time(timestamp_t *ts)
+void swi_ipc_register(const char* ns)
 {
-    time_t t;
-    time(&t);
-
-    struct tm *tm = localtime(&t);
-
-    ts->sec = tm->tm_sec;
-    ts->min = tm->tm_min;
-    ts->hour = tm->tm_hour;
-    ts->mday = tm->tm_mday;
-    ts->mon = tm->tm_mon + 1;
-    ts->year = 1900 + tm->tm_year;
-    ts->wday = tm->tm_wday;
-    ts->yday = tm->tm_yday;
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        ipc_register(ns, proc->id);
+    }
 }
 
-#define RESULT_SIZE 26
-void swi_format_time(timestamp_t *ts, char* target)
+void swi_ipc_unregister(const char* ns)
 {
-    static const char wday_name[][4] = {
-       "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
-     };
-     static const char mon_name[][4] = {
-       "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-     };
-
-    sprintf(target, "%.3s %.3s%3d %.2d:%.2d:%.2d %d\n",
-            wday_name[ts->wday],
-            mon_name[ts->mon - 1],
-            ts->mday, ts->hour,
-            ts->min, ts->sec,
-            ts->year);
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        ipc_unregister(ns, proc->id);
+    }
 }
 
-void swi_semaphore_wait(semaphore_t* semaphore)
+void swi_ipc_send(const char* ns, ipc_message_data_t* message)
 {
-    semaphore_wait(semaphore);
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        ipc_send(ns, proc->id, message);
+    }
 }
 
-void swi_semaphore_notify(semaphore_t* semaphore)
+void swi_ipc_receive(const char* ns, ipc_message_data_t** message)
 {
-    semaphore_notify(semaphore);
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        ipc_message_data_t* received = ipc_receive(ns, proc->id);
+        *message = received;
+    }
+    else
+    {
+        *message = NULL;
+    }
+}
+
+void swi_ipc_wait(const char* ns)
+{
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        ipc_wait(ns, proc->id);
+    }
 }
 
 void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
 {
-    printf("[SWI] SoftwareInterrupt: %i\n", swiNumber);
-    switch(swiNumber)
+    switch (swiNumber)
     {
-        case SYSCALL_GETTIME:
-
-            swi_get_time((timestamp_t*)arg1);
-
+        case SYSCALL_IPC_REGISTER:
+            swi_ipc_register((const char*)arg1);
             break;
-        case SYSCALL_FORMATTIME:
-
-            swi_format_time((timestamp_t*)arg1, (char*)arg2);
-
+        case SYSCALL_IPC_UNREGISTER:
+            swi_ipc_unregister((const char*)arg1);
             break;
-        case SYSCALL_SEMAPHORE_WAIT:
-
-            swi_semaphore_wait((semaphore_t*)arg1);
-
+        case SYSCALL_IPC_SEND:
+            swi_ipc_send((const char*)arg1, (ipc_message_data_t*)arg2);
             break;
-        case SYSCALL_SEMAPHORE_NOTIFY:
-
-            swi_semaphore_notify((semaphore_t*)arg1);
-
+        case SYSCALL_IPC_RECEIVE:
+            swi_ipc_receive((const char*)arg1, (ipc_message_data_t**)arg2);
+            break;
+        case SYSCALL_IPC_WAIT:
+            swi_ipc_wait((const char*)arg1);
             break;
     }
 }

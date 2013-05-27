@@ -9,7 +9,7 @@
 #include "semaphore.h"
 #include <stdlib.h>
 
-semaphore_t* semaphore_init(void)
+semaphore_t* api_semaphore_init(void)
 {
     semaphore_t* s = malloc(sizeof(semaphore_t*));
     s->counter = 0;
@@ -18,13 +18,13 @@ semaphore_t* semaphore_init(void)
     return s;
 }
 
-void semaphore_free(semaphore_t* semaphore)
+void api_semaphore_free(semaphore_t* semaphore)
 {
     node_t* n;
-    while(!list_empty(semaphore->waitingTasks))
+    while (!list_empty(semaphore->waitingTasks))
     {
         n = list_first(semaphore->waitingTasks);
-        if(n != NULL)
+        if (n != NULL)
         {
             list_remove(n);
             free(n);

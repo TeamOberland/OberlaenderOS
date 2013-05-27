@@ -8,7 +8,7 @@
 #ifndef GPIO_OMAP3530_H_
 #define GPIO_OMAP3530_H_
 
-#include "../../../types.h"
+#include "../../../../lib/types.h"
 
 /*
  * GPIO Base adresses according to Technical Reference Manual (page 3400)

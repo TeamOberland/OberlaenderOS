@@ -8,21 +8,11 @@
 #ifndef IPC_H_
 #define IPC_H_
 
-#include "../../types.h"
-#include "../../../api/list.h"
-#include "../../../api/semaphore.h"
+#include "../../../lib/types.h"
+#include "../../../lib/list.h"
+#include "../../../lib/ipc.h"
+#include "../../../lib/semaphore.h"
 #include "../scheduler/process.h"
-
-/**
- * This is the data which can be sent from one process to all receivers
- * in a namespace;
- */
-typedef struct
-{
-    uint32_t messageCode; /**< a message code for the target process to identify what to do */
-    uint32_t contentSize; /**< the amount of bytes stored in the content pointer */
-    void* content; /**< the pointer to the message data */
-} ipc_message_data_t;
 
 /**
  * This is an IPC message. It is used
@@ -90,12 +80,17 @@ void ipc_unregister_all(process_id_t pid);
 void ipc_send(const char* ns, process_id_t pid, ipc_message_data_t* message);
 
 /**
+ * Suspends the receiver until a message is available.
+ */
+void ipc_wait(const char* ns, process_id_t pid);
+
+/**
  * Receives a message from a namespace. This task will block the process until a message is received.
  * @param ns the namespace to read a message from.
  * @param pid the receiver PID to load the messages for.
  * @return
  */
-ipc_message_t* ipc_receive(const char* ns, process_id_t pid);
+ipc_message_data_t* ipc_receive(const char* ns, process_id_t pid);
 
 /**
  * Cleans up all resources allocated by this message

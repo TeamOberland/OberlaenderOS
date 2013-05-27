@@ -6,33 +6,65 @@
  */
 
 #include "scheduler.h"
-#include "../../../api/list.h"
-#include "../../types.h"
+#include "../../../lib/list.h"
+#include "../../../lib/types.h"
 
 void scheduling_algorithm_round_robin(scheduler_t* scheduler)
 {
-    if(scheduler->currentProcess == NULL)
-    {
-        scheduler->currentProcess = list_first(scheduler->processes);
-    }
-    else
-    {
-        scheduler->currentProcess = node_next(scheduler->currentProcess, scheduler->processes,TRUE);
+    if (list_empty(scheduler->processes))
+        return;
 
-//
-//        node_t* current = scheduler->currentProcess;
-//        node_t* next = node_next(scheduler->currentProcess, scheduler->processes,TRUE);
-//        // try to find a new process which is ready
-//        while(next != NULL && ((process_t*)next->member)->state != PROCESS_READY)
-//        {
-//            next = node_next(scheduler->currentProcess, scheduler->processes,TRUE);
-//            // ensure we don't run in endless loops
-//            if(current == next)
-//            {
-//                next = NULL;
-//            }
-//        }
-//
-//        scheduler->currentProcess = next;
+    // load current process
+    node_t* currentProcess = scheduler->currentProcess;
+    if (currentProcess == NULL)
+    {
+        currentProcess = list_first(scheduler->processes);
     }
+
+    node_t* processToRun = NULL;
+
+    // search for a new node which is ready
+    node_t* newProcess = node_next(currentProcess, scheduler->processes, TRUE);
+    while (true)
+    {
+        process_t* proc = (process_t*) newProcess->member;
+
+        // new process found
+        if (proc->state == PROCESS_READY || proc->state == PROCESS_ENTERING)
+        {
+            processToRun = newProcess;
+            break;
+        }
+        // if we reached the current process again
+        else if (currentProcess == newProcess)
+        {
+            //  we check if it can be run again
+            if (proc->state == PROCESS_RUNNING || proc->state == PROCESS_ENTERING || proc->state == PROCESS_READY)
+            {
+                processToRun = newProcess;
+            }
+            // if not, we couldn't find a new process, we run the main context again
+            // NOTE: shouldn't happen as we will have an idle_task running
+            else
+            {
+                processToRun = NULL;
+            }
+            break;
+        }
+
+        newProcess = node_next(newProcess, scheduler->processes, TRUE);
+    }
+
+    // let the old process wait
+    if (currentProcess != NULL && ((process_t*) currentProcess->member)->state == PROCESS_RUNNING)
+    {
+        ((process_t*) currentProcess->member)->state = PROCESS_READY;
+    }
+
+    // enable the new process
+    if (processToRun != NULL)
+    {
+        ((process_t*) processToRun->member)->state = PROCESS_RUNNING;
+    }
+    scheduler->currentProcess = processToRun;
 }

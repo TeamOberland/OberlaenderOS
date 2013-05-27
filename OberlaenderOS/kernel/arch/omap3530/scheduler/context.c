@@ -6,7 +6,7 @@
  */
 
 #include "../../../genarch/scheduler/context.h"
-#include "../../../types.h"
+#include "../../../../lib/types.h"
 #include <stdlib.h>
 #include <string.h>
 

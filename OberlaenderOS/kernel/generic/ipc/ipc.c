@@ -6,8 +6,11 @@
  */
 
 #include "ipc.h"
-#include "../../../api/list.h"
-#include "../../../api/system.h"
+#include "../../../lib/types.h"
+#include "../../../lib/semaphore.h"
+#include "../../../lib/list.h"
+#include "../../../lib/ipc.h"
+#include "../scheduler/semaphore.h"
 #include <stdlib.h>
 #include <cstring>
 
@@ -191,18 +194,40 @@ void ipc_send(const char* ns, process_id_t sender, ipc_message_data_t* message)
         copyNode->member = copy;
         list_append(copyNode, &receiver->messages);
 
-        sys_semaphore_notify(receiver->semaphore);
+        semaphore_notify(receiver->semaphore);
 
         rec = node_next(rec, &namespace->receivers, FALSE);
     }
 }
 
-ipc_message_t* ipc_receive(const char* ns, process_id_t pid)
+void ipc_wait(const char* ns, process_id_t pid)
 {
     node_t* nsNode;
     ipc_namespace_t* namespace;
     ipc_receiver_t* receiver;
-    ipc_message_t* copy;
+
+    nsNode = ipc_get_namespace(ns);
+    if (nsNode == NULL )
+    {
+        return;
+    }
+
+    namespace = (ipc_namespace_t*) nsNode->member;
+    receiver = ipc_get_recevier(namespace, pid);
+    if (receiver == NULL )
+    {
+        return;
+    }
+
+    semaphore_wait(receiver->semaphore);
+}
+
+ipc_message_data_t* ipc_receive(const char* ns, process_id_t pid)
+{
+    node_t* nsNode;
+    ipc_namespace_t* namespace;
+    ipc_receiver_t* receiver;
+    ipc_message_data_t* copy;
 
     node_t* receivedNode;
     ipc_message_t* received;
@@ -223,23 +248,19 @@ ipc_message_t* ipc_receive(const char* ns, process_id_t pid)
     receivedNode = list_first(&receiver->messages);
     received = NULL;
 
-    while (receivedNode == NULL )
+    if(receivedNode == NULL)
     {
-        sys_semaphore_wait(receiver->semaphore);
-        receivedNode = list_first(&receiver->messages);
+        return NULL;
     }
 
     received = (ipc_message_t*)receivedNode->member;
 
     // clone again for return
-    copy = (ipc_message_t*) malloc(sizeof(ipc_message_t));
-    copy->sender = received->sender;
-    copy->receiver = received->receiver;
-    copy->data = (ipc_message_data_t*) malloc(sizeof(ipc_message_data_t));
-    copy->data->messageCode = received->data->messageCode;
-    copy->data->contentSize = received->data->contentSize;
-    copy->data->content = malloc(copy->data->contentSize);
-    memcpy(copy->data->content, received->data->content, copy->data->contentSize);
+    copy = (ipc_message_data_t*) malloc(sizeof(ipc_message_data_t));
+    copy->messageCode = received->data->messageCode;
+    copy->contentSize = received->data->contentSize;
+    copy->content = malloc(copy->contentSize);
+    memcpy(copy->content, received->data->content, copy->contentSize);
 
     // remove message from list
     list_remove(receivedNode);

@@ -8,7 +8,7 @@
 #ifndef GRAPHICS_H_
 #define GRAPHICS_H_
 
-#include "../../types.h"
+#include "../../../lib/types.h"
 
 typedef struct {
     uint32_t width;

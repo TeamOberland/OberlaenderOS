@@ -8,11 +8,9 @@
 #ifndef TIMER_GENERIC_H_
 #define TIMER_GENERIC_H_
 
-#include "../../types.h"
+#include "../../../lib/types.h"
 #include "../../genarch/arch.h"
 #include "../../genarch/interrupts/timer.h"
-
-/* TODO: maybe we should use milliseconds instead of ticks, more user-friendly */
 
 /* Public Timer API */
 

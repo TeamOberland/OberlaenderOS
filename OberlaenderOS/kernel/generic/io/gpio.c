@@ -7,7 +7,7 @@
 #include "gpio.h"
 #include "../../genarch/gpio/gpio.h"
 #include "../../errno.h"
-#include "../../types.h"
+#include "../../../lib/types.h"
 
 
 /**

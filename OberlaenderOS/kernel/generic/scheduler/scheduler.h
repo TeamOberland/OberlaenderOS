@@ -8,10 +8,11 @@
 #ifndef SCHEDULER_H_
 #define SCHEDULER_H_
 
-#include "../../types.h"
+#include "../../../lib/types.h"
+#include "../../../lib/list.h"
 #include "process.h"
 #include "scheduler.h"
-#include "../../../api/list.h"
+
 
 
 

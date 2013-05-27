@@ -8,7 +8,7 @@
 #ifndef IRQ_H_
 #define IRQ_H_
 
-#include "../../types.h"
+#include "../../../lib/types.h"
 
 /**
  * Initializes the IRQ environment.

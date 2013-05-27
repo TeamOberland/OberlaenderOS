@@ -8,20 +8,20 @@
 #ifndef LIST_H_
 #define LIST_H_
 
-#include "../kernel/types.h"
+#include "types.h"
 
 /** node in the double linked list */
 typedef struct node
 {
-struct node *prev; //previous node
-struct node *next; //following node
-void *member;
+    struct node *prev; //previous node
+    struct node *next; //following node
+    void *member;
 } node_t;
 
-typedef struct list{
+typedef struct list
+{
     node_t head; //node head does not contain data just the pointer
 } list_t;
-
 
 #define LIST_INITIALIZE(name) \
          list_t name = { \
@@ -34,7 +34,6 @@ typedef struct list{
 #define list_foreach(list) \
         node_t* iterator;\
         for(iterator=(list).head.next;iterator!=&(list).head;iterator=iterator->next)
-
 
 /*
  * Initalizes the node by setting its pointers to null
@@ -57,10 +56,10 @@ void list_insert_after(node_t *node_to_insert, node_t *node);
 /*
  * insert at the beginning of the list
  */
- void list_prepend(node_t *node_to_insert, list_t *list);
- /*
-  * insert at the end of the list
-  */
+void list_prepend(node_t *node_to_insert, list_t *list);
+/*
+ * insert at the end of the list
+ */
 void list_append(node_t *node_to_insert, list_t *list);
 /*
  * remove element from the list

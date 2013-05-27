@@ -9,12 +9,12 @@
 #ifndef PROCESS_H_
 #define PROCESS_H_
 
-#include "../../types.h"
+#include "../../../lib/types.h"
 #include "../../genarch/arch.h"
 
 typedef uint8_t process_id_t;
 
-typedef uint32_t (*process_callback_t)(void);
+typedef void (*process_callback_t)(void);
 
 typedef enum process_state
 {

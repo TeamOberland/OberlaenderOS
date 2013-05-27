@@ -5,8 +5,8 @@
  *      Author: Daniel
  */
 
-#include "../../types.h"
 #include "irq.h"
+#include "../../../lib/types.h"
 #include "../../genarch/scheduler/context.h"
 #include "../../genarch/interrupts/interrupts.h"
 #include "../scheduler/scheduler.h"
@@ -51,19 +51,17 @@ interrupt void fiq_handle()
 {
     int fiq = __get_fiqid();
     //printf("[FIQ] %i Invoked\n", fiq);
+    __mark_interrupts();
 }
 
 void irq_dispatch()
 {
     int irq = __get_irqid();
-    //printf("[IRQ] %i Invoked\n", irq);
     if (irq_listeners[irq] != NULL)
     {
-        //printf("[IRQ] %i Handler available, calling it\n", irq);
         irq_listeners[irq]();
     }
-    // TODO: move to arch
-    *((memory_mapped_io_t) (MPU_INTC + INTCPS_CONTROL)) |= 0x01;
+    __mark_interrupts();
 }
 
 /**
