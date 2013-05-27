@@ -16,6 +16,8 @@
 #define SYSCALL_IPC_RECEIVE 4
 #define SYSCALL_IPC_WAIT 5
 
+#define SYSCALL_SCHEDULER_RUN 6
+
 #pragma SWI_ALIAS(syscall, 1)
 extern void syscall(uint32_t swiNumber, uint32_t arg1, uint32_t arg2);
 

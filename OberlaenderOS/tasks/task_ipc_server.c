@@ -12,11 +12,12 @@ void task_ipc_server(void)
 {
     api_ipc_register(TASK_IPC_NS);
 
-    while(TRUE)
+    while (TRUE)
     {
+        printf("Reading IPC message\n");
         ipc_message_data_t* message = api_ipc_receive(TASK_IPC_NS);
 
-        printf("MessageCode: %i", message->messageCode);
+        printf("MessageCode: %i\n", message->messageCode);
 
         api_ipc_message_free(&message);
     }

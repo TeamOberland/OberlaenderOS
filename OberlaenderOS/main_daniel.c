@@ -9,6 +9,7 @@
 #include "kernel/generic/kernel.h"
 
 #include "kernel/generic/scheduler/scheduler.h"
+#include "lib/scheduler.h"
 
 
 
@@ -199,6 +200,9 @@
 extern void task_blink_led0(void);
 extern void task_blink_led1(void);
 
+extern void task_ipc_server(void);
+extern void task_ipc_client(void);
+
 void main_daniel(void)
 {
     printf("Setup kernel\n");
@@ -207,9 +211,13 @@ void main_daniel(void)
     __enable_interrupts();
     __switch_to_user_mode();
 
+
     scheduler_add_process(global_scheduler, task_blink_led0);
     scheduler_add_process(global_scheduler, task_blink_led1);
-    scheduler_start(200);
+//    scheduler_add_process(global_scheduler, task_ipc_server);
+//    scheduler_add_process(global_scheduler, task_ipc_client);
+    scheduler_start(1000);
+    api_scheduler_run();
 
     /* led_test1(); */
 

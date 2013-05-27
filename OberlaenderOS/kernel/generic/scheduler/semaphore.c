@@ -40,7 +40,8 @@ void semaphore_notify(semaphore_t* semaphore)
         {
             process_t* proc = (process_t*)procNode->member;
             list_remove(procNode);
-            free(procNode);
+            // TODO: does not work,
+//            free(procNode);
             scheduler_resume(proc);
         }
     }

@@ -55,16 +55,5 @@ void scheduling_algorithm_round_robin(scheduler_t* scheduler)
         newProcess = node_next(newProcess, scheduler->processes, TRUE);
     }
 
-    // let the old process wait
-    if (currentProcess != NULL && ((process_t*) currentProcess->member)->state == PROCESS_RUNNING)
-    {
-        ((process_t*) currentProcess->member)->state = PROCESS_READY;
-    }
-
-    // enable the new process
-    if (processToRun != NULL)
-    {
-        ((process_t*) processToRun->member)->state = PROCESS_RUNNING;
-    }
     scheduler->currentProcess = processToRun;
 }

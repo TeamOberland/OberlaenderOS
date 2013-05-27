@@ -88,15 +88,22 @@ void scheduler_run(scheduler_t* scheduler)
     scheduler->algorithm(scheduler);
 
     process_t* current = scheduler_current_process(scheduler);
-    if(previous != NULL)
+
+    // let the old process wait
+    if (previous != NULL && previous->state == PROCESS_RUNNING)
     {
         previous->state = PROCESS_READY;
     }
 
-    if(current != NULL)
+    // enable the new process
+    if (current != NULL)
     {
         current_context = current->context;
         current->state = PROCESS_RUNNING;
+    }
+    else
+    {
+        current_context = tmp_context; // continue with main without task (should not happen)
     }
 }
 

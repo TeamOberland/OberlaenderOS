@@ -63,8 +63,15 @@ void swi_ipc_wait(const char* ns)
     }
 }
 
+
+void swi_scheduler_run(void)
+{
+    scheduler_run(global_scheduler);
+}
+
 void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
 {
+//    printf("[SWI] Handle %i\n", swiNumber);
     switch (swiNumber)
     {
         case SYSCALL_IPC_REGISTER:
@@ -81,6 +88,9 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
             break;
         case SYSCALL_IPC_WAIT:
             swi_ipc_wait((const char*)arg1);
+            break;
+        case SYSCALL_SCHEDULER_RUN:
+            swi_scheduler_run();
             break;
     }
 }

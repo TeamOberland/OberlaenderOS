@@ -24,7 +24,7 @@ void ipc_init()
 static node_t* ipc_get_namespace(const char* ns)
 {
     node_t* n = list_first(&ipc_namespace_list);
-    while (n != NULL )
+    while (n != NULL)
     {
         if (strcmp(((ipc_namespace_t*) n->member)->name, ns) == 0)
         {
@@ -32,13 +32,13 @@ static node_t* ipc_get_namespace(const char* ns)
         }
         n = node_next(n, &ipc_namespace_list, FALSE);
     }
-    return NULL ;
+    return NULL;
 }
 
 static ipc_receiver_t* ipc_get_recevier(ipc_namespace_t* namespace, process_id_t pid)
 {
     node_t* r = list_first(&namespace->receivers);
-    while (r != NULL )
+    while (r != NULL)
     {
         if (((ipc_receiver_t*) r->member)->pid == pid)
         {
@@ -46,7 +46,7 @@ static ipc_receiver_t* ipc_get_recevier(ipc_namespace_t* namespace, process_id_t
         }
     }
 
-    return NULL ;
+    return NULL;
 }
 
 static ipc_namespace_t* ipc_get_or_create_namespace(const char* ns)
@@ -55,7 +55,7 @@ static ipc_namespace_t* ipc_get_or_create_namespace(const char* ns)
     node_t* nsNode;
 
     nsNode = ipc_get_namespace(ns);
-    if (nsNode == NULL )
+    if (nsNode == NULL)
     {
         // create namespace
         namespace = (ipc_namespace_t*) malloc(sizeof(ipc_namespace_t));
@@ -82,11 +82,12 @@ void ipc_register(const char* ns, process_id_t pid)
 
     namespace = ipc_get_or_create_namespace(ns);
     receiver = ipc_get_recevier(namespace, pid);
-    if (receiver == NULL )
+    if (receiver == NULL)
     {
         receiver = (ipc_receiver_t*) malloc(sizeof(ipc_receiver_t));
         receiver->pid = pid;
         init_list(&receiver->messages);
+        receiver->semaphore = api_semaphore_init();
 
         receiverNode = (node_t*) malloc(sizeof(node_t));
         node_initialize(receiverNode);
@@ -104,7 +105,7 @@ static ipc_unregister_internal(node_t* nsNode, process_id_t pid)
 
     namespace = (ipc_namespace_t*) nsNode->member;
     receiveNode = list_first(&namespace->receivers);
-    while (receiveNode != NULL )
+    while (receiveNode != NULL)
     {
         node_t* next = node_next(receiveNode, &namespace->receivers, FALSE);
 
@@ -114,7 +115,7 @@ static ipc_unregister_internal(node_t* nsNode, process_id_t pid)
 
             // delete all messages
             msgNode = list_first(&receiver->messages);
-            while (msgNode != NULL )
+            while (msgNode != NULL)
             {
                 ipc_free_message((ipc_message_t*) msgNode->member);
             }
@@ -138,7 +139,7 @@ void ipc_unregister(const char* ns, process_id_t pid)
 {
     node_t* namespace = ipc_get_namespace(ns);
 
-    if (namespace != NULL )
+    if (namespace != NULL)
     {
         ipc_unregister_internal(namespace, pid);
     }
@@ -150,7 +151,7 @@ void ipc_unregister_all(process_id_t pid)
     node_t* nextNs;
 
     nsNode = list_first(&ipc_namespace_list);
-    while (nsNode != NULL )
+    while (nsNode != NULL)
     {
         nextNs = node_next(nsNode, &ipc_namespace_list, FALSE);
 
@@ -169,14 +170,14 @@ void ipc_send(const char* ns, process_id_t sender, ipc_message_data_t* message)
     ipc_receiver_t* receiver;
 
     nsNode = ipc_get_namespace(ns);
-    if (nsNode == NULL )
+    if (nsNode == NULL)
     {
         return;
     }
 
     namespace = (ipc_namespace_t*) nsNode->member;
     rec = list_first(&namespace->receivers);
-    while (rec != NULL )
+    while (rec != NULL)
     {
         receiver = (ipc_receiver_t*) rec->member;
 
@@ -207,14 +208,14 @@ void ipc_wait(const char* ns, process_id_t pid)
     ipc_receiver_t* receiver;
 
     nsNode = ipc_get_namespace(ns);
-    if (nsNode == NULL )
+    if (nsNode == NULL)
     {
         return;
     }
 
     namespace = (ipc_namespace_t*) nsNode->member;
     receiver = ipc_get_recevier(namespace, pid);
-    if (receiver == NULL )
+    if (receiver == NULL)
     {
         return;
     }
@@ -233,27 +234,27 @@ ipc_message_data_t* ipc_receive(const char* ns, process_id_t pid)
     ipc_message_t* received;
 
     nsNode = ipc_get_namespace(ns);
-    if (nsNode == NULL )
+    if (nsNode == NULL)
     {
-        return NULL ;
+        return NULL;
     }
 
     namespace = (ipc_namespace_t*) nsNode->member;
     receiver = ipc_get_recevier(namespace, pid);
-    if (receiver == NULL )
+    if (receiver == NULL)
     {
-        return NULL ;
+        return NULL;
     }
 
     receivedNode = list_first(&receiver->messages);
     received = NULL;
 
-    if(receivedNode == NULL)
+    if (receivedNode == NULL)
     {
         return NULL;
     }
 
-    received = (ipc_message_t*)receivedNode->member;
+    received = (ipc_message_t*) receivedNode->member;
 
     // clone again for return
     copy = (ipc_message_data_t*) malloc(sizeof(ipc_message_data_t));
@@ -264,14 +265,18 @@ ipc_message_data_t* ipc_receive(const char* ns, process_id_t pid)
 
     // remove message from list
     list_remove(receivedNode);
-    ipc_free_message(received);
+    // TODO: We get a data abort on freeing the message (WTF?)
+//    ipc_free_message(received);
 
     return copy;
 }
 
 void ipc_free_message(ipc_message_t* msg)
 {
-    free(msg->data->content);
-    free(msg->data);
-    free(msg);
+    if (msg->data->content != NULL)
+        free(msg->data->content);
+    if (msg->data != NULL)
+        free(msg->data);
+    if (msg != NULL)
+        free(msg);
 }

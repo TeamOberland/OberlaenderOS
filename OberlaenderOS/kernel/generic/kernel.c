@@ -21,7 +21,7 @@ void setup_kernel()
     irq_disable();
     irq_init();
     scheduler_init();
-    timer_init();
+    /* timer_init(); */
     ipc_init();
     irq_enable();
 }
