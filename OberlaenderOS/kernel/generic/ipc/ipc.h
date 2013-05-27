@@ -9,7 +9,8 @@
 #define IPC_H_
 
 #include "../../types.h"
-#include "../adt/list.h"
+#include "../../../api/list.h"
+#include "../../../api/semaphore.h"
 #include "../scheduler/process.h"
 
 /**
@@ -40,6 +41,7 @@ typedef struct
 typedef struct
 {
     process_id_t pid;
+    semaphore_t* semaphore;
     list_t messages; /**< the list of messages which the receivers will receive on read (ipc_message_t*) */
 } ipc_receiver_t;
 

@@ -8,7 +8,7 @@
 #ifndef LIST_H_
 #define LIST_H_
 
-#include "../../types.h"
+#include "../kernel/types.h"
 
 /** node in the double linked list */
 typedef struct node

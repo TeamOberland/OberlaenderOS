@@ -12,6 +12,9 @@
 #include <time.h>
 #include "../../../api/syscalls.h"
 #include "../../../api/system.h"
+#include "../../../api/semaphore.h"
+#include "../../genarch/scheduler/context.h"
+#include "../scheduler/semaphore.h"
 
 void swi_get_time(timestamp_t *ts)
 {
@@ -49,8 +52,17 @@ void swi_format_time(timestamp_t *ts, char* target)
             ts->year);
 }
 
-#pragma INTERRUPT(swi_handle, SWI)
-bool_t swi_handle(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
+void swi_semaphore_wait(semaphore_t* semaphore)
+{
+    semaphore_wait(semaphore);
+}
+
+void swi_semaphore_notify(semaphore_t* semaphore)
+{
+    semaphore_notify(semaphore);
+}
+
+void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
 {
     printf("[SWI] SoftwareInterrupt: %i\n", swiNumber);
     switch(swiNumber)
@@ -65,8 +77,29 @@ bool_t swi_handle(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
             swi_format_time((timestamp_t*)arg1, (char*)arg2);
 
             break;
-        default:
-            return FALSE;
+        case SYSCALL_SEMAPHORE_WAIT:
+
+            swi_semaphore_wait((semaphore_t*)arg1);
+
+            break;
+        case SYSCALL_SEMAPHORE_NOTIFY:
+
+            swi_semaphore_notify((semaphore_t*)arg1);
+
+            break;
     }
-    return TRUE;
+}
+
+#pragma INTERRUPT(swi_handle, SWI)
+#pragma TASK(swi_handle)
+interrupt void swi_handle(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
+{
+    asm(" SUB R13, R13, #4");
+    asm(" STR R14, [R13]");
+    __context_save();
+    asm(" ADD R13, R13, #4");
+
+    swi_dispatch(swiNumber, arg1, arg2);
+
+    __context_load();
 }

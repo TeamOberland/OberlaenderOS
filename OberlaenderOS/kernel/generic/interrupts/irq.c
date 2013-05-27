@@ -62,6 +62,7 @@ void irq_dispatch()
         //printf("[IRQ] %i Handler available, calling it\n", irq);
         irq_listeners[irq]();
     }
+    // TODO: move to arch
     *((memory_mapped_io_t) (MPU_INTC + INTCPS_CONTROL)) |= 0x01;
 }
 

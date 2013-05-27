@@ -6,7 +6,7 @@
  */
 
 #include "scheduler.h"
-#include "../adt/list.h"
+#include "../../../api/list.h"
 #include "../../types.h"
 
 void scheduling_algorithm_round_robin(scheduler_t* scheduler)

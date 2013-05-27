@@ -11,7 +11,7 @@
 #include "../../types.h"
 #include "process.h"
 #include "scheduler.h"
-#include "../adt/list.h"
+#include "../../../api/list.h"
 
 
 
@@ -51,5 +51,8 @@ void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback);
 void scheduler_run(scheduler_t* scheduler);
 
 void scheduler_free(scheduler_t* scheduler);
+
+void scheduler_suspend(process_t* process);
+void scheduler_resume(process_t* process);
 
 #endif /* SCHEDULER_H_ */

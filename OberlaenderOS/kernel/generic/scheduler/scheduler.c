@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 #include "../../genarch/scheduler/context.h"
-#include "../adt/list.h"
+#include "../../../api/list.h"
 #include "../interrupts/irq.h"
 #include "../interrupts/timer.h"
 
@@ -107,3 +107,18 @@ void scheduler_free(scheduler_t* scheduler)
     // TODO: free scheduler
 }
 
+void scheduler_suspend(process_t* process)
+{
+    if(process != NULL)
+    {
+        process->state = PROCESS_SLEEPING;
+    }
+}
+
+void scheduler_resume(process_t* process)
+{
+    if(process != NULL)
+    {
+        process->state = PROCESS_READY;
+    }
+}

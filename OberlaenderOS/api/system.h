@@ -8,6 +8,8 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
+#include "semaphore.h"
+
 typedef struct
 {
     int sec;
@@ -22,5 +24,8 @@ typedef struct
 
 timestamp_t sys_get_time();
 char* sys_format_time(timestamp_t* ts);
+
+void sys_semaphore_wait(semaphore_t* semaphore);
+void sys_semaphore_notify(semaphore_t* semaphore);
 
 #endif /* SYSTEM_H_ */

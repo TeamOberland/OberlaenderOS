@@ -10,10 +10,4 @@
 
 #include "../../types.h"
 
-/**
- * Handles any notified SWI
- */
-#pragma INTERRUPT(swi_handle, SWI)
-interrupt bool_t swi_handle(uint32_t swiNumber, uint32_t arg1, uint32_t arg2);
-
 #endif /* SWI_H_ */

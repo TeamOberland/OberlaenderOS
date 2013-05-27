@@ -6,7 +6,7 @@
  */
 
 #include "list.h"
-#include "../../types.h"
+#include "../kernel/types.h"
 bool_t list_member(const node_t *node, const list_t *list)
 {
     bool_t found = FALSE;

@@ -6,7 +6,8 @@
  */
 
 #include "ipc.h"
-#include "../adt/list.h"
+#include "../../../api/list.h"
+#include "../../../api/system.h"
 #include <stdlib.h>
 #include <cstring>
 
@@ -190,7 +191,7 @@ void ipc_send(const char* ns, process_id_t sender, ipc_message_data_t* message)
         copyNode->member = copy;
         list_append(copyNode, &receiver->messages);
 
-        // TODO: tell scheduler to activate receiver again
+        sys_semaphore_notify(receiver->semaphore);
 
         rec = node_next(rec, &namespace->receivers, FALSE);
     }
@@ -224,8 +225,7 @@ ipc_message_t* ipc_receive(const char* ns, process_id_t pid)
 
     while (receivedNode == NULL )
     {
-        // TODO: Send pid to sleep
-
+        sys_semaphore_wait(receiver->semaphore);
         receivedNode = list_first(&receiver->messages);
     }
 

@@ -259,7 +259,7 @@ void main_daniel(void)
 
     __enable_interrupts();
     __switch_to_user_mode();
-    scheduler_test();
+    /* scheduler_test(); */
 
 
 
@@ -269,7 +269,7 @@ void main_daniel(void)
 
     /* gptimer_test(); */
 
-    /* swi_test(); */
+    swi_test();
 
     /* ipc_test(); */
 
