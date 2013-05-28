@@ -10,10 +10,10 @@
 
 #include "../../../lib/types.h"
 
-typedef int16_t device_id_t;
-typedef int16_t driver_id_t;
-
+struct _device_manager;
 typedef struct {
+    // back reference to device manager
+    struct _device_manager* deviceManager;
     // initializing
     void    (*init)(void);
     // device specific functions

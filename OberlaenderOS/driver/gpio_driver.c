@@ -7,13 +7,22 @@
 
 #include "gpio_driver.h"
 #include "../kernel/generic/io/gpio.h"
+#include "../kernel/generic/driver/device_manager.h"
+
+driver_t gpio_driver = {
+    NULL,
+    gpio_driver_init,
+    gpio_driver_open,
+    gpio_driver_close,
+    gpio_driver_read,
+    gpio_driver_write
+};
+
 
 /**
  * The gpio lookup which maps device ids to the according gpio number
  */
 static registered_gpio_t registered_gpios[MAX_GPIO_DEVICES];
-
-static device_id_t nextDeviceId = 0;
 
 static device_id_t gpio_driver_export(uint32_t gpio, bool_t output)
 {
@@ -35,11 +44,15 @@ static device_id_t gpio_driver_export(uint32_t gpio, bool_t output)
 
     if (freeSlot >= 0)
     {
+        // create device info for later lookup
         registered_gpios[freeSlot].used = TRUE;
         registered_gpios[freeSlot].output = output;
-        registered_gpios[freeSlot].device = nextDeviceId++;
         registered_gpios[freeSlot].gpio = gpio;
-        return nextDeviceId - 1;
+
+        // register new device node in device manager
+        registered_gpios[freeSlot].device = device_manager_add_device(gpio_driver.deviceManager, &gpio_driver, &registered_gpios[freeSlot]);
+
+        return registered_gpios[freeSlot].device;
     }
     return -1;
 }
@@ -53,7 +66,6 @@ static int32_t gpio_driver_unexport(uint32_t gpio)
         if (registered_gpios[i].used && registered_gpios[i].gpio == gpio)
         {
             registered_gpios[i].used = FALSE;
-            nextDeviceId--;
             return 0;
         }
     }

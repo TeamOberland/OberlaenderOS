@@ -10,7 +10,7 @@
 
 #include "types.h"
 
-int16_t api_gpio_export(uint32_t gpio, bool_t output);
+device_id_t api_gpio_export(uint32_t gpio, bool_t output);
 
 
 #endif /* GPIO_H_ */

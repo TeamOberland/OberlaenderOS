@@ -18,13 +18,7 @@ int16_t gpio_driver_read(device_id_t device, void* buffer, uint32_t count);
 int16_t gpio_driver_write(device_id_t device, void* buffer, uint32_t count);
 
 #define MAX_GPIO_DEVICES 255
-driver_t gpio_driver = {
-    gpio_driver_init,
-    gpio_driver_open,
-    gpio_driver_close,
-    gpio_driver_read,
-    gpio_driver_write
-};
+extern driver_t gpio_driver;
 
 typedef struct {
     bool_t used;

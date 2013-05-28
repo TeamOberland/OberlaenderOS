@@ -10,8 +10,10 @@
 
 #include "kernel/generic/scheduler/scheduler.h"
 #include "lib/scheduler.h"
+#include "kernel/generic/driver/driver.h"
+#include "kernel/generic/driver/device_manager.h"
 
-
+#include "driver/gpio_driver.h"
 
 
 //void idle_task()
@@ -203,17 +205,26 @@ extern void task_blink_led1(void);
 extern void task_ipc_server(void);
 extern void task_ipc_client(void);
 
+void setup_device_manager()
+{
+    global_device_manager = device_manager_init();
+
+    // load drivers
+    device_manager_register_driver(global_device_manager, &gpio_driver);
+}
+
 void main_daniel(void)
 {
     printf("Setup kernel\n");
     setup_kernel();
 
+    setup_device_manager();
+
     __enable_interrupts();
     __switch_to_user_mode();
 
-
-    scheduler_add_process(global_scheduler, task_blink_led0);
-    scheduler_add_process(global_scheduler, task_blink_led1);
+//    scheduler_add_process(global_scheduler, task_blink_led0);
+//    scheduler_add_process(global_scheduler, task_blink_led1);
 //    scheduler_add_process(global_scheduler, task_ipc_server);
 //    scheduler_add_process(global_scheduler, task_ipc_client);
     scheduler_start(1000);

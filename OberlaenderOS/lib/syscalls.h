@@ -20,6 +20,11 @@
 
 #define SYSCALL_GPIO_EXPORT 7
 
+#define SYSCALL_DEVICE_OPEN 8
+#define SYSCALL_DEVICE_CLOSE 9
+#define SYSCALL_DEVICE_READ 10
+#define SYSCALL_DEVICE_WRITE 11
+
 #pragma SWI_ALIAS(syscall, 1)
 extern void syscall(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3);
 
