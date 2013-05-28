@@ -10,6 +10,6 @@
 
 void api_scheduler_run(void)
 {
-    syscall(SYSCALL_SCHEDULER_RUN, 0, 0);
+    syscall(SYSCALL_SCHEDULER_RUN, 0, 0, 0);
 }
 

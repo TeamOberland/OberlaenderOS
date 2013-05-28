@@ -12,6 +12,8 @@
 #include "../ipc/ipc.h"
 #include "../scheduler/scheduler.h"
 #include "../../genarch/scheduler/context.h"
+#include "../driver/driver.h"
+#include "../io/gpio.h"
 
 void swi_ipc_register(const char* ns)
 {
@@ -63,13 +65,17 @@ void swi_ipc_wait(const char* ns)
     }
 }
 
-
 void swi_scheduler_run(void)
 {
     scheduler_run(global_scheduler);
 }
 
-void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
+void swi_gpio_export(uint32_t gpio, bool_t output, device_id_t* deviceId)
+{
+    *deviceId = gpio_export(gpio, output);
+}
+
+void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3)
 {
 //    printf("[SWI] Handle %i\n", swiNumber);
     switch (swiNumber)
@@ -89,22 +95,27 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
         case SYSCALL_IPC_WAIT:
             swi_ipc_wait((const char*)arg1);
             break;
+
         case SYSCALL_SCHEDULER_RUN:
             swi_scheduler_run();
+            break;
+
+        case SYSCALL_GPIO_EXPORT:
+            swi_gpio_export(arg1, (bool_t)arg2, (device_id_t*)arg3);
             break;
     }
 }
 
 #pragma INTERRUPT(swi_handle, SWI)
 #pragma TASK(swi_handle)
-interrupt void swi_handle(uint32_t swiNumber, uint32_t arg1, uint32_t arg2)
+interrupt void swi_handle(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3)
 {
     asm(" SUB R13, R13, #4");
     asm(" STR R14, [R13]");
     __context_save();
     asm(" ADD R13, R13, #4");
 
-    swi_dispatch(swiNumber, arg1, arg2);
+    swi_dispatch(swiNumber, arg1, arg2, arg3);
 
     __context_load();
 }

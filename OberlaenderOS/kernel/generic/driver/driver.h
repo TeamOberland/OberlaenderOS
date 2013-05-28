@@ -1,0 +1,27 @@
+/*
+ * driver.h
+ *
+ *  Created on: 27.05.2013
+ *      Author: Daniel
+ */
+
+#ifndef DRIVER_H_
+#define DRIVER_H_
+
+#include "../../../lib/types.h"
+
+typedef int16_t device_id_t;
+typedef int16_t driver_id_t;
+
+typedef struct {
+    // initializing
+    void    (*init)(void);
+    // device specific functions
+    int16_t (*open)(device_id_t device);
+    int16_t (*close)(device_id_t device);
+    int16_t (*read)(device_id_t device, void* buffer, uint32_t count);
+    int16_t (*write)(device_id_t device, void* buffer, uint32_t count);
+
+} driver_t;
+
+#endif /* DRIVER_H_ */

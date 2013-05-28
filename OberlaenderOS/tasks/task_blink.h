@@ -16,8 +16,6 @@
 #define GPIO_DVI 170
 #define GPIO_USERBUTTON 7
 
-
-
 void task_blink_led0(void);
 void task_blink_led1(void);
 

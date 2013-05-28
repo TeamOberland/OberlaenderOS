@@ -43,7 +43,7 @@ int32_t __gpio_direction_output(uint32_t gpio);
  * @param gpio the number of the gpio pin to read from
  * @return the current value stored at the specified gpio pin
  */
-int32_t __gpio_get_value(uint32_t gpio);
+int32_t __gpio_get_value(int32_t gpio);
 
 
 /**
@@ -51,7 +51,7 @@ int32_t __gpio_get_value(uint32_t gpio);
  * @param gpio the number of the gpio pin to read from
  * @param value the value to store at the specified gpio pin
  */
-void __gpio_set_value(uint32_t gpio, uint32_t value);
+void __gpio_set_value(uint32_t gpio, int32_t value);
 
 
 

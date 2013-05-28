@@ -91,7 +91,7 @@ int32_t __gpio_direction_output(uint32_t gpio)
  * TODO: Check if port is input or output to get according register
  */
 
-int32_t __gpio_get_value(uint32_t gpio)
+int32_t __gpio_get_value(int32_t gpio)
 {
     /* get gpio port and calculate the pin on this port */
     uint32_t gpioPort = omap_gpio_to_gpioPort(gpio);
@@ -106,7 +106,7 @@ int32_t __gpio_get_value(uint32_t gpio)
     return (value >> pinOfPort) & 0x01;
 }
 
-void __gpio_set_value(uint32_t gpio, uint32_t value)
+void __gpio_set_value(uint32_t gpio, int32_t value)
 {
     /* get gpio port and calculate the pin on this port */
     uint32_t gpioPort = omap_gpio_to_gpioPort(gpio);

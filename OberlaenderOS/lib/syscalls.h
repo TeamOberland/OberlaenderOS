@@ -18,7 +18,9 @@
 
 #define SYSCALL_SCHEDULER_RUN 6
 
+#define SYSCALL_GPIO_EXPORT 7
+
 #pragma SWI_ALIAS(syscall, 1)
-extern void syscall(uint32_t swiNumber, uint32_t arg1, uint32_t arg2);
+extern void syscall(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3);
 
 #endif /* SYSCALLS_H_ */
