@@ -6,8 +6,8 @@
  */
 
 #include "gpio_driver.h"
-#include "../kernel/generic/io/gpio.h"
-#include "../kernel/generic/driver/device_manager.h"
+#include "../../kernel/generic/io/gpio.h"
+#include "../../kernel/generic/driver/device_manager.h"
 
 driver_t gpio_driver = {
     NULL,
