@@ -11,26 +11,26 @@
 
 void api_ipc_register(const char* ns)
 {
-    syscall(SYSCALL_IPC_REGISTER, (uint32_t)ns, 0, 0);
+    syscall(SYSCALL_IPC_REGISTER, (uint32_t)ns, 0, 0, 0, 0);
 }
 
 void api_ipc_unregister(const char* ns)
 {
-    syscall(SYSCALL_IPC_REGISTER, (uint32_t)ns, 0, 0);
+    syscall(SYSCALL_IPC_REGISTER, (uint32_t)ns, 0, 0, 0, 0);
 }
 
 void api_ipc_send(const char* ns, ipc_message_data_t* message)
 {
-    syscall(SYSCALL_IPC_SEND, (uint32_t)ns, (uint32_t)message, 0);
+    syscall(SYSCALL_IPC_SEND, (uint32_t)ns, (uint32_t)message, 0, 0, 0);
 }
 
 ipc_message_data_t* api_ipc_receive(const char* ns)
 {
-    syscall(SYSCALL_IPC_WAIT, (uint32_t)ns, 0, 0);
+    syscall(SYSCALL_IPC_WAIT, (uint32_t)ns, 0, 0, 0, 0);
 
     ipc_message_data_t* message = NULL;
 
-    syscall(SYSCALL_IPC_RECEIVE, (uint32_t)ns, (uint32_t)&message, 0);
+    syscall(SYSCALL_IPC_RECEIVE, (uint32_t)ns, (uint32_t)&message, 0, 0, 0);
 
     return message;
 }

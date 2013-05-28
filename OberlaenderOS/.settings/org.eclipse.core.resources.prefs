@@ -1,6 +1,10 @@
 eclipse.preferences.version=1
 encoding//Debug/api/subdir_rules.mk=UTF-8
 encoding//Debug/api/subdir_vars.mk=UTF-8
+encoding//Debug/driver/fs/lib/subdir_rules.mk=UTF-8
+encoding//Debug/driver/fs/lib/subdir_vars.mk=UTF-8
+encoding//Debug/driver/gpio/subdir_rules.mk=UTF-8
+encoding//Debug/driver/gpio/subdir_vars.mk=UTF-8
 encoding//Debug/driver/subdir_rules.mk=UTF-8
 encoding//Debug/driver/subdir_vars.mk=UTF-8
 encoding//Debug/drivers/subdir_rules.mk=UTF-8

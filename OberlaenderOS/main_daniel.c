@@ -13,7 +13,7 @@
 #include "kernel/generic/driver/driver.h"
 #include "kernel/generic/driver/device_manager.h"
 
-#include "driver/gpio_driver.h"
+#include "driver/gpio/gpio_driver.h"
 
 
 //void idle_task()

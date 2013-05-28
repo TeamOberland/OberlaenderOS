@@ -121,20 +121,20 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg
             swi_ipc_wait((const char*) arg1);
             break;
 
-            //
-            // Scheduler
+        //
+        // Scheduler
         case SYSCALL_SCHEDULER_RUN:
             swi_scheduler_run();
             break;
 
-            //
-            // GPIO
+        //
+        // GPIO
         case SYSCALL_GPIO_EXPORT:
             swi_gpio_export(arg1, (bool_t) arg2, (device_id_t*) arg3);
             break;
 
-            //
-            // Device
+        //
+        // Device
         case SYSCALL_DEVICE_OPEN:
             swi_device_open((device_id_t) arg1, (device_handle_t*) arg2);
             break;
@@ -147,6 +147,9 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg
         case SYSCALL_DEVICE_WRITE:
             swi_device_write((device_handle_t) arg1, (void*) arg2, arg3);
             break;
+
+        //
+        //
     }
 }
 
