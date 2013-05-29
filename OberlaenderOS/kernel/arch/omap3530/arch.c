@@ -9,6 +9,12 @@
 
 #include "interrupts/timer.h"
 #include "../../../lib/types.h"
+#include "../../genarch/uart/uart.h"
+
+void setup_arch_logging()
+{
+    uart_terminal_init(3,UART_MDR1_MODE_SELECT_16X,uart_protocol_rs232);
+}
 
 void setup_arch()
 {
@@ -23,6 +29,7 @@ void setup_arch()
 
 
 
+    setup_arch_logging();
 
 
     /* set mode to 4 (GPIO) see p. ~787 of omap35x.pdf */
@@ -44,3 +51,5 @@ void setup_arch()
     *(GPIO5_OE) &= ~rgb;
     *(GPIO5_DATAOUT) &= ~rgb;
 }
+
+

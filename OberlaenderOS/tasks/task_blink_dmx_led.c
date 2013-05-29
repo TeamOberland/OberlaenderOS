@@ -23,7 +23,7 @@ void task_blink_dmx_led(void)
         gpio_set_value(145,rand()%2);
         gpio_set_value(146,rand()%2);
 
-        for (i = 0; i < 100000; i++)
+        for (i = 0; i < 1000; i++)
             ;
     }
 }

@@ -29,10 +29,24 @@ void setup_device_manager()
     device_manager_register_driver(global_device_manager, &gpio_driver);
 }
 
+#define LOG(type, format) { \
+        va_list arglist; \
+        va_start(arglist, format); \
+        log(type, format, arglist); \
+        va_end(arglist); \
+    }
+
+void logger_debug(char* format, ...) {
+    LOG("DEBUG:\t", format)
+}
+
 void main_manuel(void)
 {
     printf("Setup kernel\n");
     setup_kernel();
+
+    logger_debug("\r\n\r\nSystem init...");
+
 
     setup_device_manager();
 
@@ -44,7 +58,7 @@ void main_manuel(void)
     scheduler_add_process(global_scheduler, task_blink_dmx_led);
 //    scheduler_add_process(global_scheduler, task_ipc_server);
 //    scheduler_add_process(global_scheduler, task_ipc_client);
-    scheduler_start(1000);
+    scheduler_start(30);
     api_scheduler_run();
 
     /* led_test1(); */
