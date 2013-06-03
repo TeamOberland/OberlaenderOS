@@ -7,6 +7,7 @@
 
 
 #include "uart.h"
+#include "../../../genarch/uart/uart.h"
 
 #define SET_BIT(addr, offset) *addr |= (1 << offset);
 #define CLEAR_BIT(addr, offset) *addr &= ~(1 << offset);
@@ -130,7 +131,22 @@ inline uint32_t omap_uart_get_baseadress(uint8_t uartPort)
     }
 }
 
-void uart_terminal_init(uint8_t uartPort,uint8_t uartMode, uart_protocol_format_t config)
+/*
+ * Returns 1 if uart read fifo queue is empty.
+ * If the Queue has at least one character the result will be 1.
+ */
+bool_t __uart_is_empty_read_queue(uint8_t uartPort) {
+  memory_mapped_io_t uart_base_addr =omap_uart_get_register(uartPort,UART_LSR_REG);
+  uint32_t status = (uint32_t) READ_BIT(uart_base_addr,UART_LSR_RX_FIFO_E);
+  return (status == 0);
+}
+
+
+bool_t __uart_is_valid_port(uint8_t uartPort) {
+    return omap_uart_get_baseadress(uartPort)!=0;
+}
+
+bool_t __uart_init(uint8_t uartPort,uint8_t uartMode, uart_protocol_format_t config)
 {
     omap_uart_software_reset(uartPort);
 
@@ -139,46 +155,30 @@ void uart_terminal_init(uint8_t uartPort,uint8_t uartMode, uart_protocol_format_
     omap_uart_load_configuration(uartPort,uartMode,config);
 }
 
-void serial_service_write(char* buffer, int count) {
-    int i = 0;
-    for (; i < count; i++, buffer++) {
-        // block while queue is full
-        while (!uart_is_empty_write_queue(3))
-            ;
-        uart_write(3, buffer);
-    }
-
-    return;
+bool_t __uart_disable(uint8_t uartPort)
+{
+    omap_uart_disable(uartPort);
 }
 
-/*
- * Returns 1 if uart read fifo queue is empty.
- * If the Queue has at least one character the result will be 1.
- */
-uint32_t uart_is_empty_read_queue(uint8_t uartPort) {
-  memory_mapped_io_t uart_base_addr =omap_uart_get_register(uartPort,UART_LSR_REG);
-  uint32_t status = (uint32_t) READ_BIT(uart_base_addr,UART_LSR_RX_FIFO_E);
-  return (status == 0);
-}
 
 /*
  * Returns 1 if uart transmission fifo queue is empty.
  * If the Queue has at least one character the result will be 1.
  */
-uint32_t uart_is_empty_write_queue(uint8_t uartPort) {
+bool_t __uart_is_empty_write_queue(uint8_t uartPort) {
     memory_mapped_io_t uart_base_addr =omap_uart_get_register(uartPort,UART_LSR_REG);
     uint32_t status = READ_BIT(uart_base_addr,                       UART_LSR_TX_FIFO_E);
   return (status > 0);
 }
 
 /* writes one character to the UART device */
-uint32_t uart_write(uint8_t uartPort, uint8_t* buffer) {
+uint32_t __uart_write(uint8_t uartPort, uint8_t* buffer) {
     memory_mapped_io_t uart_base_addr =omap_uart_get_register(uartPort,UART_THR_REG);
   *(uart_base_addr) = *buffer;
 }
 
 /* reads one character from the UART device */
-uint32_t uart_read(uint8_t uartPort, uint8_t* buffer) {
+uint32_t __uart_read(uint8_t uartPort, uint8_t* buffer) {
     memory_mapped_io_t uart_base_addr =omap_uart_get_register(uartPort,UART_RHR_REG);
   *buffer = *uart_base_addr;
 }

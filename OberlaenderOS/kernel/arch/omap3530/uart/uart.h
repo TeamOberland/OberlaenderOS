@@ -38,7 +38,6 @@
 #define UART_WER_REG        0x05C /* RW */
 
 #define UART_MDR1_REG       0x020 /* RW Mode Definition CIR/IrDA */
-
 #define UART_LSR_REG        0x014 /* R */
 
 #define UART_LSR_RX_FIFO_E  0 /* 0 BIT */
@@ -66,20 +65,15 @@
 #define UART_LCR_REG        0x00C /* RW */
 
 
+
+
+
 void omap_uart_software_reset(uint8_t uartPort);
 inline uint32_t omap_uart_get_baseadress(uint8_t uartPort);
 inline void omap_uart_waitfor_resetdone(uint8_t uartPort);
 inline void omap_uart_set_mode(uint8_t uartPort,uint32_t mode);
 void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_protocol_format_t configuration);
 
-/*
-* Returns 1 if uart transmission fifo queue is empty.
-* If the Queue has at least one character the result will be 1.
-*/
-uint32_t uart_is_empty_write_queue(uint8_t uartPort);
-/* writes one character to the UART device */
-uint32_t uart_write(uint8_t uartPort, uint8_t* buffer);
-/* reads one character from the UART device */
-uint32_t uart_read(uint8_t uartPort, uint8_t* buffer);
-void serial_service_write(char* buffer, int count);
+
+
 #endif

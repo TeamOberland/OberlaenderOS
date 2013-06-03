@@ -11,9 +11,9 @@
 #include "lib/scheduler.h"
 #include "kernel/generic/driver/driver.h"
 #include "kernel/generic/driver/device_manager.h"
-#include "kernel/arch/omap3530/uart/uart.h"
 
 #include "driver/gpio_driver.h"
+#include "driver/uart_driver.h"
 
 extern void task_blink_led0(void);
 extern void task_blink_led1(void);
@@ -28,7 +28,7 @@ void setup_device_manager()
 
     // load drivers
     device_manager_register_driver(global_device_manager, &gpio_driver);
-//    device_manager_register_driver(global_device_manager, &uart_driver);
+    device_manager_register_driver(global_device_manager, &uart_driver);
 }
 
 #define LOG(type, format) { \
@@ -41,6 +41,7 @@ void setup_device_manager()
 void log(char* type, char* format, va_list arglist) {
 
     static char buffer[1024];
+    static char readBuffer[3];
     #define LOGGER_BUFFER_SIZE sizeof(buffer)
 
     int l = vsnprintf(buffer, LOGGER_BUFFER_SIZE, format, arglist);
@@ -52,8 +53,18 @@ void log(char* type, char* format, va_list arglist) {
     buffer[l + 1] = '\n';
     buffer[l + 2] = '\0';
 
-    serial_service_write(type, strlen(type));
-    serial_service_write(buffer, (l + 2));
+    readBuffer[1] = '\n';
+    readBuffer[2] = '\0';
+
+    uart_driver.open(2);
+    uart_driver.write(2,type,strlen(type));
+    uart_driver.write(2,buffer,(l + 2));
+
+    uart_driver_read(2,readBuffer,1);
+    uart_driver.write(2,readBuffer,3);
+
+
+    uart_driver.close(2);
 }
 
 void logger_debug(char* format, ...) {
@@ -64,11 +75,9 @@ void main_manuel(void)
 {
     printf("Setup kernel\n");
     setup_kernel();
+    setup_device_manager();
 
     logger_debug("\r\n\r\nSystem init...");
-
-
-    setup_device_manager();
 
     __enable_interrupts();
     __switch_to_user_mode();

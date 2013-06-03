@@ -23,6 +23,7 @@ int16_t uart_driver_write(device_id_t device, void* buffer, uint32_t count);
 extern driver_t uart_driver;
 typedef struct {
     bool_t used;
+    uint32_t uart_port;
     device_id_t device;
 } registered_uart_t;
 

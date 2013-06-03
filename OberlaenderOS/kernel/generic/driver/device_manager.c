@@ -13,6 +13,15 @@ device_manager_t* global_device_manager;
 device_manager_t* device_manager_init(void)
 {
     device_manager_t* dm = malloc(sizeof(device_manager_t));
+    int i ;
+
+    for(i = 0; i < MAX_DEVICE_COUNT; i++)
+    {
+            dm->loadedDevice[i].driver = NULL;
+            dm->loadedDevice[i].device = -1;
+            dm->nextDeviceId = -1;
+    }
+
     return dm;
 }
 
