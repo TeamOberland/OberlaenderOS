@@ -21,10 +21,12 @@ typedef struct {
 
 #define MAX_DEVICE_COUNT 10
 typedef struct _device_manager {
-    device_id_t nextDeviceId;
     device_node_t loadedDevice[MAX_DEVICE_COUNT];
 } device_manager_t;
 
+
+device_id_t device_manager_get_next_deviceId(driver_t* driver);
+driver_id_t device_manager_get_next_driverId();
 extern device_manager_t* global_device_manager;
 
 device_manager_t* device_manager_init(void);

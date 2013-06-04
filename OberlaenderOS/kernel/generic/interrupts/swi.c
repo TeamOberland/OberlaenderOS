@@ -15,6 +15,7 @@
 #include "../../genarch/scheduler/context.h"
 #include "../driver/driver.h"
 #include "../io/gpio.h"
+#include "../io/uart.h"
 #include "../driver/device.h"
 #include "../driver/device_manager.h"
 
@@ -72,6 +73,7 @@ void swi_scheduler_run(void)
 {
     scheduler_run(global_scheduler);
 }
+
 
 void swi_gpio_export(uint32_t gpio, bool_t output, device_id_t* deviceId)
 {

@@ -14,6 +14,7 @@ struct _device_manager;
 typedef struct {
     // back reference to device manager
     struct _device_manager* deviceManager;
+    driver_id_t driver_id;
     // initializing
     void    (*init)(void);
     // device specific functions

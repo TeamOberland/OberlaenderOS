@@ -11,6 +11,7 @@
 
 driver_t gpio_driver = {
     NULL,
+    0,
     gpio_driver_init,
     gpio_driver_open,
     gpio_driver_close,

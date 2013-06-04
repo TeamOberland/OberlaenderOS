@@ -11,6 +11,7 @@
 
 driver_t uart_driver = {
     NULL,
+    0,
     uart_driver_init,
     uart_driver_open,
     uart_driver_close,

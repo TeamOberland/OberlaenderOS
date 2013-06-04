@@ -17,6 +17,7 @@
 
 extern void task_blink_led0(void);
 extern void task_blink_led1(void);
+extern void task_console(void);
 
 extern void task_ipc_server(void);
 extern void task_ipc_client(void);
@@ -85,6 +86,7 @@ void main_manuel(void)
     scheduler_add_process(global_scheduler, task_blink_led0);
     scheduler_add_process(global_scheduler, task_blink_led1);
     scheduler_add_process(global_scheduler, task_blink_dmx_led);
+    scheduler_add_process(global_scheduler, task_console);
 //    scheduler_add_process(global_scheduler, task_ipc_server);
 //    scheduler_add_process(global_scheduler, task_ipc_client);
     scheduler_start(30);
