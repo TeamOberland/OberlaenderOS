@@ -56,7 +56,7 @@ typedef struct{
 unsigned int kernelMasterTable;
 MMUAddress processTableMasterAddress;
 
-setMasterTablePointer(MMUAddress *tableAddress);
+void setMasterTablePointer(MMUAddress *tableAddress);
 MMUAddress CreateMasterTable();
 
 Pagetable master;
@@ -89,10 +89,10 @@ void fillPTwithTranslations(Region region){
 
 void controlSet(unsigned int value, unsigned int mask){
     unsigned int c1format;
-    asm("MRC p15, 0, c1format, c1, c0, 0");
+//    asm("  MRC p15, 0, c1format, c1, c0, 0");
     c1format &= ~mask;
     c1format |= value;
-    asm("MCR p15, 0, c1format, c1, c0, 0");
+//    asm("  MCR p15, 0, c1format, c1, c0, 0");
 }
 
 void mmuInit(){
@@ -116,12 +116,12 @@ void mmuInit(){
     fillPTwithTranslations(pageTableRegion);
     fillPTwithTranslations(peripheralRegion);
 
-    asm("MCR p15, 0, ttb, c2, c0, 0");
+//    asm("  MCR p15, 0, ttb, c2, c0, 0");
 
     //Enabling the MMU
-    asm("MRC p15, 0, r1, c1, c0, 0");
-    asm("ORR r1, r1, #0x1");
-    asm("MCR p15, 0, r1, c1, c0, 0");
+//    asm("  MRC p15, 0, r1, c1, c0, 0");
+//    asm("  ORR r1, r1, #0x1");
+//    asm("  MCR p15, 0, r1, c1, c0, 0");
 }
 
 /*void mmuInitOTTOS(){
