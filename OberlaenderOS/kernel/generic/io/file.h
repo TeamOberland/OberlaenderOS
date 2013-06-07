@@ -10,6 +10,7 @@
 
 #include "../../../lib/types.h"
 #include "../../../lib/file.h"
+#include "mount.h"
 
 //
 // Setup
@@ -19,7 +20,10 @@ void file_init(void);
 //
 // API
 
-file_handle_t file_open(const char* path, const char* mode);
+void file_mount(mountpoint_t* mountpoint);
+void file_unmount(mountpoint_t* mountpoint);
+
+file_handle_t file_open(mountpoint_t* mountpoint, const char* path, const char* mode);
 void file_close(file_handle_t handle);
 
 int32_t file_flush(file_handle_t handle);
@@ -33,13 +37,13 @@ int32_t file_seek(file_handle_t handle, int32_t offset, int32_t origin);
 int32_t file_getpos(file_handle_t handle, uint32_t* position);
 int32_t file_tell(file_handle_t handle);
 int32_t file_eof(file_handle_t handle);
-int32_t file_remove(const char* filename);
+int32_t file_remove(mountpoint_t* mountpoint, const char* filename);
 
-api_file_dir_t* file_opendir(const char* path, api_file_dir_t *dir);
-int32_t file_readdir(api_file_dir_t* dirls, api_file_direntry_t *entry);
-int32_t file_closedir(api_file_dir_t* dir);
+dir_handle_t file_opendir(mountpoint_t* mountpoint, const char* path);
+int32_t file_readdir(dir_handle_t dirls, api_file_direntry_t *entry);
+int32_t file_closedir(dir_handle_t dir);
 
-int32_t file_createdir(const char* path);
-int32_t file_isdir(const char* path);
+int32_t file_createdir(mountpoint_t* mountpoint, const char* path);
+int32_t file_isdir(mountpoint_t* mountpoint, const char* path);
 
 #endif /* FILE_H_ */

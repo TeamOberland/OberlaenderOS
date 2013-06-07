@@ -31,23 +31,22 @@ void file_init(void)
 
     // Initialize File IO Library
     fl_init();
+}
 
-    // TODO: dynamically mount media with according filesystem driver (not fixed mount)
-    if (fl_attach_media(media_read, media_write) != FAT_INIT_OK)
-    {
-        printf("ERROR: Media attach failed\n");
-        return;
-    }
-    else
-    {
-        printf("SUCCESS: Media attached\n");
-    }
+void file_mount(mountpoint_t* mountpoint)
+{
+    // TODO: how can we pass the mountpoint to media_read and write?
+    fl_attach_media(media_read, media_write);
+}
+
+void file_unmount(mountpoint_t* mountpoint)
+{
 }
 
 //
 // API
 
-file_handle_t file_open(const char* path, const char* mode)
+file_handle_t file_open(mountpoint_t* mountpoint, const char* path, const char* mode)
 {
     return fl_fopen(path, mode);
 }
@@ -112,33 +111,33 @@ int32_t file_eof(file_handle_t handle)
     return fl_feof(handle);
 }
 
-int32_t file_remove(const char* filename)
+int32_t file_remove(mountpoint_t* mountpoint, const char* filename)
 {
     return fl_remove(filename);
 }
 
-api_file_dir_t* file_opendir(const char* path, api_file_dir_t *dir)
+dir_handle_t file_opendir(mountpoint_t* mountpoint, const char* path)
 {
-    // NOTE: api_file_dir_t and api_file_direntry_t have the same structure
-    return (api_file_dir_t*) fl_opendir(path, (FL_DIR*) dir);
+    FL_DIR dir;
+    return (dir_handle_t) fl_opendir(path, &dir);
 }
 
-int32_t file_readdir(api_file_dir_t* dirls, api_file_direntry_t *entry)
+int32_t file_readdir(dir_handle_t dirls, api_file_direntry_t* entry)
 {
     return fl_readdir((FL_DIR*) dirls, (fl_dirent*) entry);
 }
 
-int32_t file_closedir(api_file_dir_t* dir)
+int32_t file_closedir(dir_handle_t dir)
 {
     return fl_closedir((FL_DIR*) dir);
 }
 
-int32_t file_createdir(const char* path)
+int32_t file_createdir(mountpoint_t* mountpoint, const char* path)
 {
     return fl_createdirectory(path);
 }
 
-int32_t file_isdir(const char* path)
+int32_t file_isdir(mountpoint_t* mountpoint, const char* path)
 {
     return fl_is_dir(path);
 }

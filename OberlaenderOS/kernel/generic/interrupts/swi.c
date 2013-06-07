@@ -19,6 +19,7 @@
 #include "../io/file.h"
 #include "../driver/device.h"
 #include "../driver/device_manager.h"
+#include "../io/mount.h"
 
 //
 // IPC
@@ -121,97 +122,97 @@ void swi_device_write(device_handle_t handle, void* buffer, uint32_t count)
 //
 void swi_file_open(const char* path, const char* mode, file_handle_t* handle)
 {
-    *handle = file_open(path, mode);
+    *handle = mount_open(path, mode);
 }
 
 void swi_file_close(file_handle_t handle)
 {
-    file_close(handle);
+    mount_close(handle);
 }
 
 void swi_file_flush(file_handle_t handle, int32_t* result)
 {
-    *result = file_flush(handle);
+    *result = mount_flush(handle);
 }
 
 void swi_file_getc(file_handle_t handle, int32_t* result)
 {
-    *result = file_getc(handle);
+    *result = mount_getc(handle);
 }
 
 void swi_file_gets(char* s, int32_t length,  file_handle_t handle,  char** result)
 {
-    *result = file_gets(s, length, handle);
+    *result = mount_gets(s, length, handle);
 }
 
 void swi_file_putc(int32_t c, file_handle_t handle,  int32_t* result)
 {
-    *result = file_putc(c, handle);
+    *result = mount_putc(c, handle);
 }
 
 void swi_file_puts(char* s, file_handle_t handle,  int32_t* result)
 {
-    *result = file_puts(s, handle);
+    *result = mount_puts(s, handle);
 }
 
 void swi_file_write(void* buffer, int32_t size, int32_t count, file_handle_t handle, int32_t* result)
 {
-    *result = file_write(buffer, size, count, handle);
+    *result = mount_write(buffer, size, count, handle);
 }
 
 void swi_file_read(void* buffer, int32_t size, int32_t count, file_handle_t handle, int32_t* result)
 {
-    *result = file_read(buffer, size, count, handle);
+    *result = mount_read(buffer, size, count, handle);
 }
 
 void swi_file_seek(file_handle_t handle, int32_t offset, int32_t origin, int32_t* result)
 {
-    *result = file_seek(handle, offset, origin);
+    *result = mount_seek(handle, offset, origin);
 }
 
 void swi_file_getpos(file_handle_t handle, uint32_t* position, int32_t* result)
 {
-    *result = file_getpos(handle, position);
+    *result = mount_getpos(handle, position);
 }
 
 void swi_file_tell(file_handle_t handle, int32_t* result)
 {
-    *result = file_tell(handle);
+    *result = mount_tell(handle);
 }
 
 void swi_file_eof(file_handle_t handle, int32_t* result)
 {
-    *result = file_eof(handle);
+    *result = mount_eof(handle);
 }
 
 void swi_file_remove(const char* filename, int32_t* result)
 {
-    *result = file_remove(filename);
+    *result = mount_remove(filename);
 }
 
-void swi_file_opendir(const char* path, api_file_dir_t* dir, api_file_dir_t** result)
+void swi_file_opendir(const char* path, dir_handle_t* result)
 {
-    *result = file_opendir(path, dir);
+    *result = mount_opendir(path);
 }
 
-void swi_file_readdir(api_file_dir_t* dirls, api_file_direntry_t* entry, int32_t* result)
+void swi_file_readdir(dir_handle_t dirls, api_file_direntry_t* entry, int32_t* result)
 {
-    *result = file_readdir(dirls, entry);
+    *result = mount_readdir(dirls, entry);
 }
 
-void swi_file_closedir(api_file_dir_t* dir, int32_t* result)
+void swi_file_closedir(dir_handle_t dir, int32_t* result)
 {
-    *result = file_closedir(dir);
+    *result = mount_closedir(dir);
 }
 
 void swi_file_createdir(const char* path, int32_t* result)
 {
-    *result = file_createdir(path);
+    *result = mount_createdir(path);
 }
 
 void swi_file_isdir(const char* path, int32_t* result)
 {
-    *result = file_isdir(path);
+    *result = mount_isdir(path);
 }
 
 void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t arg5)
@@ -309,13 +310,13 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg
             swi_file_remove((const char*)arg1, (int32_t*)arg2);
             break;
         case SYSCALL_FILE_OPENDIR:
-            swi_file_opendir((const char*)arg1, (api_file_dir_t*)arg2, (api_file_dir_t**)arg3);
+            swi_file_opendir((const char*)arg1, (dir_handle_t*)arg2);
             break;
         case SYSCALL_FILE_READDIR:
-            swi_file_readdir((api_file_dir_t*)arg1, (api_file_direntry_t*)arg2, (int32_t*)arg3);
+            swi_file_readdir((dir_handle_t)arg1, (api_file_direntry_t*)arg2, (int32_t*)arg3);
             break;
         case SYSCALL_FILE_CLOSEDIR:
-            swi_file_closedir((api_file_dir_t*)arg1, (int32_t*)arg2);
+            swi_file_closedir((dir_handle_t)arg1, (int32_t*)arg2);
             break;
         case SYSCALL_FILE_CREATEDIR:
             swi_file_createdir((const char*)arg1, (int32_t*)arg2);

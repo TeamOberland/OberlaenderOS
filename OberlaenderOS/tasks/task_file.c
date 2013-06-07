@@ -22,8 +22,8 @@ char* concat(const char* c1, const char* c2)
 
 void task_file(void)
 {
-    api_file_dir_t dir;
-    if(!api_opendir(TEST_DIR, &dir))
+    dir_handle_t dir = api_opendir(TEST_DIR);
+    if(!dir)
     {
         printf("Opendir failed!\n");
         return;

@@ -104,21 +104,21 @@ int32_t api_fremove(const char* filename)
     return r;
 }
 
-api_file_dir_t* api_opendir(const char* path, api_file_dir_t *dir)
+dir_handle_t api_opendir(const char* path)
 {
-    api_file_dir_t* r = NULL;
-    syscall(SYSCALL_FILE_OPENDIR, (uint32_t)path, (uint32_t)dir, (uint32_t)&r, 0, 0);
+    dir_handle_t r = NULL;
+    syscall(SYSCALL_FILE_OPENDIR, (uint32_t)path, (uint32_t)&r, 0, 0, 0);
     return r;
 }
 
-int32_t api_readdir(api_file_dir_t* dirls, api_file_direntry_t *entry)
+int32_t api_readdir(dir_handle_t dirls, api_file_direntry_t *entry)
 {
     int32_t r;
     syscall(SYSCALL_FILE_READDIR, (uint32_t)dirls, (uint32_t)entry, (uint32_t)&r, 0, 0);
     return r;
 }
 
-int32_t api_closedir(api_file_dir_t* dir)
+int32_t api_closedir(dir_handle_t dir)
 {
     int32_t r;
     syscall(SYSCALL_FILE_CLOSEDIR, (uint32_t)dir, (uint32_t)&r, 0, 0, 0);

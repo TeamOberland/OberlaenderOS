@@ -17,13 +17,6 @@
 #define API_FILE_SEEK_END 2
 #define API_FILE_EOF (-1)
 
-typedef struct
-{
-    uint32_t sector;
-    uint32_t cluster;
-    uint8_t offset;
-} api_file_dir_t;
-
 #define MAX_LONG_FILENAME         260
 typedef struct
 {
@@ -49,9 +42,9 @@ int32_t api_ftell(file_handle_t handle);
 int32_t api_feof(file_handle_t handle);
 int32_t api_fremove(const char* filename);
 
-api_file_dir_t* api_opendir(const char* path, api_file_dir_t *dir);
-int32_t api_readdir(api_file_dir_t* dirls, api_file_direntry_t *entry);
-int32_t api_closedir(api_file_dir_t* dir);
+dir_handle_t api_opendir(const char* path);
+int32_t api_readdir(dir_handle_t dirls, api_file_direntry_t *entry);
+int32_t api_closedir(dir_handle_t dir);
 
 int32_t api_createdir(const char* path);
 int32_t api_isdir(const char* path);
