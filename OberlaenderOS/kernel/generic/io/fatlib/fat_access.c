@@ -71,6 +71,7 @@ int fatfs_init(struct fatfs *fs)
     
     // Make Sure 0x55 and 0xAA are at end of sector
     // (this should be the case regardless of the MBR or boot sector)
+    printf("Hallo Welt\n");
     if (fs->currentsector.sector[SIGNATURE_POSITION] != 0x55 || fs->currentsector.sector[SIGNATURE_POSITION+1] != 0xAA)
         return FAT_INIT_INVALID_SIGNATURE;
 

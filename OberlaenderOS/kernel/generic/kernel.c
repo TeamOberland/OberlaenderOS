@@ -25,3 +25,18 @@ void setup_kernel()
     ipc_init();
     irq_enable();
 }
+
+void kernel_sleep(uint32_t ms)
+{
+    // https://code.google.com/p/puppybits/source/browse/lib/ksleep.c
+    int i;
+    while(ms--)
+    {
+        for(i = 0; i < 1000; i++)
+        {
+            asm("\t mov r0, r0");
+            asm("\t mov r0, r0");
+            asm("\t mov r0, r0");
+        }
+    }
+}

@@ -37,7 +37,7 @@ int32_t api_fgetc(file_handle_t handle)
 char* api_fgets(char* s, int32_t length, file_handle_t handle)
 {
     char* r = NULL;
-    syscall(SYSCALL_FILE_GETS, (uint32_t) s, (uint32_t)length, (uint32_t)handle, (uint32_t)r, 0);
+    syscall(SYSCALL_FILE_GETS, (uint32_t) s, (uint32_t)length, (uint32_t)handle, (uint32_t)&r, 0);
     return r;
 }
 
@@ -76,10 +76,10 @@ int32_t api_fseek(file_handle_t handle, int32_t offset, int32_t origin)
     return r;
 }
 
-int32_t api_fgetpos(file_handle_t handle, int32_t offset, int32_t* position)
+int32_t api_fgetpos(file_handle_t handle, uint32_t* position)
 {
     int32_t r;
-    syscall(SYSCALL_FILE_GETPOS, (uint32_t)handle, (uint32_t) offset, (uint32_t) position, (uint32_t) &r, 0);
+    syscall(SYSCALL_FILE_GETPOS, (uint32_t)handle, (uint32_t) position, (uint32_t) &r, 0, 0);
     return r;
 }
 
@@ -125,14 +125,14 @@ int32_t api_closedir(api_file_dir_t* dir)
     return r;
 }
 
-int32_t api_createdirectory(const char* path)
+int32_t api_createdir(const char* path)
 {
     int32_t r;
     syscall(SYSCALL_FILE_CREATEDIR, (uint32_t)path, (uint32_t)&r, 0, 0, 0);
     return r;
 }
 
-int32_t api_is_dir(const char* path)
+int32_t api_isdir(const char* path)
 {
     int32_t r;
     syscall(SYSCALL_FILE_ISDIR, (uint32_t)path, (uint32_t)&r, 0, 0, 0);

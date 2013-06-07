@@ -63,7 +63,7 @@ static struct fat_list    _free_file_list;
 //-----------------------------------------------------------------------------
 // Local Functions
 //-----------------------------------------------------------------------------
-static void                _fl_init();
+//static void                _fl_init();
 
 //-----------------------------------------------------------------------------
 // _allocate_file: Find a slot in the open files buffer for a new file

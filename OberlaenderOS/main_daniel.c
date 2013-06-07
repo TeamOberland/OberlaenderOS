@@ -12,8 +12,11 @@
 #include "lib/scheduler.h"
 #include "kernel/generic/driver/driver.h"
 #include "kernel/generic/driver/device_manager.h"
+#include "kernel/generic/io/file.h"
 
 #include "driver/gpio/gpio_driver.h"
+#include <stdlib.h>
+#include <string.h>
 
 
 //void idle_task()
@@ -213,22 +216,70 @@ void setup_device_manager()
     device_manager_register_driver(global_device_manager, &gpio_driver);
 }
 
+//
+//void file_test(void)
+//{
+//    api_file_dir_t dir;
+//    if(!file_opendir(TEST_DIR, &dir))
+//    {
+//        printf("Opendir failed!\n");
+//        return;
+//    }
+//
+//    api_file_direntry_t entry;
+//    file_handle_t f;
+//    int32_t c;
+//    char* fname;
+//    while(file_readdir(&dir, &entry) == 0)
+//    {
+//        printf("Found file: %s\n", entry.filename);
+//        printf("   Size: 0x%x", entry.size);
+//        printf("~~~~ Contents\n");
+//
+//        fname = concat(TEST_DIR, entry.filename);
+//        f = file_open(fname, "r");
+//        free(fname);
+//        if(!f)
+//        {
+//            printf("  Could not open file\n");
+//        }
+//        else
+//        {
+//            while(!file_eof(f))
+//            {
+//                c = file_getc(f);
+//                printf("%c", c);
+//                fflush(stdout);
+//            }
+//        }
+//
+//        printf("\n~~~~ Contents END\n");
+//    }
+//
+//    file_closedir(&dir);
+//}
+
+extern void task_file(void);
 void main_daniel(void)
 {
     printf("Setup kernel\n");
     setup_kernel();
 
     setup_device_manager();
+    file_init();
 
     __enable_interrupts();
     __switch_to_user_mode();
 
+    scheduler_add_process(global_scheduler, task_file);
 //    scheduler_add_process(global_scheduler, task_blink_led0);
 //    scheduler_add_process(global_scheduler, task_blink_led1);
 //    scheduler_add_process(global_scheduler, task_ipc_server);
 //    scheduler_add_process(global_scheduler, task_ipc_client);
     scheduler_start(1000);
     api_scheduler_run();
+
+//    file_test();
 
     /* led_test1(); */
 

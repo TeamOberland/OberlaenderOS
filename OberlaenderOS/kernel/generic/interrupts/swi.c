@@ -10,13 +10,19 @@
 #include "../../../lib/syscalls.h"
 #include "../../../lib/ipc.h"
 #include "../../../lib/device.h"
+#include "../../../lib/file.h"
 #include "../ipc/ipc.h"
 #include "../scheduler/scheduler.h"
 #include "../../genarch/scheduler/context.h"
 #include "../driver/driver.h"
 #include "../io/gpio.h"
+#include "../io/file.h"
 #include "../driver/device.h"
 #include "../driver/device_manager.h"
+
+//
+// IPC
+//
 
 void swi_ipc_register(const char* ns)
 {
@@ -68,15 +74,27 @@ void swi_ipc_wait(const char* ns)
     }
 }
 
+//
+// Scheduler
+//
+
 void swi_scheduler_run(void)
 {
     scheduler_run(global_scheduler);
 }
 
+//
+// GPIO
+//
+
 void swi_gpio_export(uint32_t gpio, bool_t output, device_id_t* deviceId)
 {
     *deviceId = gpio_export(gpio, output);
 }
+
+//
+// Device
+//
 
 void swi_device_open(device_id_t deviceId, device_handle_t* handle)
 {
@@ -98,7 +116,105 @@ void swi_device_write(device_handle_t handle, void* buffer, uint32_t count)
     device_write(handle, buffer, count);
 }
 
-void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3)
+//
+// File
+//
+void swi_file_open(const char* path, const char* mode, file_handle_t* handle)
+{
+    *handle = file_open(path, mode);
+}
+
+void swi_file_close(file_handle_t handle)
+{
+    file_close(handle);
+}
+
+void swi_file_flush(file_handle_t handle, int32_t* result)
+{
+    *result = file_flush(handle);
+}
+
+void swi_file_getc(file_handle_t handle, int32_t* result)
+{
+    *result = file_getc(handle);
+}
+
+void swi_file_gets(char* s, int32_t length,  file_handle_t handle,  char** result)
+{
+    *result = file_gets(s, length, handle);
+}
+
+void swi_file_putc(int32_t c, file_handle_t handle,  int32_t* result)
+{
+    *result = file_putc(c, handle);
+}
+
+void swi_file_puts(char* s, file_handle_t handle,  int32_t* result)
+{
+    *result = file_puts(s, handle);
+}
+
+void swi_file_write(void* buffer, int32_t size, int32_t count, file_handle_t handle, int32_t* result)
+{
+    *result = file_write(buffer, size, count, handle);
+}
+
+void swi_file_read(void* buffer, int32_t size, int32_t count, file_handle_t handle, int32_t* result)
+{
+    *result = file_read(buffer, size, count, handle);
+}
+
+void swi_file_seek(file_handle_t handle, int32_t offset, int32_t origin, int32_t* result)
+{
+    *result = file_seek(handle, offset, origin);
+}
+
+void swi_file_getpos(file_handle_t handle, uint32_t* position, int32_t* result)
+{
+    *result = file_getpos(handle, position);
+}
+
+void swi_file_tell(file_handle_t handle, int32_t* result)
+{
+    *result = file_tell(handle);
+}
+
+void swi_file_eof(file_handle_t handle, int32_t* result)
+{
+    *result = file_eof(handle);
+}
+
+void swi_file_remove(const char* filename, int32_t* result)
+{
+    *result = file_remove(filename);
+}
+
+void swi_file_opendir(const char* path, api_file_dir_t* dir, api_file_dir_t** result)
+{
+    *result = file_opendir(path, dir);
+}
+
+void swi_file_readdir(api_file_dir_t* dirls, api_file_direntry_t* entry, int32_t* result)
+{
+    *result = file_readdir(dirls, entry);
+}
+
+void swi_file_closedir(api_file_dir_t* dir, int32_t* result)
+{
+    *result = file_closedir(dir);
+}
+
+void swi_file_createdir(const char* path, int32_t* result)
+{
+    *result = file_createdir(path);
+}
+
+void swi_file_isdir(const char* path, int32_t* result)
+{
+    *result = file_isdir(path);
+}
+
+void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t arg5)
 {
 //    printf("[SWI] Handle %i\n", swiNumber);
     switch (swiNumber)
@@ -121,20 +237,20 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg
             swi_ipc_wait((const char*) arg1);
             break;
 
-        //
-        // Scheduler
+            //
+            // Scheduler
         case SYSCALL_SCHEDULER_RUN:
             swi_scheduler_run();
             break;
 
-        //
-        // GPIO
+            //
+            // GPIO
         case SYSCALL_GPIO_EXPORT:
             swi_gpio_export(arg1, (bool_t) arg2, (device_id_t*) arg3);
             break;
 
-        //
-        // Device
+            //
+            // Device
         case SYSCALL_DEVICE_OPEN:
             swi_device_open((device_id_t) arg1, (device_handle_t*) arg2);
             break;
@@ -148,21 +264,78 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg
             swi_device_write((device_handle_t) arg1, (void*) arg2, arg3);
             break;
 
-        //
-        //
+            //
+            // File
+        case SYSCALL_FILE_OPEN:
+            swi_file_open((const char*)arg1, (const char*)arg2, (file_handle_t*)arg3);
+            break;
+        case SYSCALL_FILE_CLOSE:
+            swi_file_close((file_handle_t)arg1);
+            break;
+        case SYSCALL_FILE_FLUSH:
+            swi_file_flush((file_handle_t)arg1, (int32_t*)arg2);
+            break;
+        case SYSCALL_FILE_GETC:
+            swi_file_getc((file_handle_t)arg1, (int32_t*)arg2);
+            break;
+        case SYSCALL_FILE_GETS:
+            swi_file_gets((char*)arg1, (int32_t)arg2, (file_handle_t)arg3, (char**)arg4);
+            break;
+        case SYSCALL_FILE_PUTC:
+            swi_file_putc((int32_t)arg1, (file_handle_t)arg2, (int32_t*)arg3);
+            break;
+        case SYSCALL_FILE_PUTS:
+            swi_file_puts((char*)arg1, (file_handle_t)arg2, (int32_t*)arg3);
+            break;
+        case SYSCALL_FILE_WRITE:
+            swi_file_write((void*)arg1, (int32_t)arg2, (int32_t)arg3, (file_handle_t)arg4, (int32_t*)arg5);
+            break;
+        case SYSCALL_FILE_READ:
+            swi_file_read((void*)arg1, (int32_t)arg2, (int32_t)arg3, (file_handle_t)arg4, (int32_t*)arg5);
+            break;
+        case SYSCALL_FILE_SEEK:
+            swi_file_seek((file_handle_t)arg1, (int32_t)arg2, (int32_t)arg3, (int32_t*)arg4);
+            break;
+        case SYSCALL_FILE_GETPOS:
+            swi_file_getpos((file_handle_t)arg1, (uint32_t*)arg2, (int32_t*)arg3);
+            break;
+        case SYSCALL_FILE_TELL:
+            swi_file_tell((file_handle_t)arg1, (int32_t*)arg2);
+            break;
+        case SYSCALL_FILE_EOF:
+            swi_file_eof((file_handle_t)arg1, (int32_t*)arg2);
+            break;
+        case SYSCALL_FILE_REMOVE:
+            swi_file_remove((const char*)arg1, (int32_t*)arg2);
+            break;
+        case SYSCALL_FILE_OPENDIR:
+            swi_file_opendir((const char*)arg1, (api_file_dir_t*)arg2, (api_file_dir_t**)arg3);
+            break;
+        case SYSCALL_FILE_READDIR:
+            swi_file_readdir((api_file_dir_t*)arg1, (api_file_direntry_t*)arg2, (int32_t*)arg3);
+            break;
+        case SYSCALL_FILE_CLOSEDIR:
+            swi_file_closedir((api_file_dir_t*)arg1, (int32_t*)arg2);
+            break;
+        case SYSCALL_FILE_CREATEDIR:
+            swi_file_createdir((const char*)arg1, (int32_t*)arg2);
+            break;
+        case SYSCALL_FILE_ISDIR:
+            swi_file_isdir((const char*)arg1, (int32_t*)arg2);
+            break;
     }
 }
 
 #pragma INTERRUPT(swi_handle, SWI)
 #pragma TASK(swi_handle)
-interrupt void swi_handle(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3)
+interrupt void swi_handle(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t arg5)
 {
     asm(" SUB R13, R13, #4");
     asm(" STR R14, [R13]");
     __context_save();
     asm(" ADD R13, R13, #4");
 
-    swi_dispatch(swiNumber, arg1, arg2, arg3);
+    swi_dispatch(swiNumber, arg1, arg2, arg3, arg4, arg5);
 
     __context_load();
 }

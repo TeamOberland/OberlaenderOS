@@ -23,6 +23,6 @@ typedef int8_t bool_t;
 
 typedef int16_t device_id_t;
 typedef int16_t driver_id_t;
-typedef int16_t file_handle_t;
+typedef void* file_handle_t;
 
 #endif /* TYPES_H_ */
