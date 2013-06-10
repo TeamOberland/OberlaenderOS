@@ -266,7 +266,7 @@ void main_daniel(void)
     setup_kernel();
 
     setup_device_manager();
-    file_init();
+    mount_init();
 
     __enable_interrupts();
     __switch_to_user_mode();

@@ -20,7 +20,7 @@ void file_init(void);
 //
 // API
 
-void file_mount(mountpoint_t* mountpoint);
+int32_t file_mount(mountpoint_t* mountpoint);
 void file_unmount(mountpoint_t* mountpoint);
 
 file_handle_t file_open(mountpoint_t* mountpoint, const char* path, const char* mode);
