@@ -45,6 +45,12 @@ file_createdir,
 file_isdir
 };
 
+void mount_init()
+{
+    mountpoint_manager_init(&global_mountpoint_manager);
+    mountpoint_manager_default_mountpoints(&global_mountpoint_manager);
+}
+
 void mountpoint_manager_init(mountpoint_manager_t* manager)
 {
     int i;
@@ -68,8 +74,12 @@ bool_t mountpoint_manager_add_mountpoint(mountpoint_manager_t* manager, const ch
             manager->mountpoints[i].id = id;
             strcpy(manager->mountpoints[i].name, name);
             manager->mountpoints[i].type = type;
-            manager->handlers[manager->mountpoints[i].type]->mount(&manager->mountpoints[i]);
-            return TRUE;
+            if(manager->handlers[manager->mountpoints[i].type]->mount(&manager->mountpoints[i]) == 0)
+            {
+                return TRUE;
+            }
+            manager->mountpoints[i].id = INVALID_MOUNTPOINT_ID;
+            return FALSE;
         }
     }
     return FALSE;
@@ -107,7 +117,7 @@ bool_t mountpoint_manager_remove_mountpoint_id(mountpoint_manager_t* manager, mo
 
 void mountpoint_manager_default_mountpoints(mountpoint_manager_t* manager)
 {
-    mountpoint_manager_add_mountpoint(manager, "dev", 0x0101, MOUNTPOINT_TYPE_DEV);
+//    mountpoint_manager_add_mountpoint(manager, "dev", 0x0101, MOUNTPOINT_TYPE_DEV);
     __mount_defaults(manager);
 }
 
@@ -142,7 +152,7 @@ static mountpoint_t* mount_find_mountpoint(const char* name)
     for (i = 0; i < MAX_MOUNTPOINTS; i++)
     {
         if (global_mountpoint_manager.mountpoints[i].id != INVALID_MOUNTPOINT_ID
-                && strcmp(global_mountpoint_manager.mountpoints[i].name, name))
+                && strcmp(global_mountpoint_manager.mountpoints[i].name, name) == 0)
         {
             return &global_mountpoint_manager.mountpoints[i];
         }
@@ -290,25 +300,36 @@ dir_handle_t mount_opendir(const char* path)
     pathCount = 0;
     pathParts = split_path(path, &pathCount);
 
-    if (pathCount == 1 || pathParts == NULL)
+    if (pathCount == 0 || pathParts == NULL)
     {
         // TODO: handle for root-directory
+        if(pathParts != NULL)
+        {
+            free(pathParts);
+        }
         return 0;
     }
 
     // search for mountpoint
-    char* nodeName = pathParts[1];
+    char* nodeName = pathParts[0];
     char* subPath = substring(path, 1 + strlen(nodeName),-1);
+    bool_t subPathFound = subPath != NULL;
+    if(!subPathFound) // empty subpath?
+    {
+        // set root
+        subPath = "/";
+    }
     mountpoint_t* mp = mount_find_mountpoint(nodeName);
+
     if (mp != NULL)
     {
         result = malloc(sizeof(mount_dir_handle_t));
         result->mountPoint = mp;
         result->internalHandle = global_mountpoint_manager.handlers[mp->type]->opendir(mp, subPath);
-        free(subPath);
+        if(subPathFound) free(subPath);
         return (dir_handle_t)result;
     }
-    free(subPath);
+    if(subPathFound) free(subPath);
     return 0;
 }
 

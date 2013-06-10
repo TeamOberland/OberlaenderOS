@@ -28,7 +28,7 @@ typedef struct
 
 typedef struct
 {
-    void (*mount)(mountpoint_t* mountpoint);
+    int32_t (*mount)(mountpoint_t* mountpoint);
     void (*unmount)(mountpoint_t* mountpoint);
 
     file_handle_t (*open)(mountpoint_t* mountpoint, const char* path, const char* mode);
@@ -67,6 +67,8 @@ typedef struct
 } mountpoint_manager_t;
 
 extern mountpoint_manager_t global_mountpoint_manager;
+
+void mount_init();
 
 void mountpoint_manager_init(mountpoint_manager_t* manager);
 bool_t mountpoint_manager_add_mountpoint(mountpoint_manager_t* manager, const char* name, mountpoint_id_t id,

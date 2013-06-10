@@ -54,7 +54,7 @@ static uint32_t omap3530_mmchs_send_cmd(uint32_t cmd, uint32_t cmdInterrupts, ui
     uint32_t retryCount = 0;
 
     // wait for commandline to get ready
-    while ((MMCHS_REG(MMCHS_PSTATE) & DATI_MASK)== DATI_NOT_ALLOWED)
+    while ((MMCHS_REG(MMCHS_PSTATE) & CMDI_MASK)== CMDI_NOT_ALLOWED)
         ;
 
     // set block size
@@ -126,7 +126,6 @@ MMCHS_REG        (MMCHS_SYSCTL) |= SRC;
     return MMCHS_STATUS_SUCCESS;
 }
 
-
 static void omap3530_mmchs_calculate_card_CLKD(uint32_t *clockFrequencySelect)
 {
     uint8_t maxDataTransferRate;
@@ -152,6 +151,7 @@ static void omap3530_mmchs_calculate_card_CLKD(uint32_t *clockFrequencySelect)
             break;
         default:
             printf("Invalid rate unit parameter.\n");
+            break;
     }
 
     switch ((maxDataTransferRate >> 3) & 0xF)
@@ -203,6 +203,7 @@ static void omap3530_mmchs_calculate_card_CLKD(uint32_t *clockFrequencySelect)
             break;
         default:
             printf("Invalid transfer speed parameter.\n");
+            break;
     }
 
     frequency = transferRateValue * timeValue / 10;
@@ -300,7 +301,7 @@ static uint32_t omap3530_mmchs_transfer_block(uint32_t lba, void* buffer, uint8_
     {
         case MMCHS_READ: // Single block read
             cmd = CMD17;
-            cmdInterruptEnable = CMD17_INT_EN;
+            cmdInterruptEnable = CMD18_INT_EN;
             break;
         case MMCHS_WRITE: // Single block Write
             cmd = CMD24;
@@ -356,14 +357,13 @@ static uint32_t omap3530_mmchs_transfer_block(uint32_t lba, void* buffer, uint8_
         }
 
         // Handle errors
-        if ((mmcStatus & DEB)|| (mmcStatus & DCRC) || (mmcStatus & DTO))
-        {
-            MMCHS_REG(MMCHS_SYSCTL) |= SRD;
-            while ((MMCHS_REG(MMCHS_SYSCTL) & SRD) != 0x0)
-            ;
+        if ((mmcStatus & DEB)|| (mmcStatus & DCRC) || (mmcStatus & DTO)){
+        MMCHS_REG(MMCHS_SYSCTL) |= SRD;
+        while ((MMCHS_REG(MMCHS_SYSCTL) & SRD) != 0x0)
+        ;
 
-            return MMCHS_ERROR_DEVICE;
-        }
+        return MMCHS_ERROR_DEVICE;
+    }
         retryCount++;
     }
 
@@ -468,12 +468,14 @@ static uint32_t omap3530_mmchs_perform_card_identification()
 
     //End Initialization
     MMCHS_REG(MMCHS_CON) &= ~INIT;
+    MMCHS_REG(MMCHS_HCTL) |= (SDVS_3_0_V | DTW_1_BIT | SDBP_ON);
 
     // Clear Status Register
     MMCHS_REG(MMCHS_STAT) = 0xFFFFFFFF;
 
     // Change clock frequency to 400KHz to fit protocol
     omap3530_mmchs_change_clock(CLKD_400KHZ);
+    MMCHS_REG(MMCHS_CON) |= OD;
 
     // Send CMD0 command. (card reset for MMC)
     status = omap3530_mmchs_send_cmd(CMD0, CMD0_INT_EN, cmdArg);
@@ -530,12 +532,12 @@ static uint32_t omap3530_mmchs_perform_card_identification()
             // Set high capacity support bit.
             if (sdCmd8Supported)
             {
-               cmdArg |= (uint32_t) MMCHS_HCS;
+                cmdArg |= (uint32_t) MMCHS_HCS;
             }
             status = omap3530_mmchs_send_cmd(ACMD41, ACMD41_INT_EN, cmdArg);
             if (omap3530_mmchs_is_error(status))
             {
-               return status;
+                return status;
             }
 
             ((uint32_t *) &(mmchsCardInfo.ocrData))[0] = MMCHS_REG(MMCHS_RSP10);
@@ -547,13 +549,12 @@ static uint32_t omap3530_mmchs_perform_card_identification()
             status = omap3530_mmchs_send_cmd(CMD1, CMD1_INT_EN, cmdArg);
             if (omap3530_mmchs_is_error(status))
             {
-               return status;
+                return status;
             }
             response = MMCHS_REG(MMCHS_RSP10);
             // NOTE: MMC not supported yet
             return MMCHS_ERROR_UNSUPPORTED;
         }
-
 
         if (mmchsCardInfo.ocrData.busy == 1)
         {
@@ -607,8 +608,6 @@ static uint32_t omap3530_mmchs_perform_card_identification()
 
     return MMCHS_STATUS_SUCCESS;
 }
-
-
 
 static uint32_t omap3530_mmchs_perform_card_configuration()
 {

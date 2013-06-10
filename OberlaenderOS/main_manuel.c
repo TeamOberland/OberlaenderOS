@@ -12,7 +12,7 @@
 #include "kernel/generic/driver/driver.h"
 #include "kernel/generic/driver/device_manager.h"
 
-#include "driver/gpio_driver.h"
+//#include "driver/gpio_driver.h"
 
 extern void task_blink_led0(void);
 extern void task_blink_led1(void);
@@ -21,13 +21,13 @@ extern void task_ipc_server(void);
 extern void task_ipc_client(void);
 extern void task_blink_dmx_led(void);
 
-void setup_device_manager()
-{
-    global_device_manager = device_manager_init();
-
-    // load drivers
-    device_manager_register_driver(global_device_manager, &gpio_driver);
-}
+//void setup_device_manager()
+//{
+//    global_device_manager = device_manager_init();
+//
+//    // load drivers
+//    device_manager_register_driver(global_device_manager, &gpio_driver);
+//}
 
 void main_manuel(void)
 {

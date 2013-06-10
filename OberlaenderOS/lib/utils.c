@@ -20,7 +20,7 @@ char* substring(const char* str, uint32_t begin, int32_t len)
         len = strlen(str) - begin;
     }
 
-    if (strlen(str) < (begin + len))
+    if (len == 0 || strlen(str) < (begin + len))
         return 0;
 
     char* sub = malloc(len);

@@ -14,6 +14,7 @@
 
 extern void ENTRY_POINT(void);
 
-void main(void) {
+void main(void)
+{
     ENTRY_POINT();
 }

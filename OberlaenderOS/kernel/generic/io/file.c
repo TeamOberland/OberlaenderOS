@@ -33,10 +33,14 @@ void file_init(void)
     fl_init();
 }
 
-void file_mount(mountpoint_t* mountpoint)
+int32_t file_mount(mountpoint_t* mountpoint)
 {
     // TODO: how can we pass the mountpoint to media_read and write?
-    fl_attach_media(media_read, media_write);
+    if(fl_attach_media(media_read, media_write) != FAT_INIT_OK)
+    {
+        return -1;
+    }
+    return 0;
 }
 
 void file_unmount(mountpoint_t* mountpoint)
