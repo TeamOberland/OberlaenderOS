@@ -17,6 +17,7 @@ int16_t uart_driver_open(device_id_t device);
 int16_t uart_driver_close(device_id_t device);
 int16_t uart_driver_read(device_id_t device, void* buffer, uint32_t count);
 int16_t uart_driver_write(device_id_t device, void* buffer, uint32_t count);
+int32_t uart_driver_ioctl(device_id_t device, uint32_t cmd, uint32_t arg);
 
 #define MAX_UART_DEVICES 3
 

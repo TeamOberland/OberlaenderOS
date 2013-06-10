@@ -15,5 +15,6 @@ device_handle_t device_open(device_manager_t* dm, device_id_t deviceId);
 void device_close(device_manager_t* dm, device_handle_t handle);
 void device_read(device_manager_t* dm, device_handle_t handle, void* buffer, uint32_t count);
 void device_write(device_manager_t* dm, device_handle_t handle, void* buffer, uint32_t count);
+int32_t device_ioctl(device_manager_t* dm, device_handle_t handle, uint32_t cmd, uint32_t arg);
 
 #endif /* DEVICE_H_ */

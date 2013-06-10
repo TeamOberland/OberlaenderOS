@@ -23,6 +23,7 @@ typedef struct {
     int16_t (*read)(device_id_t device, void* buffer, uint32_t count);
     int16_t (*write)(device_id_t device, void* buffer, uint32_t count);
 
+    int32_t (*ioctl)(device_id_t device, uint32_t cmd, uint32_t arg);
 } driver_t;
 
 #endif /* DRIVER_H_ */

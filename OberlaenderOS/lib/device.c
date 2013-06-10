@@ -29,3 +29,10 @@ void api_device_write(device_handle_t handle, void* buffer, uint32_t count)
 {
     syscall(SYSCALL_DEVICE_WRITE, (uint32_t)handle, (uint32_t)buffer, count, 0, 0);
 }
+
+int32_t api_device_ioctl(device_handle_t handle, uint32_t cmd, uint32_t arg)
+{
+    int32_t res = 0;
+    syscall(SYSCALL_DEVICE_IOCTL, (uint32_t)handle, cmd, arg, (uint32_t)&res, 0);
+    return res;
+}

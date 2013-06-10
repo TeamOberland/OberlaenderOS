@@ -259,7 +259,7 @@ void setup_device_manager()
 //    file_closedir(&dir);
 //}
 
-extern void task_file(void);
+extern void task_gpio_led0(void);
 void main_daniel(void)
 {
     printf("Setup kernel\n");
@@ -271,11 +271,12 @@ void main_daniel(void)
     __enable_interrupts();
     __switch_to_user_mode();
 
-    scheduler_add_process(global_scheduler, task_file);
+//    scheduler_add_process(global_scheduler, task_file);
 //    scheduler_add_process(global_scheduler, task_blink_led0);
 //    scheduler_add_process(global_scheduler, task_blink_led1);
 //    scheduler_add_process(global_scheduler, task_ipc_server);
 //    scheduler_add_process(global_scheduler, task_ipc_client);
+    scheduler_add_process(global_scheduler, task_gpio_led0);
     scheduler_start(1000);
     api_scheduler_run();
 

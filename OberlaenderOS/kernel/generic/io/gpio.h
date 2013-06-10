@@ -12,7 +12,7 @@
 #include "../driver/driver.h"
 
 typedef struct {
-    device_id_t (*exportGpio)(uint32_t gpio, bool_t output);
+    device_id_t (*exportGpio)(uint32_t gpio);
     int32_t (*unexportGpio)(uint32_t gpio);
 } gpio_exporter_t;
 
@@ -28,7 +28,7 @@ void gpio_init_device_exporter(gpio_exporter_t* exporter);
  * @param gpio the gpio port to export
  * @return the device id which can be used to create a file handle.
  */
-device_id_t gpio_export(uint32_t gpio, bool_t output);
+device_id_t gpio_export(uint32_t gpio);
 
 /**
  * Removes the device node associated with the given gpio.
