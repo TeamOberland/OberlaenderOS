@@ -8,8 +8,8 @@
 #ifndef GPIO_DRIVER_H_
 #define GPIO_DRIVER_H_
 
-#include "../lib/types.h"
-#include "../kernel/generic/driver/driver.h"
+#include "../../lib/types.h"
+#include "../../kernel/generic/driver/driver.h"
 
 void gpio_driver_init(void);
 int16_t gpio_driver_open(device_id_t device);

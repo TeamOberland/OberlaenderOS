@@ -11,6 +11,6 @@
 device_id_t api_gpio_export(uint32_t gpio, bool_t output)
 {
     device_id_t result = 0;
-    syscall(SYSCALL_GPIO_EXPORT, gpio, (uint32_t)output, (uint32_t)&result);
+    syscall(SYSCALL_GPIO_EXPORT, gpio, (uint32_t)output, (uint32_t)&result, 0, 0);
     return result;
 }

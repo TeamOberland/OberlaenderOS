@@ -20,7 +20,12 @@ typedef int8_t bool_t;
 
 #define TRUE 1
 #define FALSE 0
+
 typedef uint8_t driver_id_t;
 typedef uint8_t device_id_t;
+
+typedef void* file_handle_t;
+typedef void* dir_handle_t;
+
 
 #endif /* TYPES_H_ */

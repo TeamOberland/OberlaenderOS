@@ -25,7 +25,27 @@
 #define SYSCALL_DEVICE_READ 10
 #define SYSCALL_DEVICE_WRITE 11
 
+#define SYSCALL_FILE_OPEN 12
+#define SYSCALL_FILE_CLOSE 13
+#define SYSCALL_FILE_FLUSH 14
+#define SYSCALL_FILE_GETC 15
+#define SYSCALL_FILE_GETS 16
+#define SYSCALL_FILE_PUTC 17
+#define SYSCALL_FILE_PUTS 18
+#define SYSCALL_FILE_WRITE 19
+#define SYSCALL_FILE_READ 20
+#define SYSCALL_FILE_SEEK 21
+#define SYSCALL_FILE_GETPOS 22
+#define SYSCALL_FILE_TELL 23
+#define SYSCALL_FILE_EOF 24
+#define SYSCALL_FILE_REMOVE 25
+#define SYSCALL_FILE_OPENDIR 26
+#define SYSCALL_FILE_READDIR 27
+#define SYSCALL_FILE_CLOSEDIR 28
+#define SYSCALL_FILE_CREATEDIR 29
+#define SYSCALL_FILE_ISDIR 30
+
 #pragma SWI_ALIAS(syscall, 1)
-extern void syscall(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3);
+extern void syscall(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t arg5);
 
 #endif /* SYSCALLS_H_ */

@@ -11,6 +11,7 @@
 #include "../genarch/arch.h"
 
 void setup_kernel();
+void kernel_sleep(uint32_t ms);
 
 
 inline void switch_to_user_mode()
