@@ -31,6 +31,13 @@
 #define UART_THR_REG        0x000 /* W FIFO transmission */
 #define UART_DLH_REG        0x004 /* RW */
 #define UART_IER_REG        0x004 /* RW */
+#define UART_TLR_REG        0x01C
+#define UART_FCR_REG        0x008
+#define UART_EFR_REG        0x008 /* RW */
+#define UART_SCR_REG        0x040 /* RW */
+#define UART_MCR_REG        0x010 /* RW */
+
+
 
 #define UART_MVR_REG        0x050 /* R */
 #define UART_SYSC_REG       0x054 /* RW */
@@ -53,13 +60,14 @@
 #define UART_LCR_PARITY_T2  5
 #define UART_LCR_BREAK_EN   6
 #define UART_LCR_DIV_EN     7
-
-#define UART_EFR_REG        0x008 /* RW */
-
+#define UART_ENHANCED_EN    4
+#define UART_TCR_TLR       6 /* RW */
+#define UART_DMA_MODE       3 /* RW */
+#define UART_ENABLE_FIFO     0 /* RW */
 /*PDF: 2752*/
 /*no parity configuration mode 8bits word length*/
-//#define UART_LCR_MODE_CONFIG  0x083
-#define UART_LCR_MODE_CONFIG 0x00BF
+#define UART_LCR_MODE_CONFIG_A  0x083
+#define UART_LCR_MODE_CONFIG_B 0x00BF
 
 /* for configuration */
 #define UART_LCR_REG        0x00C /* RW */

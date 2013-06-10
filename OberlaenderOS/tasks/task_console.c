@@ -16,27 +16,25 @@
 
 void task_console(void)
 {
-    uint8_t toRead[255];
-    memset(&toRead,0,255);
-    uint8_t* position = &toRead[0];
+    uint8_t toRead[64];
+    uint8_t index = 0;
+    memset(&toRead,0,64);
     device_id_t uartDevice = (1<<4)+UART_3;
     device_handle_t handle= api_device_open(uartDevice);
     api_device_write(handle,"hallo\r\n\0",8);
-    api_device_write(handle,"hallo\r\n\0",8);
-    api_device_write(handle,"hallo\r\n\0",8);
-    api_device_write(handle,"hallo\r\n\0",8);
-    api_device_write(handle,"hallo\r\n\0",8);
-    api_device_write(handle,"hallo\r\n\0",8);
-    api_device_write(handle,"hallo\r\n\0",8);
-    api_device_write(handle,"hallo\r\n\0",8);
-    api_device_write(handle,"hallo\r\n\0",8);
-    api_device_write(handle,"hallo\r\n\0",8);
-
-    while((position!="\n"&&(position+1)!="\r")||&toRead[254]==position)
+//    api_device_write(handle,"hallo\r\n\0",8);
+//    api_device_write(handle,"hallo\r\n\0",8);
+//    api_device_write(handle,"hallo\r\n\0",8);
+//    api_device_write(handle,"hallo\r\n\0",8);
+//    api_device_write(handle,"hallo\r\n\0",8);
+//    api_device_write(handle,"hallo\r\n\0",8);
+//    api_device_write(handle,"hallo\r\n\0",8);
+//    api_device_write(handle,"hallo\r\n\0",8);
+//    api_device_write(handle,"hallo\r\n\0",8);
+    while(TRUE)
     {
-        api_device_read(handle,&position,1);
-        api_device_write(handle,&position,1);
-        position++;
+        api_device_read(handle,&toRead,64);
+        api_device_write(handle,&toRead,64);
     }
 
 

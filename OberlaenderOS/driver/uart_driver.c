@@ -78,13 +78,14 @@ int16_t uart_driver_read(device_id_t device, void* buffer, uint32_t count)
     registered_uart_t* reg = uart_get_registered(device);
     int i = 0;
 
-    for (; i < count; i++) {
-        // block while waiting for data
+    //for (; i < count; i++) {
         while (uart_is_empty_read_queue(reg->uart_port));
-        uart_read(reg->uart_port, castedBuffer);
-    }
 
-    return i;
+        // block while waiting for data
+        uart_read(reg->uart_port, &castedBuffer[i]);
+    //}
+
+    return 0;
 }
 
 int16_t uart_driver_write(device_id_t device, void* buffer, uint32_t count)
@@ -94,11 +95,10 @@ int16_t uart_driver_write(device_id_t device, void* buffer, uint32_t count)
     if (reg != NULL)
     {
         int i = 0;
-        for (; i < count; i++, castedBuffer++) {
+        for (; i < count; i++) {
             // block while queue is full
-            while (!uart_is_empty_write_queue(reg->uart_port))
-                ;
-            uart_write(3, castedBuffer);
+            while (!uart_is_empty_write_queue(reg->uart_port))                ;
+            uart_write(3, &castedBuffer[i]);
         }
     }
     return 0;

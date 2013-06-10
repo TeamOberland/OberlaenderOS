@@ -12,7 +12,7 @@
 #include "kernel/generic/driver/driver.h"
 #include "kernel/generic/driver/device_manager.h"
 
-#include "driver/gpio_driver.h"
+#include "driver/gpio/gpio_driver.h"
 #include "driver/uart_driver.h"
 
 extern void task_blink_led0(void);

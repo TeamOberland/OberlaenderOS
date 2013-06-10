@@ -14,11 +14,7 @@
 */
 uint32_t uart_init(uint8_t uartPort)
 {
-    __uart_init(uartPort,UART_MDR1_MODE_SELECT_16X,uart_protocol_rs232);
-    if(__uart_is_valid_port(uartPort))
-    return __uart_is_empty_write_queue(uartPort);
-
-    return 0;
+    return __uart_init(uartPort,UART_MDR1_MODE_SELECT_16X,uart_protocol_rs232);
 }
 
 /*
