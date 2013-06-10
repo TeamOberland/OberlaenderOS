@@ -167,7 +167,7 @@ bool_t __uart_disable(uint8_t uartPort)
  */
 bool_t __uart_is_empty_write_queue(uint8_t uartPort) {
     memory_mapped_io_t uart_base_addr =omap_uart_get_register(uartPort,UART_LSR_REG);
-    uint32_t status = READ_BIT(uart_base_addr,                       UART_LSR_TX_FIFO_E);
+    uint32_t status = READ_BIT(uart_base_addr,  UART_LSR_TX_FIFO_E);
   return (status > 0);
 }
 

@@ -57,15 +57,16 @@ void log(char* type, char* format, va_list arglist) {
     readBuffer[1] = '\n';
     readBuffer[2] = '\0';
 
-    uart_driver.open(2);
-    uart_driver.write(2,type,strlen(type));
-    uart_driver.write(2,buffer,(l + 2));
-
-    uart_driver_read(2,readBuffer,1);
-    uart_driver.write(2,readBuffer,3);
-
-
-    uart_driver.close(2);
+    uart_driver.open(1);
+    uart_driver.open(0);
+    while(FALSE)
+    {
+        uart_driver.write(1,"abcdefghijklmnopqrstuvwxyz",strlen("abcdefghijklmnopqrstuvwxyz"));
+        uart_driver.write(0,"abcdefghijklmnopqrstuvwxyz",strlen("abcdefghijklmnopqrstuvwxyz"));
+    }
+    uart_driver.write(1,type,strlen(type));
+    uart_driver.write(1,buffer,(l + 2));
+    uart_driver.close(1);
 }
 
 void logger_debug(char* format, ...) {
@@ -83,10 +84,10 @@ void main_manuel(void)
     __enable_interrupts();
     __switch_to_user_mode();
 
-    scheduler_add_process(global_scheduler, task_blink_led0);
-    scheduler_add_process(global_scheduler, task_blink_led1);
-    scheduler_add_process(global_scheduler, task_blink_dmx_led);
-    scheduler_add_process(global_scheduler, task_console);
+//    scheduler_add_process(global_scheduler, task_blink_led0);
+//    scheduler_add_process(global_scheduler, task_blink_led1);
+//    scheduler_add_process(global_scheduler, task_blink_dmx_led);
+      scheduler_add_process(global_scheduler, task_console);
 //    scheduler_add_process(global_scheduler, task_ipc_server);
 //    scheduler_add_process(global_scheduler, task_ipc_client);
     scheduler_start(30);

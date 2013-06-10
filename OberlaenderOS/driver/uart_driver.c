@@ -37,12 +37,15 @@ static registered_uart_t* uart_get_registered(device_id_t device)
 
 void uart_driver_init(void)
 {
+    device_id_t id;
     uint8_t i = 0;
     for (i = 0; i < MAX_UART_DEVICES; i++)
     {
+        id = device_manager_add_device(global_device_manager,&uart_driver,&registered_uarts[i]);
         registered_uarts[i].used = FALSE;
-        registered_uarts[i].device=i;
+        registered_uarts[i].device= id;
         registered_uarts[i].uart_port=i+1;
+
     }
 }
 
@@ -53,8 +56,9 @@ int16_t uart_driver_open(device_id_t device)
     {
         reg->used=TRUE;
         uart_init(reg->uart_port);
+        return 0;
     }
-    return 0;
+    return 1;
 }
 
 int16_t uart_driver_close(device_id_t device)

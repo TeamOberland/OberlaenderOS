@@ -17,7 +17,7 @@ device_handle_t api_device_open(device_id_t device)
 
 void api_device_close(device_handle_t handle)
 {
-    syscall(SYSCALL_DEVICE_OPEN, (uint32_t) handle, 0, 0);
+    syscall(SYSCALL_DEVICE_CLOSE, (uint32_t) handle, 0, 0);
 }
 
 void api_device_read(device_handle_t handle, void* buffer, uint32_t count)

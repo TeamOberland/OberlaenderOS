@@ -87,17 +87,17 @@ void swi_device_open(device_id_t deviceId, device_handle_t* handle)
 
 void swi_device_close(device_handle_t handle)
 {
-    device_close(handle);
+    device_close(global_device_manager,handle);
 }
 
 void swi_device_read(device_handle_t handle, void* buffer, uint32_t count)
 {
-    device_read(handle, buffer, count);
+    device_read(global_device_manager,handle, buffer, count);
 }
 
 void swi_device_write(device_handle_t handle, void* buffer, uint32_t count)
 {
-    device_write(handle, buffer, count);
+    device_write(global_device_manager,handle, buffer, count);
 }
 
 void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3)
@@ -135,7 +135,6 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg
             swi_gpio_export(arg1, (bool_t) arg2, (device_id_t*) arg3);
             break;
 
-            //
             // Device
         case SYSCALL_DEVICE_OPEN:
             swi_device_open((device_id_t) arg1, (device_handle_t*) arg2);
