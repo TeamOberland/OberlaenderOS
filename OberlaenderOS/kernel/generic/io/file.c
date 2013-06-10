@@ -10,6 +10,7 @@
 #include "../../../lib/types.h"
 #include "fatlib/fat_filelib.h"
 #include "../../genarch/io/media.h"
+#include <stdlib.h>
 
 //
 // Setup
@@ -122,8 +123,8 @@ int32_t file_remove(mountpoint_t* mountpoint, const char* filename)
 
 dir_handle_t file_opendir(mountpoint_t* mountpoint, const char* path)
 {
-    FL_DIR dir;
-    return (dir_handle_t) fl_opendir(path, &dir);
+    FL_DIR* dir = malloc(sizeof(FL_DIR));
+    return (dir_handle_t) fl_opendir(path, dir);
 }
 
 int32_t file_readdir(dir_handle_t dirls, api_file_direntry_t* entry)
@@ -133,7 +134,9 @@ int32_t file_readdir(dir_handle_t dirls, api_file_direntry_t* entry)
 
 int32_t file_closedir(dir_handle_t dir)
 {
-    return fl_closedir((FL_DIR*) dir);
+    int32_t res = fl_closedir((FL_DIR*) dir);
+    free(dir);
+    return res;
 }
 
 int32_t file_createdir(mountpoint_t* mountpoint, const char* path)

@@ -22,7 +22,7 @@ char* concat(const char* c1, const char* c2)
 
 void task_file(void)
 {
-    dir_handle_t dir = file_opendir(NULL, "/");
+    dir_handle_t dir = api_opendir(TEST_DIR);
     if(!dir)
     {
         printf("Opendir failed!\n");
@@ -33,7 +33,7 @@ void task_file(void)
     file_handle_t f;
     int32_t c;
     char* fname;
-    while(file_readdir(dir, &entry) == 0)
+    while(api_readdir(dir, &entry) == 0)
     {
         printf("Found file: %s\n", entry.filename);
         printf("   Size: 0x%x\n", entry.size);
