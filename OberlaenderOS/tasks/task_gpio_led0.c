@@ -14,13 +14,14 @@
 
 void task_gpio_led0(void)
 {
-    device_id_t gpioDevice = api_gpio_export(GPIO_USERLED0, TRUE);
+    device_id_t gpioDevice = api_gpio_export(GPIO_USERLED0);
 
     device_handle_t handle = api_device_open(gpioDevice);
     if(!handle)
     {
         printf("Could not open device\n");
     }
+    api_device_ioctl(handle, GPIO_DRV_IOCTL_SET_DIR, GPIO_DRV_IOCTL_DIR_OUT);
 
     uint32_t i = 0;
     uint8_t value = 0;

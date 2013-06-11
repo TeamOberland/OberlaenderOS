@@ -23,6 +23,15 @@ typedef int8_t bool_t;
 
 typedef uint8_t driver_id_t;
 typedef uint8_t device_id_t;
+typedef union device_id
+{
+    struct
+    {
+        uint8_t device_number : 4;
+        driver_id_t driver_id : 4;
+    }device_info;
+    device_id_t device_id;
+} device_id_u_t;
 
 typedef void* file_handle_t;
 typedef void* dir_handle_t;

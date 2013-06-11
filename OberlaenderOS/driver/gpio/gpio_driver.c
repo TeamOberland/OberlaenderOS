@@ -9,23 +9,15 @@
 #include "../../kernel/generic/io/gpio.h"
 #include "../../kernel/generic/driver/device_manager.h"
 
-driver_t gpio_driver = {
-    NULL,
-    0,
-    gpio_driver_init,
-    gpio_driver_open,
-    gpio_driver_close,
-    gpio_driver_read,
-    gpio_driver_write
-};
-
+driver_t gpio_driver = { NULL, DEVICE_TYPE_GPIO, gpio_driver_init, gpio_driver_open, gpio_driver_close, gpio_driver_read,
+        gpio_driver_write, gpio_driver_ioctl };
 
 /**
  * The gpio lookup which maps device ids to the according gpio number
  */
 static registered_gpio_t registered_gpios[MAX_GPIO_DEVICES];
 
-static device_id_t gpio_driver_export(uint32_t gpio, bool_t output)
+static device_id_t gpio_driver_export(uint32_t gpio)
 {
     int i;
     int freeSlot = -1;
@@ -35,6 +27,7 @@ static device_id_t gpio_driver_export(uint32_t gpio, bool_t output)
         if (!registered_gpios[i].used)
         {
             freeSlot = i;
+            break;
         }
         // GPIO already exported
         else if (registered_gpios[i].gpio == gpio)
@@ -47,11 +40,11 @@ static device_id_t gpio_driver_export(uint32_t gpio, bool_t output)
     {
         // create device info for later lookup
         registered_gpios[freeSlot].used = TRUE;
-        registered_gpios[freeSlot].output = output;
         registered_gpios[freeSlot].gpio = gpio;
 
         // register new device node in device manager
-        registered_gpios[freeSlot].device = device_manager_add_device(gpio_driver.deviceManager, &gpio_driver, &registered_gpios[freeSlot]);
+        registered_gpios[freeSlot].device = device_manager_add_device(gpio_driver.deviceManager, &gpio_driver,
+                &registered_gpios[freeSlot]);
 
         return registered_gpios[freeSlot].device;
     }
@@ -100,18 +93,6 @@ static registered_gpio_t* gpio_get_registered(device_id_t device)
 
 int16_t gpio_driver_open(device_id_t device)
 {
-    registered_gpio_t* reg = gpio_get_registered(device);
-    if (reg != NULL)
-    {
-        if (reg->output)
-        {
-            gpio_direction_output(reg->gpio);
-        }
-        else
-        {
-            gpio_direction_input(reg->gpio);
-        }
-    }
     return 0;
 }
 
@@ -127,7 +108,7 @@ int16_t gpio_driver_read(device_id_t device, void* buffer, uint32_t count)
     if (reg != NULL)
     {
         int32_t val = gpio_get_value(reg->gpio);
-        *((uint8_t*)buffer) = (uint8_t) val;
+        *((uint8_t*) buffer) = (uint8_t) val;
         return 0;
     }
     return -1;
@@ -138,9 +119,36 @@ int16_t gpio_driver_write(device_id_t device, void* buffer, uint32_t count)
     registered_gpio_t* reg = gpio_get_registered(device);
     if (reg != NULL)
     {
-        uint8_t val = *((uint8_t*)buffer);
+        uint8_t val = *((uint8_t*) buffer);
         gpio_set_value(reg->gpio, val);
         return 0;
     }
+    return -1;
+}
+
+int32_t gpio_driver_ioctl(device_id_t device, uint32_t cmd, uint32_t arg)
+{
+    registered_gpio_t* reg = gpio_get_registered(device);
+    if (reg == NULL)
+    {
+        return -1;
+    }
+
+    switch (cmd)
+    {
+        case GPIO_DRV_IOCTL_SET_DIR:
+
+            switch (arg)
+            {
+                case GPIO_DRV_IOCTL_DIR_OUT:
+                    gpio_direction_output(reg->gpio);
+                    return 0;
+                case GPIO_DRV_IOCTL_DIR_IN:
+                    gpio_direction_input(reg->gpio);
+                    return 0;
+            }
+            return -1;
+    }
+
     return -1;
 }

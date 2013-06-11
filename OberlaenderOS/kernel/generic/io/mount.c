@@ -124,6 +124,7 @@ void mountpoint_manager_default_mountpoints(mountpoint_manager_t* manager)
 #define MAX_PATH_PARTS 10
 static char** split_path(const char* path, uint32_t* count)
 {
+    char* copy;
     char** result = malloc(MAX_PATH_PARTS * sizeof(char*));
     int len = strlen(path);
     char* cur;
@@ -133,14 +134,17 @@ static char** split_path(const char* path, uint32_t* count)
         return NULL;
     }
 
+    copy = malloc(strlen(path) + 1);
+    memcpy(copy, path, strlen(path)+1);
     *count = 0;
-    cur = strtok((char*)path, "/");
+    cur = strtok((char*)copy, "/");
     while (cur != NULL)
     {
         result[*count] = cur;
         *count += 1;
         cur = strtok(NULL, "/");
     }
+//    free(copy);
 
     return result;
 }
@@ -162,32 +166,45 @@ static mountpoint_t* mount_find_mountpoint(const char* name)
 
 file_handle_t mount_open(const char* path, const char* mode)
 {
-    mount_handle_t* m;
+    mount_handle_t* result;
     uint32_t pathCount;
     char** pathParts;
 
     pathCount = 0;
     pathParts = split_path(path, &pathCount);
 
-    if (pathCount == 1 || pathParts == NULL)
+    if (pathCount == 0 || pathParts == NULL)
     {
-        return (file_handle_t) 0;
+        if(pathParts != NULL)
+        {
+            free(pathParts);
+        }
+        return 0;
     }
 
     // search for mountpoint
-    char* nodeName = pathParts[1];
-    char* subPath = substring(path, 1 + strlen(nodeName), -1);
+    char* nodeName = pathParts[0];
+    char* subPath = substring(path, 1 + strlen(nodeName),-1);
+    bool_t subPathFound = subPath != NULL;
+    if(!subPathFound) // empty subpath?
+    {
+        // set root
+        subPath = "/";
+    }
     mountpoint_t* mp = mount_find_mountpoint(nodeName);
+
     if (mp != NULL)
     {
-        m = malloc(sizeof(mount_handle_t));
-        m->mountPoint = mp;
-        m->internalHandle = global_mountpoint_manager.handlers[mp->type]->open(mp, subPath, mode);
-        free(subPath);
-        return (file_handle_t) m;
+        result = malloc(sizeof(mount_handle_t));
+        result->mountPoint = mp;
+        result->internalHandle = global_mountpoint_manager.handlers[mp->type]->open(mp, subPath, mode);
+        if(subPathFound) free(subPath);
+        free(pathParts);
+        return (file_handle_t)result;
     }
-    free(subPath);
-    return (file_handle_t) 0;
+    if(subPathFound) free(subPath);
+    free(pathParts);
+    return 0;
 }
 
 void mount_close(file_handle_t handle)
@@ -236,7 +253,7 @@ int32_t mount_write(void* buffer, int32_t size, int32_t count, file_handle_t han
 int32_t mount_read(void* buffer, int32_t size, int32_t count, file_handle_t handle)
 {
     mount_handle_t* mh = (mount_handle_t*) handle;
-    return global_mountpoint_manager.handlers[mh->mountPoint->type]->write(buffer, size, count, mh->internalHandle);
+    return global_mountpoint_manager.handlers[mh->mountPoint->type]->read(buffer, size, count, mh->internalHandle);
 }
 
 int32_t mount_seek(file_handle_t handle, int32_t offset, int32_t origin)
@@ -265,29 +282,42 @@ int32_t mount_eof(file_handle_t handle)
 
 int32_t mount_remove(const char* filename)
 {
-    int32_t r;
+    int32_t result = 0;
     uint32_t pathCount;
     char** pathParts;
 
     pathCount = 0;
     pathParts = split_path(filename, &pathCount);
 
-    if (pathCount == 1 || pathParts == NULL)
+    if (pathCount == 0 || pathParts == NULL)
     {
+        if(pathParts != NULL)
+        {
+            free(pathParts);
+        }
         return 0;
     }
 
     // search for mountpoint
-    char* nodeName = pathParts[1];
-    char* subPath = substring(filename, 1 + strlen(nodeName), 1);
+    char* nodeName = pathParts[0];
+    char* subPath = substring(filename, 1 + strlen(nodeName),-1);
+    bool_t subPathFound = subPath != NULL;
+    if(!subPathFound) // empty subpath?
+    {
+        // set root
+        subPath = "/";
+    }
     mountpoint_t* mp = mount_find_mountpoint(nodeName);
+
     if (mp != NULL)
     {
-        r = global_mountpoint_manager.handlers[mp->type]->remove(mp, subPath);
-        free(subPath);
-        return r;
+        result = global_mountpoint_manager.handlers[mp->type]->remove(mp, subPath);
+        if(subPathFound) free(subPath);
+        free(pathParts);
+        return result;
     }
-    free(subPath);
+    if(subPathFound) free(subPath);
+    free(pathParts);
     return 0;
 }
 
@@ -327,9 +357,11 @@ dir_handle_t mount_opendir(const char* path)
         result->mountPoint = mp;
         result->internalHandle = global_mountpoint_manager.handlers[mp->type]->opendir(mp, subPath);
         if(subPathFound) free(subPath);
+        free(pathParts);
         return (dir_handle_t)result;
     }
     if(subPathFound) free(subPath);
+    free(pathParts);
     return 0;
 }
 
@@ -351,56 +383,82 @@ int32_t mount_closedir(dir_handle_t dir)
 
 int32_t mount_createdir(const char* path)
 {
-    int32_t r;
+    int32_t result = 0;
     uint32_t pathCount;
     char** pathParts;
 
     pathCount = 0;
     pathParts = split_path(path, &pathCount);
 
-    if (pathCount == 1 || pathParts == NULL)
+    if (pathCount == 0 || pathParts == NULL)
     {
+        if(pathParts != NULL)
+        {
+            free(pathParts);
+        }
         return 0;
     }
 
     // search for mountpoint
-    char* nodeName = pathParts[1];
-    char* subPath = substring(path, 1 + strlen(nodeName), -1);
+    char* nodeName = pathParts[0];
+    char* subPath = substring(path, 1 + strlen(nodeName),-1);
+    bool_t subPathFound = subPath != NULL;
+    if(!subPathFound) // empty subpath?
+    {
+        // set root
+        subPath = "/";
+    }
     mountpoint_t* mp = mount_find_mountpoint(nodeName);
+
     if (mp != NULL)
     {
-        r = global_mountpoint_manager.handlers[mp->type]->createdir(mp, subPath);
-        free(subPath);
-        return r;
+        result = global_mountpoint_manager.handlers[mp->type]->createdir(mp, subPath);
+        if(subPathFound) free(subPath);
+        free(pathParts);
+        return result;
     }
-    free(subPath);
+    if(subPathFound) free(subPath);
+    free(pathParts);
     return 0;
 }
 
 int32_t mount_isdir(const char* path)
 {
-    int32_t r;
+    int32_t result = 0;
     uint32_t pathCount;
     char** pathParts;
 
     pathCount = 0;
     pathParts = split_path(path, &pathCount);
 
-    if (pathCount == 1 || pathParts == NULL)
+    if (pathCount == 0 || pathParts == NULL)
     {
+        if(pathParts != NULL)
+        {
+            free(pathParts);
+        }
         return 0;
     }
 
     // search for mountpoint
-    char* nodeName = pathParts[1];
-    char* subPath = substring(path, 1 + strlen(nodeName), -1);
+    char* nodeName = pathParts[0];
+    char* subPath = substring(path, 1 + strlen(nodeName),-1);
+    bool_t subPathFound = subPath != NULL;
+    if(!subPathFound) // empty subpath?
+    {
+        // set root
+        subPath = "/";
+    }
     mountpoint_t* mp = mount_find_mountpoint(nodeName);
+
     if (mp != NULL)
     {
-        r = global_mountpoint_manager.handlers[mp->type]->isdir(mp, subPath);
-        free(subPath);
-        return r;
+        result = global_mountpoint_manager.handlers[mp->type]->isdir(mp, subPath);
+        if(subPathFound) free(subPath);
+        free(pathParts);
+        return result;
     }
-    free(subPath);
+    if(subPathFound) free(subPath);
+    free(pathParts);
     return 0;
 }

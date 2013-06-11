@@ -1,8 +1,8 @@
 /*
- * main_daniel.c
+ * main_manuel.c
  *
  *  Created on: 21.03.2013
- *      Author: Daniel
+ *      Author: Manuel
  */
 
 #include "kernel/generic/kernel.h"

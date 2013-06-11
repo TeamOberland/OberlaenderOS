@@ -8,17 +8,6 @@
 #include "device_manager.h"
 #include <stdlib.h>
 
-typedef union device_id
-{
-    struct
-    {
-        uint8_t device_number : 4;
-        driver_id_t driver_id : 4;
-    }device_info;
-    device_id_t device_id;
-} device_id_u_t;
-
-
 device_manager_t* global_device_manager;
 
 device_manager_t* device_manager_init(void)
@@ -43,23 +32,8 @@ void device_manager_register_driver(device_manager_t* dm, driver_t* driver)
     if(driver != NULL && driver->init != NULL)
     {
         driver->deviceManager = dm;
-        driver->driver_id=device_manager_get_next_driverId();
         driver->init();
     }
-}
-
-driver_id_t device_manager_get_next_driverId()
-{
-    driver_id_t max=0;
-    uint8_t i = 0;
-    for(i = 0; i < MAX_DEVICE_COUNT; i++)
-    {
-        if(global_device_manager->loadedDevice[i].driver!=NULL&&global_device_manager->loadedDevice[i].driver->driver_id>max)
-        {
-            max = global_device_manager->loadedDevice[i].driver->driver_id;
-        }
-    }
-    return ++max;
 }
 
 device_id_t device_manager_get_next_deviceId(driver_t* driver)

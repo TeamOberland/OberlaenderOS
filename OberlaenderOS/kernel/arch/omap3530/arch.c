@@ -7,7 +7,7 @@
 
 #include "../../genarch/arch.h"
 
-#include "interrupts/timer.h"
+#include "interrupts/clocks.h"
 #include "../../../lib/types.h"
 #include "../../genarch/uart/uart.h"
 

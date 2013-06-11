@@ -91,9 +91,9 @@ void swi_scheduler_run(void)
 //
 
 
-void swi_gpio_export(uint32_t gpio, bool_t output, device_id_t* deviceId)
+void swi_gpio_export(uint32_t gpio, device_id_t* deviceId)
 {
-    *deviceId = gpio_export(gpio, output);
+    *deviceId = gpio_export(gpio);
 }
 
 //
@@ -118,6 +118,11 @@ void swi_device_read(device_handle_t handle, void* buffer, uint32_t count)
 void swi_device_write(device_handle_t handle, void* buffer, uint32_t count)
 {
     device_write(global_device_manager,handle, buffer, count);
+}
+
+void swi_device_ioctl(device_handle_t handle, uint32_t cmd, uint32_t arg, int32_t* res)
+{
+    *res = device_ioctl(global_device_manager, handle, cmd, arg);
 }
 
 //
@@ -250,7 +255,7 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg
             //
             // GPIO
         case SYSCALL_GPIO_EXPORT:
-            swi_gpio_export(arg1, (bool_t) arg2, (device_id_t*) arg3);
+            swi_gpio_export(arg1, (device_id_t*) arg2);
             break;
 
             // Device
@@ -265,6 +270,9 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg
             break;
         case SYSCALL_DEVICE_WRITE:
             swi_device_write((device_handle_t) arg1, (void*) arg2, arg3);
+            break;
+        case SYSCALL_DEVICE_IOCTL:
+            swi_device_ioctl((device_handle_t) arg1, arg2, arg3, (int32_t*)arg4);
             break;
 
             //

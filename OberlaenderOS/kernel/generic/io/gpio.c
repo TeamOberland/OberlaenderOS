@@ -16,11 +16,11 @@ void gpio_init_device_exporter(gpio_exporter_t* exporter)
     main_exporter = exporter;
 }
 
-device_id_t gpio_export(uint32_t gpio, bool_t output)
+device_id_t gpio_export(uint32_t gpio)
 {
     if (main_exporter != NULL)
     {
-        return main_exporter->exportGpio(gpio, output);
+        return main_exporter->exportGpio(gpio);
     }
     return -1;
 }

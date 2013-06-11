@@ -6,17 +6,18 @@
  */
 
 #include "uart_driver.h"
-#include "../kernel/generic/driver/device_manager.h"
-#include "../kernel/generic/io/uart.h"
+#include "../../kernel/generic/driver/device_manager.h"
+#include "../../kernel/generic/io/uart.h"
 
 driver_t uart_driver = {
     NULL,
-    0,
+    DEVICE_TYPE_UART,
     uart_driver_init,
     uart_driver_open,
     uart_driver_close,
     uart_driver_read,
-    uart_driver_write
+    uart_driver_write,
+    uart_driver_ioctl
 };
 
 static registered_uart_t registered_uarts[MAX_UART_DEVICES];
@@ -104,5 +105,9 @@ int16_t uart_driver_write(device_id_t device, void* buffer, uint32_t count)
     return 0;
 }
 
+int32_t uart_driver_ioctl(device_id_t device, uint32_t cmd, uint32_t arg)
+{
+    return 0;
+}
 
 

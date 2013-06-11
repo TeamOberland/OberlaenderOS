@@ -10,7 +10,12 @@
 
 #include "types.h"
 
-device_id_t api_gpio_export(uint32_t gpio, bool_t output);
+// NOTE: Copied from gpio_driver.h
+#define GPIO_DRV_IOCTL_SET_DIR 1
+#define GPIO_DRV_IOCTL_DIR_OUT 0
+#define GPIO_DRV_IOCTL_DIR_IN 1
+
+device_id_t api_gpio_export(uint32_t gpio);
 
 
 #endif /* GPIO_H_ */
