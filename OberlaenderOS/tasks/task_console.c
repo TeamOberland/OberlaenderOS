@@ -16,26 +16,39 @@
 
 void task_console(void)
 {
-    uint8_t toRead[64];
-    uint8_t index = 0;
+    char toRead[64];
     memset(&toRead,0,64);
     device_id_t uartDevice = (1<<4)+UART_3;
     device_handle_t handle= api_device_open(uartDevice);
-    api_device_write(handle,"hallo\r\n\0",8);
-//    api_device_write(handle,"hallo\r\n\0",8);
-//    api_device_write(handle,"hallo\r\n\0",8);
-//    api_device_write(handle,"hallo\r\n\0",8);
-//    api_device_write(handle,"hallo\r\n\0",8);
-//    api_device_write(handle,"hallo\r\n\0",8);
-//    api_device_write(handle,"hallo\r\n\0",8);
-//    api_device_write(handle,"hallo\r\n\0",8);
-//    api_device_write(handle,"hallo\r\n\0",8);
-//    api_device_write(handle,"hallo\r\n\0",8);
+    char* message = "\r\n welcome to oberlaenderOS\r\n\0";
+    api_device_write(handle,message,strlen(message));
+    message="possible commands are:\r\n\0";
+    api_device_write(handle,message,strlen(message));
+    message ="echo\r\n pwd\r\n\0";
+    api_device_write(handle,message,strlen(message));
+    uint8_t i = 0;
+
     while(TRUE)
     {
-        api_device_read(handle,&toRead,64);
-        api_device_write(handle,&toRead,64);
+        if(i>=64)
+        {
+            i=0;
+        }
+
+
+        api_device_read(handle,&toRead[i],1);
+        i++;
+        //line ending
+        if(toRead[i-1]==13&&toRead[i]==10)
+        {
+            message="trying to execute your command:\r\n\0";
+            api_device_write(handle,message,strlen(message));
+        }
+
+        api_device_write(handle,&toRead[i-1],1);
     }
+
+
 
 
     api_device_close(handle);

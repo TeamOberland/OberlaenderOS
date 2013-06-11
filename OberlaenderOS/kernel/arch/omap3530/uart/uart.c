@@ -88,9 +88,12 @@ void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_proto
 
     //7
     memory_mapped_io_t tlr_reg = omap_uart_get_register(uartPort,UART_TLR_REG);
-    *(tlr_reg)=0;
-    SET_BIT(fcr_reg,7);
-    SET_BIT(fcr_reg,6);
+    SET_BIT(tlr_reg,4);
+    SET_BIT(tlr_reg,0) ;
+//    *(tlr_reg)=0;
+//    SET_BIT(fcr_reg,7);
+//    SET_BIT(fcr_reg,6);
+//    SET_BIT(fcr_reg,);
 
     //8
     memory_mapped_io_t scr_reg = omap_uart_get_register(uartPort,UART_SCR_REG);
