@@ -19,7 +19,7 @@ void task_console(void)
     uint8_t toRead[64];
     uint8_t index = 0;
     memset(&toRead,0,64);
-    device_id_t uartDevice = (1<<4)+UART_3;
+    device_id_t uartDevice = api_device_build_id(DEVICE_TYPE_UART, UART_3);
     device_handle_t handle= api_device_open(uartDevice);
     api_device_write(handle,"hallo\r\n\0",8);
 //    api_device_write(handle,"hallo\r\n\0",8);

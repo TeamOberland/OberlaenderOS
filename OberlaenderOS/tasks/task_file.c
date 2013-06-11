@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TEST_DIR "/sd"
+#define TEST_DIR "/sd/"
 char* concat(const char* c1, const char* c2)
 {
     char* c3 = malloc(strlen(c1) + strlen(c2) + 1);
@@ -22,6 +22,20 @@ char* concat(const char* c1, const char* c2)
 
 void task_file(void)
 {
+//    file_handle_t f = api_fopen("/sd/Banner.raw", "rb");
+//    if (!f)
+//    {
+//        printf("Could open file\n");
+//        return;
+//    }
+//    int32_t c;
+//    while (!api_feof(f))
+//    {
+//        c = api_fgetc(f);
+//        printf("%c", c);
+//        fflush(stdout);
+//    }
+//    api_fclose(f);
     dir_handle_t dir = api_opendir(TEST_DIR);
     if(!dir)
     {
@@ -54,13 +68,14 @@ void task_file(void)
                 printf("%c", c);
                 fflush(stdout);
             }
+            api_fclose(f);
         }
 
         printf("\n~~~~ Contents END\n");
     }
 
     api_closedir(dir);
-}
+            }
 //
 //
 //void task_file(void)

@@ -23,7 +23,8 @@ char* substring(const char* str, uint32_t begin, int32_t len)
     if (len == 0 || strlen(str) < (begin + len))
         return 0;
 
-    char* sub = malloc(len);
-    memcpy(sub, str, len);
+    char* sub = malloc(len + 1);
+    memcpy(sub, str + begin, len);
+    sub[len] = '\0';
     return sub;
 }

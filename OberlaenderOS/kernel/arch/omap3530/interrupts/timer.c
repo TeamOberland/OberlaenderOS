@@ -6,6 +6,7 @@
  */
 
 #include "timer.h"
+#include "clocks.h"
 #include "../../../errno.h"
 #include "../../../genarch/interrupts/timer.h"
 

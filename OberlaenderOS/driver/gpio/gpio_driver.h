@@ -19,6 +19,7 @@ int16_t gpio_driver_write(device_id_t device, void* buffer, uint32_t count);
 int32_t gpio_driver_ioctl(device_id_t device, uint32_t cmd, uint32_t arg);
 
 #define MAX_GPIO_DEVICES 255
+#define GPIO_DRIVER_ID 0x0001
 extern driver_t gpio_driver;
 
 #define GPIO_DRV_IOCTL_SET_DIR 1

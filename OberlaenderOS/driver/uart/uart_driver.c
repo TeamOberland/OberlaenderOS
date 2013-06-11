@@ -6,12 +6,12 @@
  */
 
 #include "uart_driver.h"
-#include "../kernel/generic/driver/device_manager.h"
-#include "../kernel/generic/io/uart.h"
+#include "../../kernel/generic/driver/device_manager.h"
+#include "../../kernel/generic/io/uart.h"
 
 driver_t uart_driver = {
     NULL,
-    0,
+    DEVICE_TYPE_UART,
     uart_driver_init,
     uart_driver_open,
     uart_driver_close,
