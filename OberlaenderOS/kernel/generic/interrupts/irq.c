@@ -10,10 +10,9 @@
 #include "../../genarch/scheduler/context.h"
 #include "../../genarch/interrupts/interrupts.h"
 #include "../scheduler/scheduler.h"
+#include "../mmu/mmu.h"
 
 static irq_listener irq_listeners[IRQ_COUNT];
-
-extern scheduler_t* _scheduler;
 
 /**
  * Initializes the IRQ environment.
@@ -88,7 +87,6 @@ interrupt void irq_handle()
 #pragma INTERRUPT(udef_handle, UDEF)
 interrupt void udef_handle()
 {
-    __disable_interrupts();
     printf("Undefined Error occured\n");
 }
 
@@ -98,8 +96,18 @@ interrupt void udef_handle()
 #pragma INTERRUPT(pabt_handle, PABT)
 interrupt void pabt_handle()
 {
-    /* TODO: Tell MMU about prefetch abort */
-    printf("Prefetch abort\n");
+    asm(" SUB R14, R14, #4");
+    asm(" SUB R13, R13, #4");
+    asm(" STR R14, [R13]");
+    __context_save();
+    asm(" ADD R13, R13, #4");
+
+    if(!mmu_handle_prefetch_abort())
+    {
+        scheduler_run(global_scheduler);
+    }
+
+    __context_load();
 }
 
 /**
@@ -108,8 +116,18 @@ interrupt void pabt_handle()
 #pragma INTERRUPT(dabt_handle, DABT)
 interrupt void dabt_handle()
 {
-    /* TODO: Tell MMU about data abort */
-    printf("Data abort\n");
+    asm(" SUB R14, R14, #8");
+    asm(" SUB R13, R13, #4");
+    asm(" STR R14, [R13]");
+    __context_save();
+    asm(" ADD R13, R13, #4");
+
+    if(!mmu_handle_data_abort())
+    {
+        scheduler_run(global_scheduler);
+    }
+
+    __context_load();
 }
 
 /**

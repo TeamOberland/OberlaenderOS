@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "tasks/task_hello_world.h"
 
 //void idle_task()
 //{
@@ -261,8 +262,9 @@ void setup_device_manager()
 //    file_closedir(&dir);
 //}
 
-extern void task_video(void);
-extern void task_file(void);
+
+
+
 void main_daniel(void)
 {
     printf("Setup kernel\n");
@@ -274,13 +276,14 @@ void main_daniel(void)
     __enable_interrupts();
     __switch_to_user_mode();
 
+    scheduler_add_process_from_intel_hex(global_scheduler, task_hello_world);
 //    scheduler_add_process(global_scheduler, task_file);
 //    scheduler_add_process(global_scheduler, task_blink_led0);
 //    scheduler_add_process(global_scheduler, task_blink_led1);
 //    scheduler_add_process(global_scheduler, task_ipc_server);
 //    scheduler_add_process(global_scheduler, task_ipc_client);
 //    scheduler_add_process(global_scheduler, task_gpio_led0);
-    scheduler_add_process(global_scheduler, task_video);
+//    scheduler_add_process(global_scheduler, task_video);
     scheduler_start(1000);
     api_scheduler_run();
 

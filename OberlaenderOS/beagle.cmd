@@ -25,10 +25,13 @@ MEMORY
    ext_ddr:  ORIGIN = 0x82000000  LENGTH = 0x10000000
 }
 
+
+
+
+
 SECTIONS
 {
 	.intvecs   > int_vecs {
-		_intvecs_start = .;
 		*(.intvecs)
 	}
 
@@ -37,6 +40,7 @@ SECTIONS
 	.text2 		> int_ram {
 		swi.obj
 		irq.obj
+		int_ram_user_start = .;
 	}
 
     .const      > ext_ddr
@@ -62,5 +66,6 @@ SECTIONS
 		systemStack = .;
 		. = . + (4 * 1024);
 		abortStack = .;
+		ext_ddr_user_start = .;
 	}
 }

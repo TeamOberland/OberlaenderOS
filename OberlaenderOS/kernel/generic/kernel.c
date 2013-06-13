@@ -11,6 +11,7 @@
 #include "interrupts/irq.h"
 #include "interrupts/timer.h"
 #include "scheduler/scheduler.h"
+#include "mmu/mmu.h"
 
 void setup_kernel()
 {
@@ -24,7 +25,10 @@ void setup_kernel()
     /* timer_init(); */
     ipc_init();
     irq_enable();
+
+    mmu_init();
 }
+
 
 void kernel_sleep(uint32_t ms)
 {

@@ -11,6 +11,7 @@
 
 #include "../../../lib/types.h"
 #include "../../genarch/arch.h"
+#include "../mmu/mmu_types.h"
 
 typedef uint8_t process_id_t;
 
@@ -30,12 +31,17 @@ typedef enum process_state
 	PROCESS_EXITING
 } process_state_t;
 
+
 typedef struct _process
 {
     process_state_t state;
     process_id_t id;
 //	uint32_t priority;
-	process_callback_t callback;
+
+    mmu_table_pointer_t masterTable;
+    uint32_t pageCount; /**< how many pages (in code) does the code have */
+    memory_mapped_io_t code; /**< memory address of the process code */
+
 	DECLARE_PROCESS_CONTEXT(context)
 } process_t;
 

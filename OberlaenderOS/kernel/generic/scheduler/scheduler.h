@@ -47,7 +47,8 @@ void scheduler_start(uint32_t speed);
 
 process_t* scheduler_current_process(scheduler_t* scheduler);
 
-void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback);
+//void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback);
+void scheduler_add_process_from_intel_hex(scheduler_t* scheduler, const char* data);
 
 void scheduler_run(scheduler_t* scheduler);
 
@@ -55,5 +56,7 @@ void scheduler_free(scheduler_t* scheduler);
 
 void scheduler_suspend(process_t* process);
 void scheduler_resume(process_t* process);
+
+void scheduler_kill_current(scheduler_t* scheduler);
 
 #endif /* SCHEDULER_H_ */

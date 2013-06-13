@@ -15,7 +15,7 @@
 
 static uint32_t rastport_get_bpp(rastport_t* rast)
 {
-    switch(rast->target->format)
+    switch (rast->target->format)
     {
         case BITMAP_FORMAT_RGB16:
             return 16;
@@ -29,7 +29,7 @@ static uint32_t rastport_get_bpp(rastport_t* rast)
 
 static inline void rastport_set_color(void* px, color_t c)
 {
-    *((color_t*)px) = c;
+    *((color_t*) px) = c;
 }
 
 static void rastport_move_to(rastport_t* rast, uint32_t x, uint32_t y)
@@ -60,7 +60,7 @@ static uint32_t min(uint32_t x, uint32_t y)
 static void rastport_raw_image(rastport_t* rast, video_element_t* elm)
 {
     file_handle_t fh = mount_open(elm->data.raw_image.path, "rb");
-    if(!fh)
+    if (!fh)
     {
         return;
     }
@@ -81,42 +81,39 @@ static void rastport_raw_image(rastport_t* rast, video_element_t* elm)
     uint32_t targetW = x2 - x1;
     uint32_t targetH = y2 - y1;
     uint32_t bufSize = targetW * RAW_IMAGE_BYTE_PER_PIXEL;
-    uint8_t* buf = malloc(bufSize);
     uint32_t row;
 
     if (x2 >= x1 && y2 >= y1)
     {
-        for(row = 0; row < targetH; row++)
+        for (row = 0; row < targetH; row++)
         {
-            // read a row
-            mount_read(buf, bufSize, 1, fh);
             // move target pointer
             rastport_move_to(rast, elm->data.rectangle.x, elm->data.rectangle.y + row);
-            // copy the data
-            memcpy(rast->currentPixel, buf, bufSize);
+            // read a row
+            mount_read(rast->currentPixel, 1, bufSize, fh);
         }
     }
-    free(buf);
     mount_close(fh);
 }
 
 static void rastport_fill_rect(rastport_t* rast, video_element_t* elm)
 {
-    if(elm->data.rectangle.h == 0 || elm->data.rectangle.w == 0) return;
+    if (elm->data.rectangle.h == 0 || elm->data.rectangle.w == 0)
+        return;
 
-    uint32_t x,y;
+    uint32_t x, y;
 
     // manually fill first row
     rastport_move_to(rast, elm->data.rectangle.x, elm->data.rectangle.y);
     void* src = rast->currentPixel;
-    for(x = 0; x < elm->data.rectangle.w; x++)
+    for (x = 0; x < elm->data.rectangle.w; x++)
     {
         rastport_move_to(rast, elm->data.rectangle.x + x, elm->data.rectangle.y);
         rastport_set_color(rast->currentPixel, elm->color);
     }
 
     // memcopy further rows
-    for(y = 1; y < elm->data.rectangle.h; y++)
+    for (y = 1; y < elm->data.rectangle.h; y++)
     {
         rastport_move_to(rast, elm->data.rectangle.x, elm->data.rectangle.y + y);
         memcpy(rast->currentPixel, src, rast->target->stride);
@@ -128,7 +125,7 @@ static void rastport_fill_rect(rastport_t* rast, video_element_t* elm)
 
 static void rastport_draw_line(rastport_t* rast, video_element_t* elm)
 {
-    uint32_t x1,y1,x2,y2;
+    uint32_t x1, y1, x2, y2;
     uint32_t dx, dy;
     uint32_t stepY, stepX;
     uint32_t err, err2;
@@ -146,20 +143,20 @@ static void rastport_draw_line(rastport_t* rast, video_element_t* elm)
 
     rastport_move_to(rast, x1, y2);
 
-    while(x1 != x2 || y1 != y2)
+    while (x1 != x2 || y1 != y2)
     {
         rastport_move_to(rast, x1, y1);
         rastport_set_color(rast->currentPixel, elm->color);
 
-        err2 = 2*err;
+        err2 = 2 * err;
 
-        if(err2 > dy)
+        if (err2 > dy)
         {
             err += dy;
             x1 += stepX;
         }
 
-        if(err2 < dx)
+        if (err2 < dx)
         {
             err += dx;
             y1 = stepY;
