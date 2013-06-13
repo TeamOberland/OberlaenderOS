@@ -79,12 +79,12 @@ int16_t uart_driver_read(device_id_t device, void* buffer, uint32_t count)
     registered_uart_t* reg = uart_get_registered(device);
     int i = 0;
 
-    //for (; i < count; i++) {
+    for (; i < count; i++) {
         while (uart_is_empty_read_queue(reg->uart_port));
 
         // block while waiting for data
         uart_read(reg->uart_port, &castedBuffer[i]);
-    //}
+    }
 
     return 0;
 }
