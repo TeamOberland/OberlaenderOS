@@ -5,6 +5,7 @@
  *      Author: Daniel
  */
 
+#include "../../../generic/mmu/mmu.h"
 #include "../../../genarch/mmu/mmu.h"
 
 uint8_t __mmu_get_domain_access(uint8_t domain)
@@ -18,7 +19,7 @@ uint8_t __mmu_get_domain_access(uint8_t domain)
     }
 }
 
-inline void __mmu_init(void)
+void __mmu_init(void)
 {
     //
     // Initialize domain access control (we use only domain0 therefore we have 11 there)
@@ -32,7 +33,7 @@ inline void __mmu_init(void)
     asm("  MCR   P15, #0, R0, C3, C0, #0");
 }
 
-inline void __mmu_enable(void)
+void __mmu_enable(void)
 {
     // TODO: move to arch
     asm("  MRC p15, #0, r0, c1, c0, #0");

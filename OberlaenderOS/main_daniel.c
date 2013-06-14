@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "tasks/task_blink.h"
 #include "tasks/task_hello_world.h"
 
 //void idle_task()
@@ -30,43 +31,43 @@
 ///**
 // * A simple led GPIO test without interrupts
 // */
-//void led_test1(void)
-//{
-//    printf("Setup GPIOs\n");
-//    gpio_direction_output(GPIO_USERLED0);
-//    gpio_direction_output(GPIO_USERLED1);
-//    gpio_direction_input(GPIO_USERBUTTON);
-//
-//    volatile int i, led0 = 0, led1 = 1, led0Mask = 0x00, led1Mask = 0x01;
-//
-//    while (1)
-//    {
-//        for (i = 0; i < 150000; i++)
-//            ;
-//
-//        if (gpio_get_value(GPIO_USERBUTTON) == 0x01) /* if button pressed */
-//        {
-//            printf("Button Press detected, inverting LED masks\n");
-//            /* invert leds to blink */
-//            led0Mask ^= 1;
-//            led1Mask ^= 1;
-//
-//            /* reset leds */
-//            led0 = led0Mask;
-//            led1 = led1Mask;
-//
-//            /* wait for button release */
-//            while (gpio_get_value(GPIO_USERBUTTON) == 0x01)
-//                ;
-//        }
-//
-//        gpio_set_value(GPIO_USERLED0, led0);
-//        gpio_set_value(GPIO_USERLED1, led1);
-//
-//        led0 ^= led0Mask;
-//        led1 ^= led1Mask;
-//    }
-//}
+void led_test1(void)
+{
+    printf("Setup GPIOs\n");
+    gpio_direction_output(GPIO_USERLED0);
+    gpio_direction_output(GPIO_USERLED1);
+    gpio_direction_input(GPIO_USERBUTTON);
+
+    volatile int i, led0 = 0, led1 = 1, led0Mask = 0x00, led1Mask = 0x01;
+
+    while (1)
+    {
+        for (i = 0; i < 150000; i++)
+            ;
+
+        if (gpio_get_value(GPIO_USERBUTTON) == 0x01) /* if button pressed */
+        {
+            printf("Button Press detected, inverting LED masks\n");
+            /* invert leds to blink */
+            led0Mask ^= 1;
+            led1Mask ^= 1;
+
+            /* reset leds */
+            led0 = led0Mask;
+            led1 = led1Mask;
+
+            /* wait for button release */
+            while (gpio_get_value(GPIO_USERBUTTON) == 0x01)
+                ;
+        }
+
+        gpio_set_value(GPIO_USERLED0, led0);
+        gpio_set_value(GPIO_USERLED1, led1);
+
+        led0 ^= led0Mask;
+        led1 ^= led1Mask;
+    }
+}
 //
 ///* TIMER TEST */
 //
@@ -284,12 +285,13 @@ void main_daniel(void)
 //    scheduler_add_process(global_scheduler, task_ipc_client);
 //    scheduler_add_process(global_scheduler, task_gpio_led0);
 //    scheduler_add_process(global_scheduler, task_video);
-    scheduler_start(1000);
+    scheduler_start(10000);
     api_scheduler_run();
+
 
 //    file_test();
 
-    /* led_test1(); */
+//    led_test1();
 
     /* timer_test(); */
 

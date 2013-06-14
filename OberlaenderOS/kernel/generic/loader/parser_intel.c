@@ -38,7 +38,7 @@ static uint32_t parse_hex(const char* data, uint32_t* index, uint32_t size)
             default: digit = 0; break;
         }
 
-        result += (digit << ((size - 1) * 4));
+        result += (digit << ((size - 1 - i) * 4));
         *index += 1;
     }
 
@@ -67,6 +67,7 @@ code_instruction_t* parser_intel_parse_string(const char* data)
         else if (data[index] == ':')
         {
             newinstruction = malloc(sizeof(code_instruction_t));
+            memset(newinstruction, 0, sizeof(code_instruction_t));
             index++;
 
             newinstruction->byteCount = parse_hex(data, &index, 2);
@@ -99,7 +100,7 @@ code_instruction_t* parser_intel_parse_string(const char* data)
             }
             else if (recordType == INTEL_RECORD_TYPE_EXT_LIN_ADDR)
             {
-                addressOffset = parse_hex(data, &index, 2) << 16;
+                addressOffset = parse_hex(data, &index, 4) << 16;
                 free(newinstruction);
             }
             else
@@ -108,6 +109,9 @@ code_instruction_t* parser_intel_parse_string(const char* data)
                 free(newinstruction);
                 break;
             }
+
+            // checksum
+            index += 2;
         }
         else
         {
@@ -116,5 +120,5 @@ code_instruction_t* parser_intel_parse_string(const char* data)
         }
 
     }
-    return NULL;
+    return root;
 }

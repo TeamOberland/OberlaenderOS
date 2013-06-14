@@ -46,8 +46,8 @@
 #define MMU_L2_TABLE_SIZE MMU_L2_PAGE_SIZE * MMU_L2_PAGE_COUNT
 
 // the upper 20 bits of the physical address represent the page address
-#define MMU_L2_TABLE_ENTRY_TO_PAGE(p) ((p) & ~0x1FFF)
-#define MMU_VIRTUAL_TO_L2_TABLE_ENTRY(v) ( ((v) >> 12)  - ( ( (v) >> 12 )  & 0xFFF00 ) )
+#define MMU_L2_TABLE_ENTRY_TO_PAGE(p) (((p) >> 12) << 12)
+#define MMU_VIRTUAL_TO_L2_TABLE_ENTRY(v) ( (v >> 12) & 0xFF)
 
 //
 // Handler

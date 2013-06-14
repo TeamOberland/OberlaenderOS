@@ -16,5 +16,4 @@ uint8_t __mmu_get_domain_access(uint8_t domain);
 void __mmu_load_dabt_data(void);
 void __mmu_update_master_table(void);
 
-
 #endif /* MMU_H_ */

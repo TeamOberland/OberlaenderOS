@@ -47,7 +47,6 @@ void mmu_init(void)
     //
     // create the kernel master table
     kernel_master_table = mmu_create_master_table();
-
     //
     // initialize the kernel master table so the lookup works for the kernel
     mmu_table_pointer_t currentTableEntry = kernel_master_table;
