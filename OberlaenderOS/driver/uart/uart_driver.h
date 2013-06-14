@@ -12,6 +12,7 @@
 #include "../../lib/types.h"
 #include "../../lib/device.h"
 #include "../../kernel/generic/driver/driver.h"
+#include "../../kernel/genarch/uart/uart.h"
 
 void uart_driver_init(void);
 int16_t uart_driver_open(device_id_t device);
@@ -26,8 +27,9 @@ extern driver_t uart_driver;
 
 typedef struct {
     bool_t used;
-    uint32_t uart_port;
+    uint8_t uart_port;
     device_id_t device;
+    bool_t initialized;
 } registered_uart_t;
 
 #endif /* UART_DRIVER_H_ */

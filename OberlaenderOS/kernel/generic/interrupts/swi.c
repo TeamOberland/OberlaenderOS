@@ -117,7 +117,9 @@ void swi_device_read(device_handle_t handle, void* buffer, uint32_t count)
 
 void swi_device_write(device_handle_t handle, void* buffer, uint32_t count)
 {
+    log_debug("swi_device_write start");
     device_write(global_device_manager,handle, buffer, count);
+    log_debug("swi_device_write end");
 }
 
 void swi_device_ioctl(device_handle_t handle, uint32_t cmd, uint32_t arg, int32_t* res)
@@ -223,30 +225,29 @@ void swi_file_isdir(const char* path, int32_t* result)
     *result = mount_isdir(path);
 }
 
-void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t arg5)
+void swi_dispatch(syscall_data_t* data)
 {
 //    printf("[SWI] Handle %i\n", swiNumber);
-    switch (swiNumber)
+    switch (data->swiNumber)
     {
-        //
         // IPC
         case SYSCALL_IPC_REGISTER:
-            swi_ipc_register((const char*) arg1);
+            swi_ipc_register((const char*) data->arg1);
             break;
         case SYSCALL_IPC_UNREGISTER:
-            swi_ipc_unregister((const char*) arg1);
+            swi_ipc_unregister((const char*) data->arg1);
             break;
         case SYSCALL_IPC_SEND:
-            swi_ipc_send((const char*) arg1, (ipc_message_data_t*) arg2);
+            swi_ipc_send((const char*) data->arg1, (ipc_message_data_t*) data->arg2);
             break;
         case SYSCALL_IPC_RECEIVE:
-            swi_ipc_receive((const char*) arg1, (ipc_message_data_t**) arg2);
+            swi_ipc_receive((const char*) data->arg1, (ipc_message_data_t**) data->arg2);
             break;
         case SYSCALL_IPC_WAIT:
-            swi_ipc_wait((const char*) arg1);
+            swi_ipc_wait((const char*) data->arg1);
             break;
 
-            //
+     //
             // Scheduler
         case SYSCALL_SCHEDULER_RUN:
             swi_scheduler_run();
@@ -255,98 +256,103 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg
             //
             // GPIO
         case SYSCALL_GPIO_EXPORT:
-            swi_gpio_export(arg1, (device_id_t*) arg2);
+            swi_gpio_export(data->arg1, (device_id_t*) data->arg2);
             break;
 
             // Device
         case SYSCALL_DEVICE_OPEN:
-            swi_device_open((device_id_t) arg1, (device_handle_t*) arg2);
+            swi_device_open((device_id_t) data->arg1, (device_handle_t*) data->arg2);
             break;
         case SYSCALL_DEVICE_CLOSE:
-            swi_device_close((device_handle_t) arg1);
+            swi_device_close((device_handle_t) data->arg1);
             break;
         case SYSCALL_DEVICE_READ:
-            swi_device_read((device_handle_t) arg1, (void*) arg2, arg3);
+            swi_device_read((device_handle_t) data->arg1, (void*) data->arg2, data->arg3);
             break;
         case SYSCALL_DEVICE_WRITE:
-            swi_device_write((device_handle_t) arg1, (void*) arg2, arg3);
+            break;
+            swi_device_write((device_handle_t) data->arg1, (void*) data->arg2, data->arg3);
             break;
         case SYSCALL_DEVICE_IOCTL:
-            swi_device_ioctl((device_handle_t) arg1, arg2, arg3, (int32_t*)arg4);
+            swi_device_ioctl((device_handle_t) data->arg1, data->arg2, data->arg3, (int32_t*)&data->arg4);
             break;
 
             //
             // File
         case SYSCALL_FILE_OPEN:
-            swi_file_open((const char*)arg1, (const char*)arg2, (file_handle_t*)arg3);
+            swi_file_open((const char*)data->arg1, (const char*)data->arg2, (file_handle_t*)data->arg3);
             break;
         case SYSCALL_FILE_CLOSE:
-            swi_file_close((file_handle_t)arg1);
+            swi_file_close((file_handle_t)data->arg1);
             break;
         case SYSCALL_FILE_FLUSH:
-            swi_file_flush((file_handle_t)arg1, (int32_t*)arg2);
+            swi_file_flush((file_handle_t) data->arg1, (int32_t*)data->arg2);
             break;
         case SYSCALL_FILE_GETC:
-            swi_file_getc((file_handle_t)arg1, (int32_t*)arg2);
+            swi_file_getc((file_handle_t)data->arg1, (int32_t*)data->arg2);
             break;
         case SYSCALL_FILE_GETS:
-            swi_file_gets((char*)arg1, (int32_t)arg2, (file_handle_t)arg3, (char**)arg4);
+            swi_file_gets((char*)data->arg1, (int32_t)data->arg2, (file_handle_t)data->arg3, (char**)data->arg4);
             break;
         case SYSCALL_FILE_PUTC:
-            swi_file_putc((int32_t)arg1, (file_handle_t)arg2, (int32_t*)arg3);
+            swi_file_putc((int32_t)data->arg1, (file_handle_t)data->arg2, (int32_t*)data->arg3);
             break;
         case SYSCALL_FILE_PUTS:
-            swi_file_puts((char*)arg1, (file_handle_t)arg2, (int32_t*)arg3);
+            swi_file_puts((char*)data->arg1, (file_handle_t)data->arg2, (int32_t*)data->arg3);
             break;
         case SYSCALL_FILE_WRITE:
-            swi_file_write((void*)arg1, (int32_t)arg2, (int32_t)arg3, (file_handle_t)arg4, (int32_t*)arg5);
+            swi_file_write((void*)data->arg1, (int32_t)data->arg2, (int32_t)data->arg3, (file_handle_t)data->arg4, (int32_t*)data->arg5);
             break;
         case SYSCALL_FILE_READ:
-            swi_file_read((void*)arg1, (int32_t)arg2, (int32_t)arg3, (file_handle_t)arg4, (int32_t*)arg5);
+            swi_file_read((void*)data->arg1, (int32_t)data->arg2, (int32_t)data->arg3, (file_handle_t)data->arg4, (int32_t*)data->arg5);
             break;
         case SYSCALL_FILE_SEEK:
-            swi_file_seek((file_handle_t)arg1, (int32_t)arg2, (int32_t)arg3, (int32_t*)arg4);
+            swi_file_seek((file_handle_t)data->arg1, (int32_t)data->arg2, (int32_t)data->arg3, (int32_t*)data->arg4);
             break;
         case SYSCALL_FILE_GETPOS:
-            swi_file_getpos((file_handle_t)arg1, (uint32_t*)arg2, (int32_t*)arg3);
+            swi_file_getpos((file_handle_t)data->arg1, (uint32_t*)data->arg2, (int32_t*)data->arg3);
             break;
         case SYSCALL_FILE_TELL:
-            swi_file_tell((file_handle_t)arg1, (int32_t*)arg2);
+            swi_file_tell((file_handle_t)data->arg1, (int32_t*)data->arg2);
             break;
         case SYSCALL_FILE_EOF:
-            swi_file_eof((file_handle_t)arg1, (int32_t*)arg2);
+            swi_file_eof((file_handle_t)data->arg1, (int32_t*)data->arg2);
             break;
         case SYSCALL_FILE_REMOVE:
-            swi_file_remove((const char*)arg1, (int32_t*)arg2);
+            swi_file_remove((const char*)data->arg1, (int32_t*)data->arg2);
             break;
         case SYSCALL_FILE_OPENDIR:
-            swi_file_opendir((const char*)arg1, (dir_handle_t*)arg2);
+            swi_file_opendir((const char*)data->arg1, (dir_handle_t*)data->arg2);
             break;
         case SYSCALL_FILE_READDIR:
-            swi_file_readdir((dir_handle_t)arg1, (api_file_direntry_t*)arg2, (int32_t*)arg3);
+            swi_file_readdir((dir_handle_t)data->arg1, (api_file_direntry_t*)data->arg2, (int32_t*)data->arg3);
             break;
         case SYSCALL_FILE_CLOSEDIR:
-            swi_file_closedir((dir_handle_t)arg1, (int32_t*)arg2);
+            swi_file_closedir((dir_handle_t)data->arg1, (int32_t*)data->arg2);
             break;
         case SYSCALL_FILE_CREATEDIR:
-            swi_file_createdir((const char*)arg1, (int32_t*)arg2);
+            swi_file_createdir((const char*)data->arg1, (int32_t*)data->arg2);
             break;
         case SYSCALL_FILE_ISDIR:
-            swi_file_isdir((const char*)arg1, (int32_t*)arg2);
+            swi_file_isdir((const char*)data->arg1, (int32_t*)data->arg2);
             break;
     }
 }
 
+
+
 #pragma INTERRUPT(swi_handle, SWI)
 #pragma TASK(swi_handle)
-interrupt void swi_handle(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t arg5)
+interrupt void swi_handle(syscall_data_t* data)
 {
     asm(" SUB R13, R13, #4");
     asm(" STR R14, [R13]");
     __context_save();
     asm(" ADD R13, R13, #4");
 
-    swi_dispatch(swiNumber, arg1, arg2, arg3, arg4, arg5);
+    log_debug("2 swiHandle dispatch");
+    swi_dispatch(data);
 
+    log_debug("3 before context load");
     __context_load();
 }

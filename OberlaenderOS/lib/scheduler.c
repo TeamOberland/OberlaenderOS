@@ -10,6 +10,13 @@
 
 void api_scheduler_run(void)
 {
-    syscall(SYSCALL_SCHEDULER_RUN, 0, 0, 0, 0, 0);
+    syscall_data_t data;
+    data.swiNumber=SYSCALL_SCHEDULER_RUN;
+    data.arg1 = 0;
+    data.arg2 =0;
+    data.arg3= 0;
+    data.arg4 = 0;
+    data.arg5 = 0;
+    syscall(&data);
 }
 

@@ -8,6 +8,7 @@
 #include "uart_driver.h"
 #include "../../kernel/generic/driver/device_manager.h"
 #include "../../kernel/generic/io/uart.h"
+#include "../../lib/uart.h"
 
 driver_t uart_driver = {
     NULL,
@@ -44,8 +45,10 @@ void uart_driver_init(void)
     {
         id = device_manager_add_device(global_device_manager,&uart_driver,&registered_uarts[i]);
         registered_uarts[i].used = FALSE;
+        registered_uarts[i].initialized = FALSE;
         registered_uarts[i].device= id;
         registered_uarts[i].uart_port=i+1;
+
 
     }
 }
@@ -56,7 +59,6 @@ int16_t uart_driver_open(device_id_t device)
     if (reg != NULL)
     {
         reg->used=TRUE;
-        uart_init(reg->uart_port);
         return 0;
     }
     return 1;
@@ -98,16 +100,33 @@ int16_t uart_driver_write(device_id_t device, void* buffer, uint32_t count)
         int i = 0;
         for (; i < count; i++) {
             // block while queue is full
-            while (!uart_is_empty_write_queue(reg->uart_port))                ;
-            uart_write(3, &castedBuffer[i]);
+            while (!uart_is_empty_write_queue(reg->uart_port));
+            uart_write(reg->uart_port, &castedBuffer[i]);
         }
+        return 0;
     }
-    return 0;
+    return 1;
 }
 
 int32_t uart_driver_ioctl(device_id_t device, uint32_t cmd, uint32_t arg)
 {
-    return 0;
+    registered_uart_t* reg = uart_get_registered(device);
+    if(reg!=NULL)
+    {
+        switch(cmd)
+        case UART_DEVICE_INIT:
+            if(uart_init(reg->uart_port,(uart_protocol_format_t*)arg)==0)
+            {
+                reg->initialized=TRUE;
+                return 0;
+            }
+            else
+            {
+                return 2;
+            }
+    }
+
+    return 1;
 }
 
 

@@ -38,7 +38,10 @@ void device_read(device_manager_t* dm, device_handle_t handle, void* buffer, uin
 void device_write(device_manager_t* dm, device_handle_t handle, void* buffer, uint32_t count)
 {
     device_node_t* node =device_manager_get_device_node(dm,(handle>>8));
-    node->driver->write(handle>>8,buffer,count);
+    if(node!=NULL&&node->driver!=NULL)
+    {
+        node->driver->write(handle>>8,buffer,count);
+    }
 }
 
 int32_t device_ioctl(device_manager_t* dm, device_handle_t handle, uint32_t cmd, uint32_t arg)
