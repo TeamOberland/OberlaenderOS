@@ -5,6 +5,7 @@
  *      Author: Daniel
  */
 
+#include "../../../generic/mmu/mmu.h"
 #include "../../../genarch/mmu/mmu.h"
 
 uint8_t __mmu_get_domain_access(uint8_t domain)

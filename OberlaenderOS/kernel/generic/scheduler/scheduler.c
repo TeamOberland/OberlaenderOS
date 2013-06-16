@@ -148,6 +148,7 @@ void scheduler_run(scheduler_t* scheduler)
     }
     else
     {
+        mmu_switch_to_kernel();
         current_context = tmp_context; // continue with main without task (should not happen)
     }
 }

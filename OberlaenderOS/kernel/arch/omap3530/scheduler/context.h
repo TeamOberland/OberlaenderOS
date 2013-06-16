@@ -11,7 +11,7 @@
 //
 // TODO: not very portable, those values are matching the CMD file for client apps
 
-#define PROCESS_CODE_START 0x1000
+#define PROCESS_CODE_START 0x00020000
 
 
 #define PROCESS_STACK_START 0x10000000

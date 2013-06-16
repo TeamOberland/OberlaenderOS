@@ -116,7 +116,7 @@ void* mem_find_free_in(memorytype_t type, uint32_t pageCount, bool_t align, bool
 
     for (i = 0; i < m->pageTableTotalCount; i++)
     {
-        if (!m->pageTableLookup[i].occupied && ((!align) || (pagesFound > 0) || ((i % pageCount) == 0)))
+        if (!m->pageTableLookup[i].reserved && ((!align) || (pagesFound > 0) || ((i % pageCount) == 0)))
         {
             pagesFound++;
             if (pagesFound == pageCount)

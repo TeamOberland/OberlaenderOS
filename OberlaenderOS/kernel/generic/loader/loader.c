@@ -42,7 +42,7 @@ void loader_load_intel_from_string(process_t* proc, const char* data)
     //
     // Allocate the neede pages and copy the code to this memory
 
-    uint32_t pageCount = pageEnd - pageStart;
+    uint32_t pageCount = pageEnd - pageStart + 1;
     void* processMemory = mem_find_free(pageCount, FALSE, TRUE);
     proc->pageCount = pageCount;
     proc->code = processMemory;

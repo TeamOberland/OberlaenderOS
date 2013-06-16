@@ -11,5 +11,7 @@ __mmu_update_master_table:
 	MCR   P15, #0, R1, C2, C0, #0 ; sets the master table
 	MRC   P15, #0, R1, C2, C0, #0
 
-	MOV   R0, #0	; clears the tlb
-	MCR   P15, #0, R0, C8, C7, #0
+	ISB
+
+;	MOV   R0, #0	; clears the tlb
+;	MCR   P15, #0, R0, C8, C7, #0
