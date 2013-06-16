@@ -13,6 +13,7 @@
 #include "../../lib/device.h"
 #include "../../kernel/generic/driver/driver.h"
 #include "../../kernel/genarch/uart/uart.h"
+#include "../shared/driver_shared.h"
 
 void uart_driver_init(void);
 int16_t uart_driver_open(device_id_t device);

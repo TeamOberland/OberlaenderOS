@@ -52,7 +52,6 @@ uint32_t uart_write(uint8_t uartPort, uint8_t* buffer)
 {
     if(__uart_is_valid_port(uartPort))
     return __uart_write(uartPort, buffer);
-
     return 0;
 }
 /* reads one character from the UART device */
