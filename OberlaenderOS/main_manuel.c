@@ -1,109 +1,122 @@
-///*
-// * main_manuel.c
-// *
-// *  Created on: 21.03.2013
-// *      Author: Manuel
-// */
+/*
+ * main_manuel.c
+ *
+ *  Created on: 21.03.2013
+ *      Author: Manuel
+ */
+
+#include "kernel/generic/kernel.h"
+
+#include "kernel/generic/scheduler/scheduler.h"
+#include "lib/scheduler.h"
+#include "kernel/generic/driver/driver.h"
+#include "kernel/generic/driver/device_manager.h"
+
+#include "driver/gpio/gpio_driver.h"
+#include "driver/uart/uart_driver.h"
+#include "lib/logger.h"
+#include "lib/device.h"
+#include <string.h>
+
+extern void task_blink_led0(void);
+extern void task_blink_led1(void);
+extern void task_console(void);
+extern void task_gpio_led0(void);
+
+extern void task_ipc_server(void);
+extern void task_ipc_client(void);
+extern void task_blink_dmx_led(void);
+
+
+
+void setup_device_manager()
+{
+    global_device_manager = device_manager_init();
+
+    // load drivers
+    device_manager_register_driver(global_device_manager, &gpio_driver);
+    device_manager_register_driver(global_device_manager, &uart_driver);
+}
+
+
+void dmx_sending_signal()
+{
+//    device_id_t uart_pin11 = gpio_export(135);
+    device_id_t uart_pin6 = gpio_export(146);
+//    device_handle_t uart_pin11_handle = device_open(global_device_manager,uart_pin11);
+    device_handle_t uart_pin6_handle = device_open(global_device_manager,uart_pin6);
 //
-//#include "kernel/generic/kernel.h"
+//    device_ioctl(global_device_manager,uart_pin11_handle, GPIO_DRV_IOCTL_SET_DIR, GPIO_DRV_IOCTL_DIR_OUT);
+    device_ioctl(global_device_manager,uart_pin6_handle, GPIO_DRV_IOCTL_SET_DIR, GPIO_DRV_IOCTL_DIR_OUT);
 //
-//#include "kernel/generic/scheduler/scheduler.h"
-//#include "lib/scheduler.h"
-//#include "kernel/generic/driver/driver.h"
-//#include "kernel/generic/driver/device_manager.h"
+//    device_ioctl(global_device_manager,uart_pin11_handle, GPIO_DRV_IOCTL_SET_EXPPIN_MODE, 0);
+    device_ioctl(global_device_manager,uart_pin6_handle, GPIO_DRV_IOCTL_SET_EXPPIN_MODE, 0);
 //
-//#include "driver/gpio/gpio_driver.h"
-//#include "driver/uart/uart_driver.h"
+    uint8_t value = 1;
+//    device_write(global_device_manager,uart_pin11_handle, &value, 1);
+    device_write(global_device_manager,uart_pin6_handle, &value, 1);
+    int i = 0;
 //
-//extern void task_blink_led0(void);
-//extern void task_blink_led1(void);
-//extern void task_console(void);
-//
-//extern void task_ipc_server(void);
-//extern void task_ipc_client(void);
-//extern void task_blink_dmx_led(void);
-//
-//void setup_device_manager()
-//{
-//    global_device_manager = device_manager_init();
-//
-//    // load drivers
-//    device_manager_register_driver(global_device_manager, &gpio_driver);
-//    device_manager_register_driver(global_device_manager, &uart_driver);
-//}
-//
-//#define LOG(type, format) { \
-//        va_list arglist; \
-//        va_start(arglist, format); \
-//        log(type, format, arglist); \
-//        va_end(arglist); \
-//    }
-//
-//void log(char* type, char* format, va_list arglist) {
-//
-//    static char buffer[1024];
-//    static char readBuffer[3];
-//    #define LOGGER_BUFFER_SIZE sizeof(buffer)
-//
-//    int l = vsnprintf(buffer, LOGGER_BUFFER_SIZE, format, arglist);
-//
-//    if (l < 0 || l >= (LOGGER_BUFFER_SIZE - 3)) {
-//        l = (LOGGER_BUFFER_SIZE - 3);
-//    }
-//    buffer[l] = '\r';
-//    buffer[l + 1] = '\n';
-//    buffer[l + 2] = '\0';
-//
-//    readBuffer[1] = '\n';
-//    readBuffer[2] = '\0';
-//
-//    uart_driver.open(1);
-//    uart_driver.open(0);
-//    while(FALSE)
+//    while(TRUE)
 //    {
-//        uart_driver.write(1,"abcdefghijklmnopqrstuvwxyz",strlen("abcdefghijklmnopqrstuvwxyz"));
-//        uart_driver.write(0,"abcdefghijklmnopqrstuvwxyz",strlen("abcdefghijklmnopqrstuvwxyz"));
+//        value^=1;
+//        device_write(global_device_manager,uart_pin11_handle, &value, 1);
+//        device_write(global_device_manager,uart_pin6_handle, &value, 1);
+//        for (i = 0; i < 1000000; i++);
 //    }
-//    uart_driver.write(1,type,strlen(type));
-//    uart_driver.write(1,buffer,(l + 2));
-//    uart_driver.close(1);
-//}
-//
-//void logger_debug(char* format, ...) {
-//    LOG("DEBUG:\t", format)
-//}
-//
-//void main_manuel(void)
-//{
-//    printf("Setup kernel\n");
-//    setup_kernel();
-//    setup_device_manager();
-//
-//    logger_debug("\r\n\r\nSystem init...");
-//
+
+    device_id_t uartDevice = api_device_build_id(DEVICE_TYPE_UART, 2);
+    device_handle_t handle= device_open(global_device_manager,uartDevice);
+    device_ioctl(global_device_manager,handle,UART_DRIVER_INIT,(uint32_t)&uart_protocol_rs232);
+    char* message = "\r\n welcome to oberlaenderOS\r\n\0";
+
+    while(TRUE)
+    {
+        device_write(global_device_manager,handle,message,strlen(message));
+        for (i = 0; i < 100000; i++);
+    }
+
+
+}
+
+
+uint32_t saved_R14;
+void main_manuel(void)
+{
+    saved_R14=0;
+    printf("Setup kernel\n");
+    setup_kernel();
+    setup_device_manager();
+    loggerInit();
+
+    log_debug("\r\n\r\nSystem init...");
+
+    dmx_sending_signal();
+
 //    __enable_interrupts();
 //    __switch_to_user_mode();
-//
-////    scheduler_add_process(global_scheduler, task_blink_led0);
-////    scheduler_add_process(global_scheduler, task_blink_led1);
-//      scheduler_add_process(global_scheduler, task_blink_dmx_led);
-////      scheduler_add_process(global_scheduler, task_console);
-////    scheduler_add_process(global_scheduler, task_ipc_server);
-////    scheduler_add_process(global_scheduler, task_ipc_client);
-//    scheduler_start(30);
-//    api_scheduler_run();
-//
-//    /* led_test1(); */
-//
-//    /* timer_test(); */
-//
-//    /* gptimer_test(); */
-//
-//    /* swi_test();*/
-//
-//    /* ipc_test(); */
-//
-//    /* display_test(); */
-//}
-//
-//
+
+//    scheduler_add_process(global_scheduler, task_blink_led0);
+//    scheduler_add_process(global_scheduler, task_blink_led1);
+//    scheduler_add_process(global_scheduler, task_gpio_led0);
+//    scheduler_add_process(global_scheduler, task_blink_dmx_led);
+//    scheduler_add_process(global_scheduler, task_console);
+//    scheduler_add_process(global_scheduler, task_ipc_server);
+//    scheduler_add_process(global_scheduler, task_ipc_client);
+    //scheduler_start(10000000);
+    //api_scheduler_run();
+
+    /* led_test1(); */
+
+    /* timer_test(); */
+
+    /* gptimer_test(); */
+
+    /* swi_test();*/
+
+    /* ipc_test(); */
+
+    /* display_test(); */
+}
+
+

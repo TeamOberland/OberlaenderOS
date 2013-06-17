@@ -10,6 +10,7 @@
 
 #include <oos/types.h>
 #include "../../kernel/generic/driver/driver.h"
+#include "../shared/driver_shared.h"
 
 void gpio_driver_init(void);
 int16_t gpio_driver_open(device_id_t device);
@@ -23,6 +24,7 @@ int32_t gpio_driver_ioctl(device_id_t device, uint32_t cmd, uint32_t arg);
 extern driver_t gpio_driver;
 
 #define GPIO_DRV_IOCTL_SET_DIR 1
+#define GPIO_DRV_IOCTL_SET_EXPPIN_MODE 2
 #define GPIO_DRV_IOCTL_DIR_OUT 0
 #define GPIO_DRV_IOCTL_DIR_IN 1
 

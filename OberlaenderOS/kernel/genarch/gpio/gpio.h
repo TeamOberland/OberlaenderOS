@@ -19,6 +19,7 @@
  */
 bool_t __gpio_isvalid(uint32_t gpio);
 
+
 /**
  * Configures the specified gpio pin to be an input
  * @param gpio the gpio pin to configure

@@ -57,7 +57,7 @@ uint32_t omap_uart_switch_to_config_mode_a(uint8_t uartPort)
 }
 
 
-void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_protocol_format_t configuration)
+void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_protocol_format_t *configuration)
 {
     uint32_t saved_lcr_reg,saved_efr_reg,saved_tcr_reg,saved_tlr_reg,saved_tcr_TLR;
     //17.5.1.1.1 UART Software Reset Site: 2734
@@ -142,9 +142,9 @@ void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_proto
     /*baudrate*/    /*pdf 2746*/
     memory_mapped_io_t registerToSet =omap_uart_get_register(uartPort,UART_DLL_REG);
     /* only use the first 2 bytes the other bytes are saved in dlh register (we dont use this ;-) )*/
-    *(registerToSet) = (configuration.baudrate & 0xFF);
+    *(registerToSet) = (configuration->baudrate & 0xFF);
     registerToSet =omap_uart_get_register(uartPort,UART_DLH_REG);
-    *(registerToSet) = (configuration.baudrate >> 8) & 0x3F;
+    *(registerToSet) = (configuration->baudrate >> 8) & 0x3F;
 
     //8
     *(lcr_reg)=0;
@@ -166,7 +166,7 @@ void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_proto
         registerToSet =omap_uart_get_register(uartPort,UART_EFR_REG);
         /*clear flow control config*/
             *(registerToSet) &= ~0x0F;
-            *(registerToSet) = configuration.flowControl;
+            *(registerToSet) = configuration->flowControl;
 
 
             /* clear LCR DIV and BREAK field */
@@ -178,10 +178,10 @@ void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_proto
             /* clear the len bits in LCR register */
             *(registerToSet) &= ~0x03;
             /* set new len bits in LCR register */
-            *(registerToSet) |= configuration.datalength;
+            *(registerToSet) |= configuration->datalength;
 
 
-             switch (configuration.stopbit) {
+             switch (configuration->stopbit) {
               case UART_PROTOCOL_NB_STOP_1:
                 CLEAR_BIT(registerToSet, UART_LCR_NB_STOP);
                 break;
@@ -191,7 +191,7 @@ void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_proto
                 break;
             }
 
-            switch (configuration.parity) {
+            switch (configuration->parity) {
               case UART_PROTOCOL_PARITY_NONE:
               default:
                 CLEAR_BIT(registerToSet, UART_LCR_PARITY_EN);
@@ -252,10 +252,9 @@ bool_t __uart_is_valid_port(uint8_t uartPort) {
     return omap_uart_get_baseadress(uartPort)!=0;
 }
 
-bool_t __uart_init(uint8_t uartPort,uint8_t uartMode, uart_protocol_format_t config)
+bool_t __uart_init(uint8_t uartPort,uint8_t uartMode, uart_protocol_format_t* config)
 {
     omap_uart_software_reset(uartPort);
-
     omap_uart_load_configuration(uartPort,uartMode,config);
 
     return 0;
@@ -275,7 +274,7 @@ bool_t __uart_disable(uint8_t uartPort)
 bool_t __uart_is_empty_write_queue(uint8_t uartPort) {
     memory_mapped_io_t uart_base_addr =omap_uart_get_register(uartPort,UART_LSR_REG);
     uint32_t status = READ_BIT(uart_base_addr,  UART_LSR_TX_FIFO_E);
-  return (status > 0);
+  return (status != 0);
 }
 
 /* writes one character to the UART device */

@@ -14,6 +14,7 @@
 */
 uint32_t uart_is_empty_write_queue(uint8_t uartPort);
 uint32_t uart_is_empty_read_queue(uint8_t uartPort);
+uint32_t uart_activate_pin(uint8_t uartPort);
 /* writes one character to the UART device */
 uint32_t uart_write(uint8_t uartPort, uint8_t* buffer);
 /* reads one character from the UART device */

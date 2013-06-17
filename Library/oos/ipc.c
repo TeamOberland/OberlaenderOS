@@ -11,26 +11,61 @@
 
 void api_ipc_register(const char* ns)
 {
-    syscall(SYSCALL_IPC_REGISTER, (uint32_t)ns, 0, 0, 0, 0);
+    syscall_data_t data;
+    data.swiNumber=SYSCALL_IPC_REGISTER;
+    data.arg1 = (uint32_t) ns;
+    data.arg2 = 0;
+    data.arg3= 0;
+    data.arg4 = 0;
+    data.arg5 = 0;
+    syscall(&data);
 }
 
 void api_ipc_unregister(const char* ns)
 {
-    syscall(SYSCALL_IPC_REGISTER, (uint32_t)ns, 0, 0, 0, 0);
+    syscall_data_t data;
+    data.swiNumber=SYSCALL_IPC_REGISTER;
+    data.arg1 = (uint32_t) ns;
+    data.arg2 = 0;
+    data.arg3= 0;
+    data.arg4 = 0;
+    data.arg5 = 0;
+    syscall(&data);
 }
 
 void api_ipc_send(const char* ns, ipc_message_data_t* message)
 {
-    syscall(SYSCALL_IPC_SEND, (uint32_t)ns, (uint32_t)message, 0, 0, 0);
+    syscall_data_t data;
+    data.swiNumber=SYSCALL_DEVICE_WRITE;
+    data.arg1 = (uint32_t) ns;
+    data.arg2 =(uint32_t)message;
+    data.arg3= 0;
+    data.arg4 = 0;
+    data.arg5 = 0;
+    syscall(&data);
 }
 
 ipc_message_data_t* api_ipc_receive(const char* ns)
 {
-    syscall(SYSCALL_IPC_WAIT, (uint32_t)ns, 0, 0, 0, 0);
+    syscall_data_t data1;
+    data1.swiNumber=SYSCALL_IPC_WAIT;
+    data1.arg1 = (uint32_t) ns;
+    data1.arg2 =0;
+    data1.arg3= 0;
+    data1.arg4 = 0;
+    data1.arg5 = 0;
+    syscall(&data1);
 
     ipc_message_data_t* message = NULL;
 
-    syscall(SYSCALL_IPC_RECEIVE, (uint32_t)ns, (uint32_t)&message, 0, 0, 0);
+    syscall_data_t data2;
+    data2.swiNumber=SYSCALL_IPC_RECEIVE;
+    data2.arg1 = (uint32_t) ns;
+    data2.arg2 =(uint32_t)&message;
+    data2.arg3= 0;
+    data2.arg4 = 0;
+    data2.arg5 = 0;
+    syscall(&data2);
 
     return message;
 }

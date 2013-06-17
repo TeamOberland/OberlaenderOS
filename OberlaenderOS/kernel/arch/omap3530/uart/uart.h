@@ -80,7 +80,7 @@ void omap_uart_software_reset(uint8_t uartPort);
 inline uint32_t omap_uart_get_baseadress(uint8_t uartPort);
 inline void omap_uart_waitfor_resetdone(uint8_t uartPort);
 inline void omap_uart_set_mode(uint8_t uartPort,uint32_t mode);
-void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_protocol_format_t configuration);
+void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_protocol_format_t *configuration);
 
 
 

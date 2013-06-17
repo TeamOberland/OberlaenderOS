@@ -26,7 +26,7 @@ void setup_kernel()
     ipc_init();
     irq_enable();
 
-    mmu_init();
+    //mmu_init();
 }
 
 

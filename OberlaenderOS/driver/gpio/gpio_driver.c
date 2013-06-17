@@ -127,6 +127,8 @@ int16_t gpio_driver_write(device_id_t device, void* buffer, uint32_t count)
     return -1;
 }
 
+
+
 int32_t gpio_driver_ioctl(device_id_t device, uint32_t cmd, uint32_t arg)
 {
     registered_gpio_t* reg = gpio_get_registered(device);
@@ -147,8 +149,11 @@ int32_t gpio_driver_ioctl(device_id_t device, uint32_t cmd, uint32_t arg)
                 case GPIO_DRV_IOCTL_DIR_IN:
                     gpio_direction_input(reg->gpio);
                     return 0;
+
             }
             return -1;
+         case GPIO_DRV_IOCTL_SET_EXPPIN_MODE:
+             return driver_set_expansion_pin_mode(arg,MODE_GPIO);
     }
 
     return -1;

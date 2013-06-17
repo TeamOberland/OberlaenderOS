@@ -6,15 +6,15 @@
  */
 
 #include "../../genarch/uart/uart.h"
-
+#include "../../../lib/uart.h"
 
 /*
 * Returns 1 if uart transmission fifo queue is empty.
 * If the Queue has at least one character the result will be 1.
 */
-uint32_t uart_init(uint8_t uartPort)
+uint32_t uart_init(uint8_t uartPort, uart_protocol_format_t *protocol)
 {
-    return __uart_init(uartPort,UART_MDR1_MODE_SELECT_16X,uart_protocol_rs232);
+    return __uart_init(uartPort,UART_MDR1_MODE_SELECT_16X,protocol);
 }
 
 /*
@@ -52,7 +52,6 @@ uint32_t uart_write(uint8_t uartPort, uint8_t* buffer)
 {
     if(__uart_is_valid_port(uartPort))
     return __uart_write(uartPort, buffer);
-
     return 0;
 }
 /* reads one character from the UART device */
