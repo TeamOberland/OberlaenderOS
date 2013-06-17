@@ -28,7 +28,10 @@ __mmu_enable:
 	; Load current mmu flags into R0
 	MRC P15, #0, R0, C1, C0, #0
 	; add SCTLR_ICACHE | SCTLR_DCACHE | SCTLR_PREDICT | SCTLR_MMUEN = 0x1805
-	MOV R1, #0x1805
+	;MOV R1, #0x1805
+	; add SCTLR_PREDICT | SCTLR_MMUEN = 0x801
+	MOV R1, #0x801
+
 	ORR R0, R0, R1
 	; Write mmu flags back to coprocessor
 	MCR P15, #0, R0, C1, C0, #0
@@ -46,7 +49,7 @@ __mmu_disable:
 	; clearup flags ~( SCTLR_TRE | SCTLR_AFE |  SCTLR_ICACHE | SCTLR_DCACHE | SCTLR_MMUEN) = ~(0x30001005)
 	; = 0xCFFFEFFA
 	MOV R1, #0xCFFF
-	MOV R1, #0xEFFA
+	MOVT R1, #0xEFFA
 	AND R0, R0, R1
 	; Write mmu flags back to coprocessor
 	MCR P15, #0, R0, C1, C0, #0
