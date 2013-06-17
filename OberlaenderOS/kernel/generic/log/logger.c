@@ -5,12 +5,10 @@
  *      Author: Manuel
  */
 
-
-
-#include "device.h"
-#include "../kernel/generic/driver/device_manager.h"
-#include "../kernel/generic/driver/device.h"
-#include "types.h"
+#include <oos/types.h>
+#include <oos/device.h>
+#include "../driver/device.h"
+#include "../driver/device_manager.h"
 
 extern device_manager_t* global_device_manager;
 device_handle_t logger;

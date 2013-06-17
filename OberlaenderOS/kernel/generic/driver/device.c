@@ -5,6 +5,8 @@
  *      Author: Daniel
  */
 
+#include <oos/types.h>
+#include <oos/nullfix.h>
 #include "device.h"
 #include <oos/device.h>
 

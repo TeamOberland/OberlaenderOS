@@ -5,8 +5,6 @@
  *      Author: Daniel
  */
 
-#include <oos/types.h>
-#include <oos/syscalls.h>
 #include <oos/ipc.h>
 #include <oos/device.h>
 #include <oos/file.h>
@@ -20,6 +18,8 @@
 #include "../driver/device.h"
 #include "../driver/device_manager.h"
 #include "../io/mount.h"
+#include <oos/syscalls.h>
+
 
 //
 // IPC
@@ -229,6 +229,21 @@ void swi_stdio_printf(const char* text)
     printf(text);
 }
 
+// something is really wrong with this preprocessor
+// the include <oos/syscalls.h> includes the defines but not the typedefs o.O
+#ifndef SYSCALL_DATA
+#define SYSCALL_DATA
+typedef struct syscall_data
+{
+    uint32_t swiNumber;
+    uint32_t arg1;
+    uint32_t arg2;
+    uint32_t arg3;
+    uint32_t arg4;
+    uint32_t arg5;
+} syscall_data_t;
+#endif
+
 void swi_dispatch(syscall_data_t* data)
 {
 //    printf("[SWI] Handle %i\n", swiNumber);
@@ -342,7 +357,8 @@ void swi_dispatch(syscall_data_t* data)
             break;
 
         case SYSCALL_STDIO_PRINTF:
-            swi_stdio_printf((const char*)arg1);
+            swi_stdio_printf((const char*)data->arg1);
+            break;
     }
 }
 

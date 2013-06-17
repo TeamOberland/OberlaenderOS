@@ -7,6 +7,7 @@
 
 
 #include "uart.h"
+#include <oos/uart.h>
 #include "../../../genarch/uart/uart.h"
 
 #define SET_BIT(addr, offset) *addr |= (1 << offset);

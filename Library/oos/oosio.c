@@ -19,5 +19,10 @@ void api_printf(const char* format, ...)
     vsprintf(parsed, format, args);
     va_end(args);
 
-    syscall(SYSCALL_STDIO_PRINTF, (uint32_t) &parsed, 0, 0, 0, 0);
+
+	syscall_data_t data;
+	data.swiNumber = SYSCALL_STDIO_PRINTF;
+	data.arg1 = (uint32_t)&parsed;
+
+    syscall(&data);
 }

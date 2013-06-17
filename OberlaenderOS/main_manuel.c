@@ -8,14 +8,14 @@
 #include "kernel/generic/kernel.h"
 
 #include "kernel/generic/scheduler/scheduler.h"
-#include "lib/scheduler.h"
+#include <oos/scheduler.h>
 #include "kernel/generic/driver/driver.h"
 #include "kernel/generic/driver/device_manager.h"
 
 #include "driver/gpio/gpio_driver.h"
 #include "driver/uart/uart_driver.h"
-#include "lib/logger.h"
-#include "lib/device.h"
+#include "kernel/generic/log/logger.h"
+#include <oos/device.h>
 #include <string.h>
 
 extern void task_blink_led0(void);
@@ -29,7 +29,7 @@ extern void task_blink_dmx_led(void);
 
 
 
-void setup_device_manager()
+void manuel_setup_device_manager()
 {
     global_device_manager = device_manager_init();
 
@@ -86,7 +86,7 @@ void main_manuel(void)
     saved_R14=0;
     printf("Setup kernel\n");
     setup_kernel();
-    setup_device_manager();
+    manuel_setup_device_manager();
     loggerInit();
 
     log_debug("\r\n\r\nSystem init...");

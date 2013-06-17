@@ -6,7 +6,7 @@
  */
 
 #include "../../../generic/io/expansion.h"
-#include "../../../../lib/types.h"
+#include <oos/types.h>
 
 
 uint8_t __set_expansion_pin_mode(uint32_t pinNumber, uint8_t mode)

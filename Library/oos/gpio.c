@@ -10,7 +10,6 @@
 
 device_id_t api_gpio_export(uint32_t gpio)
 {
-    device_id_t result = 0;
     syscall_data_t data;
     data.swiNumber=SYSCALL_GPIO_EXPORT;
     data.arg1 = (uint32_t) gpio;

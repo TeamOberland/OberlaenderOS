@@ -7,7 +7,7 @@
 
 #ifndef EXPANSION_GENARCH_H_
 #define EXPANSION_GENARCH_H_
-#include "../../../lib/types.h"
+#include <oos/types.h>
 
 #define MODE_GPIO  4
 #define MODE_UART  0
