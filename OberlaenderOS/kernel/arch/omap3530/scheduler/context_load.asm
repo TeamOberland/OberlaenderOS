@@ -1,4 +1,5 @@
 	.global __context_load
+	.global __context_log
 
 	.global current_context
 _current_context: .field current_context, 32

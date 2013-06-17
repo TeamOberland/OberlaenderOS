@@ -5,10 +5,11 @@
  *      Author: Daniel
  */
 
-#include "../lib/file.h"
-#include "../kernel/generic/io/file.h"
+#include <oos/file.h>
+//#include "../kernel/generic/io/file.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #define TEST_DIR "/sd/"
 char* concat(const char* c1, const char* c2)

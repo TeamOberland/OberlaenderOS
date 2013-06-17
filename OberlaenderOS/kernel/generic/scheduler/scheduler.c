@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 #include "../../genarch/scheduler/context.h"
-#include "../../../lib/list.h"
+#include <oos/list.h>
 #include "../interrupts/irq.h"
 #include "../interrupts/timer.h"
 #include "../mmu/mmu.h"

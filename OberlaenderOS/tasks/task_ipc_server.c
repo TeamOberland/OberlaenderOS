@@ -4,8 +4,8 @@
  *  Created on: 27.05.2013
  *      Author: Daniel
  */
-#include "../lib/ipc.h"
-#include "../lib/types.h"
+#include <oos/ipc.h>
+#include <oos/types.h>
 #include "task_ipc.h"
 
 void task_ipc_server(void)

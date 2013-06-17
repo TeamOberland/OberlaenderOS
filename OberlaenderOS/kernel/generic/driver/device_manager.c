@@ -6,6 +6,7 @@
  */
 
 #include "device_manager.h"
+#include <oos/device.h>
 #include <stdlib.h>
 
 device_manager_t* global_device_manager;

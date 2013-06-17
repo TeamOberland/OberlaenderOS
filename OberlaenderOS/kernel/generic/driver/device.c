@@ -6,7 +6,7 @@
  */
 
 #include "device.h"
-#include "../../../lib/device.h"
+#include <oos/device.h>
 
 
 device_handle_t device_open(device_manager_t* dm, device_id_t deviceId)

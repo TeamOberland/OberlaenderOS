@@ -8,10 +8,10 @@
 #ifndef IPC_H_
 #define IPC_H_
 
-#include "../../../lib/types.h"
-#include "../../../lib/list.h"
-#include "../../../lib/ipc.h"
-#include "../../../lib/semaphore.h"
+#include <oos/types.h>
+#include <oos/list.h>
+#include <oos/ipc.h>
+#include <oos/semaphore.h>
 #include "../scheduler/process.h"
 
 /**

@@ -6,7 +6,7 @@
  */
 
 #include "irq.h"
-#include "../../../lib/types.h"
+#include <oos/types.h>
 #include "../../genarch/scheduler/context.h"
 #include "../../genarch/interrupts/interrupts.h"
 #include "../scheduler/scheduler.h"

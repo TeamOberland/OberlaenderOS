@@ -6,8 +6,8 @@
  */
 
 #include "file.h"
-#include "../../../lib/file.h"
-#include "../../../lib/types.h"
+#include <oos/file.h>
+#include <oos/types.h>
 #include "fatlib/fat_filelib.h"
 #include "../../genarch/io/media.h"
 #include <stdlib.h>

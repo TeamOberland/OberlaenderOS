@@ -4,7 +4,7 @@
  *  Created on: 21.03.2013
  *      Author: Daniel
  */
-#include "../../../../lib/types.h"
+#include <oos/types.h>
 
 #include "../../../errno.h"
 #include "../../../genarch/gpio/gpio.h"

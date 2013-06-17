@@ -8,8 +8,8 @@
 #ifndef MOUNT_H_
 #define MOUNT_H_
 
-#include "../../../lib/types.h"
-#include "../../../lib/file.h"
+#include <oos/types.h>
+#include <oos/file.h>
 
 typedef uint16_t mountpoint_id_t;
 

@@ -8,7 +8,7 @@
 #ifndef MEM_GENARCH_H_
 #define MEM_GENARCH_H_
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 #include "../../generic/mmu/mem.h"
 
 extern uint32_t intvecs_start;

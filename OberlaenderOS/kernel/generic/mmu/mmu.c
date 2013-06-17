@@ -13,7 +13,7 @@
 
 mmu_table_pointer_t kernel_master_table;
 
-volatile uint32_t current_master_table;
+volatile uint32_t mmu_current_master_table;
 volatile uint32_t mmu_accessed_address;
 volatile uint32_t mmu_fault_state;
 
@@ -27,6 +27,8 @@ void mmu_init(void)
 
     uint32_t kernelPageCount;
     uint32_t i;
+
+    __mmu_disable();
 
     //
     // reserve pages in all memories for the kernel so the processes can't use it
@@ -59,8 +61,11 @@ void mmu_init(void)
 
     //
     // activate the mmu using the master table of the kernel
-    __mmu_init();
+    __mmu_flush_tlb();
     mmu_set_master_table(kernel_master_table);
+    __mmu_flush_tlb();
+    // TODO: Change to 0x55555557 if everything works
+    __mmu_set_domain_access(0xFFFFFFFF);
     __mmu_enable();
 }
 
@@ -71,8 +76,10 @@ void mmu_init(void)
 
 void mmu_set_master_table(mmu_table_pointer_t table)
 {
-    current_master_table = (uint32_t) table & MMU_ALIGN_ADDRESS;
-    __mmu_update_master_table();
+    uint32_t tableAddress = (uint32_t) table & MMU_ALIGN_ADDRESS;
+    mmu_current_master_table = tableAddress;
+    __mmu_set_master_table(tableAddress);
+//    __mmu_flush_tlb();
 }
 
 void mmu_switch_to_kernel()
@@ -339,4 +346,36 @@ void mmu_delete_process_memory(process_t* proc)
     }
 }
 
+// a manual implementation of the stuff the MMU does (for validation)
+uint32_t mmu_virtual_to_physical(uint32_t virtualAddress)
+{
+    // lookup master table entry
+    mmu_table_pointer_t masterTable = (mmu_table_pointer_t)mmu_current_master_table;
+    uint32_t masterTableEntry =MMU_VIRTUAL_TO_MASTER_TABLE_ENTRY(virtualAddress);
 
+    mmu_table_pointer_t l2Table;
+    uint32_t l2TableEntry;
+
+    uint32_t pageAddress;
+
+    if(masterTableEntry < MMU_MASTER_TABLE_PAGE_SIZE)
+    {
+        // load L2 Table address
+        l2Table = (mmu_table_pointer_t) MMU_MASTER_TABLE_ENTRY_TO_L2_ADDRESS((*(masterTable + masterTableEntry)));
+        if(l2Table != NULL)
+        {
+            // lookup L2 Entry
+            l2TableEntry = MMU_VIRTUAL_TO_L2_TABLE_ENTRY(virtualAddress);
+            if(l2TableEntry < MMU_L2_PAGE_COUNT)
+            {
+                // load page address
+                pageAddress = MMU_L2_TABLE_ENTRY_TO_PAGE( *(l2Table + l2TableEntry) );
+
+                return pageAddress;
+            }
+
+        }
+    }
+
+    return 0;
+}

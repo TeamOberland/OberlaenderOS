@@ -8,12 +8,16 @@
 #ifndef MMU_GENARC_H_
 #define MMU_GENARC_H_
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 
-void __mmu_init(void);
 void __mmu_enable(void);
+void __mmu_disable(void);
+
+void __mmu_flush_tlb();
+void __mmu_set_master_table(uint32_t tableAddress);
+
+void __mmu_set_domain_access(uint32_t domainAccess);
 uint8_t __mmu_get_domain_access(uint8_t domain);
 void __mmu_load_dabt_data(void);
-void __mmu_update_master_table(void);
 
 #endif /* MMU_H_ */

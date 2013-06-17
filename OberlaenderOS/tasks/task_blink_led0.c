@@ -5,7 +5,7 @@
  *      Author: Daniel
  */
 #include "task_blink.h"
-#include "../lib/types.h"
+#include <oos/types.h>
 
 void task_blink_led0(void)
 {

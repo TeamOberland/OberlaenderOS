@@ -7,7 +7,7 @@
 #include "media.h"
 #include "../../../genarch/io/media.h"
 #include "../interrupts/clocks.h"
-#include "../../../../lib/types.h"
+#include <oos/types.h>
 #include "../../../generic/kernel.h"
 #include <string.h>
 

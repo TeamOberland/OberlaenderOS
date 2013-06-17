@@ -4,8 +4,9 @@
  *  Created on: 10.06.2013
  *      Author: Daniel
  */
-#include "../lib/video.h"
-#include "../lib/types.h"
+
+#include <oos/types.h>
+#include <oos/video.h>
 
 void task_video(void)
 {

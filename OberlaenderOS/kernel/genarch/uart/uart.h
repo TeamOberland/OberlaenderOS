@@ -8,7 +8,7 @@
 #ifndef UART_H_Genarch
 #define UART_H_Genarch
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 
 #define UART_PROTOCOL_BAUDRATE_16X115_2 0x001A
 #define UART_PROTOCOL_NB_STOP_1         0x0

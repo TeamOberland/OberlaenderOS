@@ -9,7 +9,7 @@
 #include "kernel/generic/kernel.h"
 
 #include "kernel/generic/scheduler/scheduler.h"
-#include "lib/scheduler.h"
+#include <oos/scheduler.h>
 #include "kernel/generic/driver/driver.h"
 #include "kernel/generic/driver/device_manager.h"
 #include "kernel/generic/io/file.h"

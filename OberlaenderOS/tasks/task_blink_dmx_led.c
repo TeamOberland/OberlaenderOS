@@ -5,10 +5,9 @@
  *      Author: Daniel
  */
 #include "task_blink.h"
-#include "../lib/types.h"
+#include <oos/types.h>
 #include "../kernel/generic/io/gpio.h"
-#include "../lib/syscalls.h"
-#include "../lib/device.h"
+#include <oos/device.h>
 #include "stdlib.h"
 #define UART_2 2
 

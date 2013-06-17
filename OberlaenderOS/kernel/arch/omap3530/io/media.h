@@ -8,7 +8,7 @@
 #ifndef MEDIA_OMAP3530_H_
 #define MEDIA_OMAP3530_H_
 
-#include "../../../../lib/types.h"
+#include <oos/types.h>
 
 #define MMCHS_MAX_RETRY_COUNT   (100*5)
 

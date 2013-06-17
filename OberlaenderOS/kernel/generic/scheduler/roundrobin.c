@@ -6,8 +6,8 @@
  */
 
 #include "scheduler.h"
-#include "../../../lib/list.h"
-#include "../../../lib/types.h"
+#include <oos/list.h>
+#include <oos/types.h>
 
 void scheduling_algorithm_round_robin(scheduler_t* scheduler)
 {

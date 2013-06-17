@@ -8,7 +8,7 @@
 #ifndef MMU_TYPES_H_
 #define MMU_TYPES_H_
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 
 typedef uint32_t* mmu_table_pointer_t;
 

@@ -8,7 +8,6 @@
 #ifndef GPIO_GENERIC_H_
 #define GPIO_GENERIC_H_
 
-#include "../../../lib/types.h"
 #include "../driver/driver.h"
 
 typedef struct {

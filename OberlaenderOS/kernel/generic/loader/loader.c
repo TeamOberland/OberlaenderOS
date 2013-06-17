@@ -5,7 +5,7 @@
  *      Author: Daniel
  */
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 #include "loader.h"
 #include "parser.h"
 #include "parser_intel.h"

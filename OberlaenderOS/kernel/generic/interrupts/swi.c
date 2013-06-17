@@ -5,12 +5,11 @@
  *      Author: Daniel
  */
 
-#include "swi.h"
-#include "../../../lib/types.h"
-#include "../../../lib/syscalls.h"
-#include "../../../lib/ipc.h"
-#include "../../../lib/device.h"
-#include "../../../lib/file.h"
+#include <oos/types.h>
+#include <oos/syscalls.h>
+#include <oos/ipc.h>
+#include <oos/device.h>
+#include <oos/file.h>
 #include "../ipc/ipc.h"
 #include "../scheduler/scheduler.h"
 #include "../../genarch/scheduler/context.h"
@@ -223,6 +222,11 @@ void swi_file_isdir(const char* path, int32_t* result)
     *result = mount_isdir(path);
 }
 
+void swi_stdio_printf(const char* text)
+{
+    printf(text);
+}
+
 void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg3, uint32_t arg4, uint32_t arg5)
 {
 //    printf("[SWI] Handle %i\n", swiNumber);
@@ -334,6 +338,9 @@ void swi_dispatch(uint32_t swiNumber, uint32_t arg1, uint32_t arg2, uint32_t arg
         case SYSCALL_FILE_ISDIR:
             swi_file_isdir((const char*)arg1, (int32_t*)arg2);
             break;
+
+        case SYSCALL_STDIO_PRINTF:
+            swi_stdio_printf((const char*)arg1);
     }
 }
 

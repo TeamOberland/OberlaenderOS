@@ -8,9 +8,8 @@
 #ifndef UART_DRIVER_H_
 #define UART_DRIVER_H_
 
-
-#include "../../lib/types.h"
-#include "../../lib/device.h"
+#include <oos/types.h>
+#include <oos/device.h>
 #include "../../kernel/generic/driver/driver.h"
 
 void uart_driver_init(void);

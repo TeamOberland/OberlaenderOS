@@ -5,10 +5,9 @@
  *      Author: Daniel
  */
 
-
-#include "../lib/types.h"
-#include "../lib/gpio.h"
-#include "../lib/device.h"
+#include <oos/types.h>
+#include <oos/gpio.h>
+#include <oos/device.h>
 
 #define GPIO_USERLED0 149
 

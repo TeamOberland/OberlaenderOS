@@ -8,7 +8,7 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 
 typedef struct _code_instruction {
     uint32_t virtualAddress;

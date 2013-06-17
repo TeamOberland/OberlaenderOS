@@ -8,7 +8,7 @@
 #ifndef TIMER_GENARCH_H_
 #define TIMER_GENARCH_H_
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 
 /**
  * Gets a value indicating whether the givne GPTIMER is valid.

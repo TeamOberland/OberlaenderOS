@@ -5,7 +5,7 @@
  *      Author: Daniel
  */
 
-#include "../../../lib/semaphore.h"
+#include <oos/semaphore.h>
 #include "semaphore.h"
 #include "scheduler.h"
 #include "../../genarch/interrupts/interrupts.h"

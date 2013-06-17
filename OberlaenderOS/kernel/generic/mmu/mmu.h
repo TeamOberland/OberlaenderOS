@@ -8,7 +8,7 @@
 #ifndef MMU_H_
 #define MMU_H_
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 #include "mmu_types.h"
 #include "../scheduler/process.h"
 
@@ -76,5 +76,7 @@ mmu_table_pointer_t mmu_get_or_create_l2_table(mmu_table_pointer_t masterTable, 
 bool_t mmu_is_legal(uint32_t accessedAddress, uint32_t faultState);
 bool_t mmu_is_process_page(uint32_t address);
 void mmu_delete_process_memory(process_t* proc);
+
+uint32_t mmu_virtual_to_physical(uint32_t virtualAddress);
 
 #endif /* MMU_H_ */
