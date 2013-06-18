@@ -79,6 +79,32 @@ void scheduler_kill_current(scheduler_t* scheduler)
     scheduler->currentProcess = NULL;
 }
 
+void scheduler_add_process_from_elf_data(scheduler_t* scheduler, uint32_t length, uint8_t* data)
+{
+    irq_disable();
+    __disable_interrupts();
+
+    node_t* node = (node_t*) malloc(sizeof(node_t));
+    node_initialize(node);
+
+    process_t* process = (process_t*) malloc(sizeof(process_t));
+    process->id = scheduler->nextProcessId;
+    process->masterTable = mmu_create_master_table();
+    mmu_init_process(process);
+    node->member = process;
+
+    uint32_t entryPoint = 0;
+    loader_load_elf_from_data(process, length, data, &entryPoint);
+    __context_init_with_entrypoint(process, entryPoint);
+
+
+    scheduler->nextProcessId++;
+    list_append(node, scheduler->processes);
+
+    irq_enable();
+    __enable_interrupts();
+}
+
 void scheduler_add_process_from_intel_hex(scheduler_t* scheduler, const char* data)
 {
     irq_disable();
@@ -90,6 +116,7 @@ void scheduler_add_process_from_intel_hex(scheduler_t* scheduler, const char* da
     process_t* process = (process_t*) malloc(sizeof(process_t));
     process->id = scheduler->nextProcessId;
     process->masterTable = mmu_create_master_table();
+    mmu_init_process(process);
     node->member = process;
 
     __context_init(process);

@@ -102,10 +102,10 @@ interrupt void pabt_handle()
     __context_save();
     asm(" ADD R13, R13, #4");
 
-//    if(!mmu_handle_prefetch_abort())
-//    {
-//        //scheduler_run(global_scheduler);
-//    }
+    if(!mmu_handle_prefetch_abort())
+    {
+        scheduler_run(global_scheduler);
+    }
 
     __context_load();
 }
@@ -122,10 +122,10 @@ interrupt void dabt_handle()
     __context_save();
     asm(" ADD R13, R13, #4");
 
-//    if(!mmu_handle_data_abort())
-//    {
-//        //scheduler_run(global_scheduler);
-//    }
+    if(!mmu_handle_data_abort())
+    {
+        scheduler_run(global_scheduler);
+    }
 
     __context_load();
 }

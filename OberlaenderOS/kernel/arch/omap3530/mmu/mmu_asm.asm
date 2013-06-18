@@ -2,7 +2,8 @@
 	.global __mmu_disable
 
 	.global __mmu_flush_tlb
-	.global __mmu_set_master_table
+	.global __mmu_set_kernel_table
+	.global __mmu_set_process_table
 
 	.global __mmu_set_domain_access
 	.global __mmu_load_dabt_data
@@ -29,9 +30,7 @@ __mmu_enable:
 	MRC P15, #0, R0, C1, C0, #0
 	; add SCTLR_ICACHE | SCTLR_DCACHE | SCTLR_PREDICT | SCTLR_MMUEN = 0x1805
 	;MOV R1, #0x1805
-	; add SCTLR_PREDICT | SCTLR_MMUEN = 0x801
-	MOV R1, #0x801
-
+	MOV R1, #0x01
 	ORR R0, R0, R1
 	; Write mmu flags back to coprocessor
 	MCR P15, #0, R0, C1, C0, #0
@@ -68,9 +67,12 @@ __mmu_flush_tlb:
   	LDMFD R13!, {R0, R1} ; restore r0,r1 and jump back
    	MOV PC, R14
 
+__mmu_set_process_table:
+	MCR P15, #0, R0, C2, C0, #0 ; Set master table address
+   	MOV PC, R14
 
-__mmu_set_master_table:
-	MCR P15, #0, R0, C2, C0, #0
+__mmu_set_kernel_table:
+	MCR P15, #0, R0, C2, C0, #1 ; Set master table address
    	MOV PC, R14
 
 

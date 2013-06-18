@@ -13,15 +13,24 @@
 
 void __context_init(process_t* process)
 {
-    process->context[0] = (void*)PROCESS_CODE_START;
+    __context_init_with_entrypoint(process, PROCESS_CODE_START + 0x04);
+}
+
+
+void __context_init_with_entrypoint(process_t* process, uint32_t address)
+{
+    memset(process->context, 0, (PROCESS_CONTEXT_SIZE * sizeof(void*)));
+    process->context[0] = (void*)address;
     process->context[14] = (void*)(PROCESS_STACK_START + PROCESS_STACK_SIZE);
     process->context[16] = (void*) _get_CPSR();
 }
 
-void __context_log(uint32_t address)
+
+void __context_log(process_t* process)
 {
-    printf("Restoring context, jumping to (v: 0x%x / p: 0x%x\n",
+    uint32_t address = (uint32_t)process->context[0];
+    printf("Context will jump to (v: 0x%x / p: 0x%x\n",
             address,
-            mmu_virtual_to_physical(address)
+            mmu_virtual_to_physical(process->masterTable, address)
     );
 }

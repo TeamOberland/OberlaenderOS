@@ -21,7 +21,7 @@ MEMORY
    //  - Unused			: 0x4020FFD8
    //  - IRQ			: 0x4020FFDC
    //  - FIQ			: 0x4020FFE0
-   int_vecs:  ORIGIN = 0x4020FFC4  LENGTH = 0x0000003B
+   int_vecs:  ORIGIN = 0x4020FFC0  LENGTH = 0x0000003B
    ext_ddr:  ORIGIN = 0x82000000  LENGTH = 0x10000000
 }
 
@@ -32,6 +32,7 @@ MEMORY
 SECTIONS
 {
 	.intvecs   > int_vecs {
+		int_vecs = .;
 		*(.intvecs)
 	}
 

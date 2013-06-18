@@ -277,7 +277,8 @@ void main_daniel(void)
     __enable_interrupts();
     __switch_to_user_mode();
 
-    scheduler_add_process_from_intel_hex(global_scheduler, task_hello_world);
+        scheduler_add_process_from_elf_data(global_scheduler, task_hello_world_length, task_hello_world);
+//    scheduler_add_process_from_intel_hex(global_scheduler, task_hello_world_hex);
 //    scheduler_add_process(global_scheduler, task_file);
 //    scheduler_add_process(global_scheduler, task_blink_led0);
 //    scheduler_add_process(global_scheduler, task_blink_led1);

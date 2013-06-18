@@ -29,6 +29,6 @@ void __mem_init(void)
     memories[1].userSize = 0x10000000;
 
     // interrupt vectors
-    intvecs_start = 0x4020FFC4;
+    intvecs_start = 0x4020FFC0;
     intvecs_size = 0x0000003B;
 }
