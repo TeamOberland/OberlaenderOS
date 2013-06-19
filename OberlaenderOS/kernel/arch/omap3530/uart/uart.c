@@ -77,19 +77,25 @@ void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_proto
     memory_mapped_io_t mcr_reg = omap_uart_get_register(uartPort,UART_MCR_REG);
     saved_tcr_TLR = READ_BIT(mcr_reg,6);
     SET_BIT(mcr_reg,UART_TCR_TLR);
+
     //5
-    memory_mapped_io_t fcr_reg = omap_uart_get_register(uartPort,UART_FCR_REG);
-    SET_BIT(fcr_reg,UART_DMA_MODE);
-    SET_BIT(fcr_reg,UART_ENABLE_FIFO);
+    //not for dmx
+//    memory_mapped_io_t fcr_reg = omap_uart_get_register(uartPort,UART_FCR_REG);
+//    SET_BIT(fcr_reg,UART_DMA_MODE);
+//    SET_BIT(fcr_reg,UART_ENABLE_FIFO);
 
     //6
     omap_uart_switch_to_config_mode_b(uartPort);
 
 
     //7
-    memory_mapped_io_t tlr_reg = omap_uart_get_register(uartPort,UART_TLR_REG);
-    SET_BIT(tlr_reg,4);
-    SET_BIT(tlr_reg,0) ;
+    //not for dmx
+//    memory_mapped_io_t tlr_reg = omap_uart_get_register(uartPort,UART_TLR_REG);
+//    SET_BIT(tlr_reg,4);
+//    SET_BIT(tlr_reg,0) ;
+
+
+
 //    *(tlr_reg)=0;
 //    SET_BIT(fcr_reg,7);
 //    SET_BIT(fcr_reg,6);
@@ -99,7 +105,9 @@ void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_proto
     memory_mapped_io_t scr_reg = omap_uart_get_register(uartPort,UART_SCR_REG);
     SET_BIT(scr_reg,7);//Enables the granularity of 1 for TRIGGER RX level
     SET_BIT(scr_reg,6);//Enables the granularity of 1 for trigger TX level
-    SET_BIT(scr_reg,2);//DMA mode 1 (UARTi_DMA_TX, UARTi_DMA_RX)
+
+    //not for dmx
+    //SET_BIT(scr_reg,2);//DMA mode 1 (UARTi_DMA_TX, UARTi_DMA_RX)
 
     //9
     *(efr_reg)|=saved_efr_reg;//restore the ENHANCED_EN BIT
@@ -126,7 +134,8 @@ void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_proto
 
     //3
     saved_efr_reg = READ_BIT(efr_reg,UART_ENHANCED_EN);
-    SET_BIT(efr_reg,UART_ENHANCED_EN);
+    //not for dmx
+    //SET_BIT(efr_reg,UART_ENHANCED_EN);
 
     //4
     *(lcr_reg)=0;
@@ -150,7 +159,8 @@ void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_proto
     *(lcr_reg)=0;
 
     //9 disable interrupts
-    SET_BIT(efr_reg,1);
+    //not for dmx
+    //SET_BIT(efr_reg,1);
 
     //10
     omap_uart_switch_to_config_mode_b(uartPort);
@@ -193,10 +203,20 @@ void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_proto
 
             switch (configuration->parity) {
               case UART_PROTOCOL_PARITY_NONE:
+                  CLEAR_BIT(registerToSet, UART_LCR_PARITY_EN);
+                  break;
               default:
                 CLEAR_BIT(registerToSet, UART_LCR_PARITY_EN);
                 break;
             }
+
+            //special dmx stuff
+            //force parity bit to be 1
+//            SET_BIT(registerToSet, UART_LCR_PARITY_EN);
+//            SET_BIT(registerToSet, 5);
+//            CLEAR_BIT(registerToSet, 4);
+            //
+
 
             //13
             omap_uart_set_mode(uartPort,uart_mode );

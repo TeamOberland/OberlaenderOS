@@ -12,7 +12,7 @@
 
 #define UART_PROTOCOL_BAUDRATE_16X115_2 0x001A
 //250kbit
-#define UART_PROTOCOL_BAUDRATE_DMX      0x00D
+#define UART_PROTOCOL_BAUDRATE_DMX      0x000C
 #define UART_PROTOCOL_NB_STOP_1         0x0
 #define UART_PROTOCOL_NB_STOP_2         0x1
 #define UART_PROTOCOL_PARITY_NONE       0x0
@@ -56,7 +56,7 @@ typedef struct uart_protocol_format_t {
  */
 
 static struct uart_protocol_format_t uart_protocol_rs232 = {
-        UART_PROTOCOL_BAUDRATE_16X115_2,
+  UART_PROTOCOL_BAUDRATE_16X115_2,
   UART_PROTOCOL_DATA_LENGTH_8,
   UART_PROTOCOL_NB_STOP_1,
   UART_PROTOCOL_PARITY_NONE,
@@ -64,11 +64,11 @@ static struct uart_protocol_format_t uart_protocol_rs232 = {
 };
 
 static struct uart_protocol_format_t uart_protocol_dmx = {
-  UART_PROTOCOL_BAUDRATE_DMX,
-  UART_PROTOCOL_DATA_LENGTH_7,
-  UART_PROTOCOL_NB_STOP_2,
-  UART_PROTOCOL_PARITY_NONE,
-  UART_FLOW_CONTROL_DISABLE_FLAG
+        UART_PROTOCOL_BAUDRATE_DMX,
+        UART_PROTOCOL_DATA_LENGTH_8,
+        UART_PROTOCOL_NB_STOP_2,
+        UART_PROTOCOL_PARITY_NONE,
+        UART_FLOW_CONTROL_DISABLE_FLAG
 };
 
 
