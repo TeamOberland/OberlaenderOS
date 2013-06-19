@@ -8,7 +8,7 @@
 #ifndef INTERRUPTS_H_
 #define INTERRUPTS_H_
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 
 /**
  * Enables global interrupts on the system.

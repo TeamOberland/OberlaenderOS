@@ -9,7 +9,8 @@
 #define DEVICE_MANAGER_H_
 
 #include "driver.h"
-#include "../../../lib/device.h"
+#include <oos/types.h>
+#include <oos/device.h>
 
 #define MAX_HANDLE_COUNT 10
 /**

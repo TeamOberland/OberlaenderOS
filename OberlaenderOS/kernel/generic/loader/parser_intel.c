@@ -6,7 +6,7 @@
  */
 
 #include "parser_intel.h"
-#include "../../../lib/types.h"
+#include <oos/types.h>
 #include <string.h>
 #include <stdlib.h>
 

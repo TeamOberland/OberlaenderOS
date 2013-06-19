@@ -7,8 +7,8 @@
 
 #include "mount.h"
 #include "../../genarch/io/mount.h"
-#include "../../../lib/types.h"
-#include "../../../lib/utils.h"
+#include <oos/types.h>
+#include <oos/utils.h>
 #include "file.h"
 #include <string.h>
 #include <stdlib.h>

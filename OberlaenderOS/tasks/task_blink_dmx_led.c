@@ -5,13 +5,14 @@
  *      Author: Daniel
  */
 #include "task_blink.h"
-#include "../lib/types.h"
+#include <oos/types.h>
 #include "../kernel/generic/io/gpio.h"
-#include "../lib/syscalls.h"
-#include "../lib/device.h"
-#include "../lib/uart.h"
-#include "../lib/gpio.h"
-#include "../lib/device.h"
+#include <oos/device.h>
+#include <oos/syscalls.h>
+#include <oos/device.h>
+#include <oos/uart.h>
+#include <oos/gpio.h>
+#include <oos/device.h>
 #include "stdlib.h"
 #define UART_2 2
 #define UART_3 3

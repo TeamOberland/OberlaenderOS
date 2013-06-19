@@ -8,7 +8,7 @@
 #ifndef MEM_GENERIC_H_
 #define MEM_GENERIC_H_
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 
 typedef uint8_t memorytype_t;
 

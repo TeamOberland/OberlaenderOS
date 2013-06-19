@@ -8,7 +8,7 @@
 #ifndef DRIVER_H_
 #define DRIVER_H_
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 
 struct _device_manager;
 typedef struct {

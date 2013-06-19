@@ -8,7 +8,7 @@
 #ifndef DRIVER_SHARED_H_
 #define DRIVER_SHARED_H_
 
-#include "../../lib/types.h"
+#include <oos/types.h>
 #include "../../kernel/generic/io/expansion.h"
 
 uint8_t driver_set_expansion_pin_mode(uint32_t pinNumber, uint8_t mode);

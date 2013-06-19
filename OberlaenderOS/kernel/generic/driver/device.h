@@ -9,7 +9,7 @@
 #define DEVICE_H_
 
 #include "device_manager.h"
-#include "../../../lib/device.h"
+#include <oos/device.h>
 
 device_handle_t device_open(device_manager_t* dm, device_id_t deviceId);
 void device_close(device_manager_t* dm, device_handle_t handle);

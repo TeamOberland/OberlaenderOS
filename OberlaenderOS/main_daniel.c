@@ -9,7 +9,7 @@
 #include "kernel/generic/kernel.h"
 
 #include "kernel/generic/scheduler/scheduler.h"
-#include "lib/scheduler.h"
+#include <oos/scheduler.h>
 #include "kernel/generic/driver/driver.h"
 #include "kernel/generic/driver/device_manager.h"
 #include "kernel/generic/io/file.h"
@@ -277,7 +277,8 @@ void main_daniel(void)
     __enable_interrupts();
     __switch_to_user_mode();
 
-    scheduler_add_process_from_intel_hex(global_scheduler, task_hello_world);
+        scheduler_add_process_from_elf_data(global_scheduler, task_hello_world_length, task_hello_world);
+//    scheduler_add_process_from_intel_hex(global_scheduler, task_hello_world_hex);
 //    scheduler_add_process(global_scheduler, task_file);
 //    scheduler_add_process(global_scheduler, task_blink_led0);
 //    scheduler_add_process(global_scheduler, task_blink_led1);

@@ -8,7 +8,7 @@
 #include "video_driver.h"
 #include "../../kernel/arch/omap3530/interrupts/clocks.h"
 #include "../../kernel/generic/driver/device_manager.h"
-#include "../../lib/video.h"
+#include <oos/video.h>
 #include <stdlib.h>
 #include <string.h>
 

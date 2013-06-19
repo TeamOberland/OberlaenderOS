@@ -8,8 +8,8 @@
 #ifndef BITMAP_H_
 #define BITMAP_H_
 
-#include "../../lib/types.h"
-#include "../../lib/video.h"
+#include <oos/types.h>
+#include <oos/video.h>
 
 /**
  * A structure storing the pixeldata

@@ -8,7 +8,7 @@
 #ifndef TIMER_GENERIC_H_
 #define TIMER_GENERIC_H_
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 #include "../../genarch/arch.h"
 #include "../../genarch/interrupts/timer.h"
 

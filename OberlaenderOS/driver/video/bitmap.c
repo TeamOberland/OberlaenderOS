@@ -6,7 +6,7 @@
  */
 
 #include "bitmap.h"
-#include "../../lib/video.h"
+#include <oos/video.h>
 #include "../../kernel/generic/io/mount.h"
 #include <stdlib.h>
 

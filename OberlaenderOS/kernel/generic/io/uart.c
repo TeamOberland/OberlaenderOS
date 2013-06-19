@@ -6,7 +6,7 @@
  */
 
 #include "../../genarch/uart/uart.h"
-#include "../../../lib/uart.h"
+#include <oos/uart.h>
 
 /*
 * Returns 1 if uart transmission fifo queue is empty.

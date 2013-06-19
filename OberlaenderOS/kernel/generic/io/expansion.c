@@ -5,7 +5,7 @@
  *      Author: Manuel
  */
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 #include "../../genarch/io/expansion.h"
 
 int8_t set_expansion_pin_mode(uint32_t pinNumber, uint8_t mode)

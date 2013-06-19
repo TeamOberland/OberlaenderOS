@@ -8,7 +8,7 @@
 #ifndef UART_H_
 #define UART_H_
 
-#include "../../../../lib/types.h"
+#include <oos/types.h>
 #include "../../../genarch/uart/uart.h"
 
 

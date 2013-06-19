@@ -5,10 +5,11 @@
  *      Author: Manuel
  */
 
+#include <oos/nullfix.h>
 #include "uart_driver.h"
 #include "../../kernel/generic/driver/device_manager.h"
 #include "../../kernel/generic/io/uart.h"
-#include "../../lib/uart.h"
+#include <oos/uart.h>
 
 driver_t uart_driver = {
     NULL,

@@ -5,6 +5,7 @@
  *      Author: Daniel
  */
 
+#include <oos/types.h>
 #include "gpio_driver.h"
 #include "../../kernel/generic/io/gpio.h"
 #include "../../kernel/generic/driver/device_manager.h"

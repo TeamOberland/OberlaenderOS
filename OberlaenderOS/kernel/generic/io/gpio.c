@@ -4,10 +4,11 @@
  *  Created on: 21.03.2013
  *      Author: Daniel
  */
+
+#include <oos/nullfix.h>
 #include "gpio.h"
 #include "../../genarch/gpio/gpio.h"
 #include "../../errno.h"
-#include "../../../lib/types.h"
 #include "../driver/driver.h"
 
 static gpio_exporter_t* main_exporter = NULL;

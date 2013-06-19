@@ -8,7 +8,7 @@
 #ifndef GPIO_DRIVER_H_
 #define GPIO_DRIVER_H_
 
-#include "../../lib/types.h"
+#include <oos/types.h>
 #include "../../kernel/generic/driver/driver.h"
 #include "../shared/driver_shared.h"
 

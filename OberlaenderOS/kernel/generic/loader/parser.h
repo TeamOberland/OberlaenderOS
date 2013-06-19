@@ -8,14 +8,6 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
-#include "../../../lib/types.h"
-
-typedef struct _code_instruction {
-    uint32_t virtualAddress;
-    uint32_t byteCount;
-    uint8_t* bytes;
-    struct _code_instruction* next;
-} code_instruction_t;
-
+#include <oos/types.h>
 
 #endif /* PARSER_H_ */

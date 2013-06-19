@@ -6,10 +6,10 @@
  */
 
 #include "ipc.h"
-#include "../../../lib/types.h"
-#include "../../../lib/semaphore.h"
-#include "../../../lib/list.h"
-#include "../../../lib/ipc.h"
+#include <oos/types.h>
+#include <oos/semaphore.h>
+#include <oos/list.h>
+#include <oos/ipc.h>
 #include "../scheduler/semaphore.h"
 #include <stdlib.h>
 #include <cstring>

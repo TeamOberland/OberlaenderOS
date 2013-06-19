@@ -8,8 +8,8 @@
 #ifndef FILE_H_
 #define FILE_H_
 
-#include "../../../lib/types.h"
-#include "../../../lib/file.h"
+#include <oos/types.h>
+#include <oos/file.h>
 #include "mount.h"
 
 //

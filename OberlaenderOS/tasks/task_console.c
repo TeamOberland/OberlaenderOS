@@ -6,11 +6,8 @@
  */
 
 
-
-
-#include "../lib/syscalls.h"
-#include "../lib/types.h"
-#include "../lib/device.h"
+#include <oos/types.h>
+#include <oos/device.h>
 #include <string.h>
 #define UART_3 3
 

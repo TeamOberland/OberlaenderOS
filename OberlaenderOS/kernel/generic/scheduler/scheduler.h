@@ -8,8 +8,8 @@
 #ifndef SCHEDULER_H_
 #define SCHEDULER_H_
 
-#include "../../../lib/types.h"
-#include "../../../lib/list.h"
+#include <oos/types.h>
+#include <oos/list.h>
 #include "process.h"
 #include "scheduler.h"
 
@@ -48,6 +48,7 @@ void scheduler_start(uint32_t speed);
 process_t* scheduler_current_process(scheduler_t* scheduler);
 
 //void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback);
+void scheduler_add_process_from_elf_data(scheduler_t* scheduler, uint32_t length, uint8_t* data);
 void scheduler_add_process_from_intel_hex(scheduler_t* scheduler, const char* data);
 
 void scheduler_run(scheduler_t* scheduler);

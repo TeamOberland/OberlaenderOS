@@ -9,7 +9,7 @@
 #ifndef PROCESS_H_
 #define PROCESS_H_
 
-#include "../../../lib/types.h"
+#include <oos/types.h>
 #include "../../genarch/arch.h"
 #include "../mmu/mmu_types.h"
 

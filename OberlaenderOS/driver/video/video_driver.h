@@ -9,8 +9,8 @@
 #define VIDEO_DRIVER_H_
 
 #include "bitmap.h"
-#include "../../lib/types.h"
-#include "../../lib/video.h"
+#include <oos/types.h>
+#include <oos/video.h>
 #include "../../kernel/generic/driver/driver.h"
 
 

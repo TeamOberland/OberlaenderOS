@@ -37,6 +37,11 @@ _c_int00: .asmfunc
         CPS		0x1F
         LDR		sp, c_sp_system
 
+		; Interrupt Vectors base register
+    	LDR R0, _int_vecs
+		MCR p15, #0, R0, c12, c0, #0
+
+
         ;*------------------------------------------------------
         ;* Initialize User-Mode Stack
         ;*------------------------------------------------------
@@ -77,6 +82,8 @@ c_sp_kernel		.long	kernelStack
 c_sp_abort		.long	abortStack
 c_sp_system		.long	systemStack
 
+_int_vecs		.long 	int_vecs
+
 ;******************************************************
 ;* UNDEFINED REFERENCES                               *
 ;******************************************************
@@ -84,6 +91,8 @@ c_sp_system		.long	systemStack
 	.global ARGS_MAIN_RTN
 	.global MAIN_FUNC_SP
 
+
+	.global int_vecs
 	.global irqStack
 	.global kernelStack
 	.global abortStack
