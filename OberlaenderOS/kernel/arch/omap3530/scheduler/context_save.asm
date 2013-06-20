@@ -4,16 +4,29 @@
 _current_context: .field current_context, 32
 
 __context_save:
-	STMFD R13!, {R12, R14}
+	; Backup R14 of _context_save
+	STMFD R13!, {R14}
+
+	; Load context pointer into R14
 	LDR R14, _current_context
 	LDR R14, [R14]
 
+	; Load R14 of calling function into context (return address)
+	; (at PC position in context)
 	LDR R12, [R13, #8]
 	STMIA R14!, {R12}
-	LDR R12, [R13]
+
+	; Restore correct R12 in case of tramping
+	LDR R12, [R13, #4]
+
+	; Store Registers in Context
 	STMIA R14, {R0-R14}^
+
+	; Store CPSR in Context
 	MRS R12, SPSR
 	STR R12, [R14, #60]
 
-	LDMFD R13!, {R12, R14}
+	; Restore Correct R14
+	LDMFD R13!, {R14}
+	; Jump back to caller
 	MOV PC, R14

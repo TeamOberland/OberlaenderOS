@@ -27,6 +27,11 @@ typedef struct {
     mem_pagetable_lookup_t* pageTableLookup;
 } mem_memory_t;
 
+typedef struct {
+    uint32_t startAddress;
+    uint32_t size;
+} mem_devicememory_t;
+
 
 
 mem_memory_t* mem_get(memorytype_t t);

@@ -60,6 +60,7 @@ typedef struct syscall_data
 #define SYSCALL_FILE_ISDIR 519
 
 #define SYSCALL_STDIO_PRINTF 601
+#define SYSCALL_STDIO_PRINT_TEST 602
 
 
 #pragma SWI_ALIAS(syscall, 1)

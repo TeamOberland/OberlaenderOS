@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <oos/oosio.h>
 #include "tasks/task_blink.h"
 #include "tasks/task_hello_world.h"
 

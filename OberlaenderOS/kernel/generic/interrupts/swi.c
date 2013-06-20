@@ -20,6 +20,7 @@
 #include "../io/mount.h"
 #include <oos/syscalls.h>
 
+#define SYSCALL_STDIO_PRINT_TEST 602
 
 //
 // IPC
@@ -244,6 +245,7 @@ typedef struct syscall_data
 } syscall_data_t;
 #endif
 
+
 void swi_dispatch(syscall_data_t* data)
 {
 //    printf("[SWI] Handle %i\n", swiNumber);
@@ -359,6 +361,9 @@ void swi_dispatch(syscall_data_t* data)
         case SYSCALL_STDIO_PRINTF:
             swi_stdio_printf((const char*)data->arg1);
             break;
+        case SYSCALL_STDIO_PRINT_TEST:
+            swi_stdio_printf("Hello World\n");
+            break;
     }
 }
 
@@ -368,10 +373,10 @@ void swi_dispatch(syscall_data_t* data)
 #pragma TASK(swi_handle)
 interrupt void swi_handle(syscall_data_t* data)
 {
-    asm(" SUB R13, R13, #4");
-    asm(" STR R14, [R13]");
+    asm(" STMFD R13!, {R12, R14}"); // store R12 and R14 on stack (R12 in case of tramping)
     __context_save();
-    asm(" ADD R13, R13, #4");
+    asm(" LDMFD R13!, {R12, R14}"); // restore R12 and R14 from stack
+
 
     log_debug("2 swiHandle dispatch");
     swi_dispatch(data);

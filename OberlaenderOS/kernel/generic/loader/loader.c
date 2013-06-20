@@ -49,7 +49,7 @@ void loader_load_elf_from_data(process_t* process, uint32_t length, uint8_t* dat
     uint32_t pageCount;
 
     elf_header_t* header;
-    elf_program_header_entry_t* entry;
+    elf_program_header_entry_t entry;
     uint32_t i,j;
 
     header = (elf_header_t*) data;
@@ -61,22 +61,23 @@ void loader_load_elf_from_data(process_t* process, uint32_t length, uint8_t* dat
         *entryPoint = header->entry;
         for (i = 0; i < header->phnum; i++)
         {
-            entry = (elf_program_header_entry_t*) (((uint32_t) header) + header->phoff + (header->phentsize * i));
-            if (entry->type == ELF_PT_LOAD)
+            // copy the header to prevent alignment problems
+            memcpy(&entry, (void*)(((uint32_t) header) + header->phoff + (header->phentsize * i)), sizeof(elf_program_header_entry_t));
+            if (entry.type == ELF_PT_LOAD)
             {
                 // allocate pages needed for this program header
-                pageCount = entry->filesz/ MMU_MASTER_TABLE_PAGE_SIZE;
-                if ((entry->filesz % MMU_MASTER_TABLE_PAGE_SIZE) > 0)
+                pageCount = entry.filesz/ MMU_MASTER_TABLE_PAGE_SIZE;
+                if ((entry.filesz % MMU_MASTER_TABLE_PAGE_SIZE) > 0)
                     pageCount++;
                 processMemory = mem_find_free(pageCount, FALSE, TRUE);
 
                 // copy the plain data of the program header
-                memcpy(processMemory, header + entry->offset, entry->filesz);
+                memcpy(processMemory, (void*)((uint32_t)header + entry.offset), entry.filesz);
 
                 // map the virtual addressses of the new allocated program header
                 for(j = 0; j < pageCount; j++)
                 {
-                    virtual = (entry->vaddr + (i * MMU_MASTER_TABLE_PAGE_SIZE));
+                    virtual = (entry.vaddr + (i * MMU_MASTER_TABLE_PAGE_SIZE));
                     physical = (((uint32_t) processMemory) + (i * MMU_MASTER_TABLE_PAGE_SIZE));
                     mmu_create_address_mapping(process->masterTable,virtual, physical, 0);
                 }

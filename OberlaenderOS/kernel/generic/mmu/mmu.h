@@ -15,6 +15,9 @@
 #include "../../genarch/mmu/mmu.h"
 #include "../../genarch/mmu/mem.h"
 
+extern volatile uint32_t mmu_current_master_table;
+
+
 //
 // General
 //
@@ -41,8 +44,8 @@
 //
 // L2 Table
 //
-#define MMU_L2_PAGE_COUNT 256
-#define MMU_L2_PAGE_SIZE 4
+#define MMU_L2_PAGE_SIZE 0x100
+#define MMU_L2_PAGE_COUNT 4
 #define MMU_L2_TABLE_SIZE MMU_L2_PAGE_SIZE * MMU_L2_PAGE_COUNT
 
 

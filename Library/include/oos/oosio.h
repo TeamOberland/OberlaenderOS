@@ -8,6 +8,7 @@
 #ifndef OOSIO_H_
 #define OOSIO_H_
 
+void api_print_test(void);
 void api_printf(const char* format, ...);
 
 #endif /* OOSIO_H_ */
