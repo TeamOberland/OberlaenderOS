@@ -138,7 +138,8 @@ bool_t mmu_handle_data_abort()
         }
         else
         {
-            printf("illegal accessed address (0x%x) at position (0x%x) bye bye pid %i\n", mmu_accessed_address, last_interrupt_source, currentProcess->id);
+            printf("illegal accessed address (0x%x) at position (0x%x) bye bye pid %i\n", mmu_accessed_address,
+                    last_interrupt_source, currentProcess->id);
             scheduler_kill_current(global_scheduler);
             return FALSE;
         }
@@ -174,6 +175,59 @@ void mmu_create_page_mapping(mmu_table_pointer_t masterTable, uint32_t virtualAd
     memset(physicalAddress, 0, MMU_MASTER_TABLE_PAGE_SIZE);
     // and map it to the given master table
     mmu_create_address_mapping(masterTable, virtualAddress, (uint32_t) physicalAddress, domain);
+}
+
+void mmu_create_direct_mapping_range(mmu_table_pointer_t masterTable, uint32_t physicalStartAddress,
+        uint32_t physicalEndAddress, uint8_t domain)
+{
+    uint32_t i;
+    uint32_t masterEntryCount;
+    uint32_t masterEntryIndex;
+    mmu_table_pointer_t currentTableEntry;
+    // mark page as reserved
+    masterEntryCount = (physicalEndAddress - physicalStartAddress) / MMU_SECTION_ENTRY_SIZE;
+    // if there is still a little space, reserve one more
+    if (((physicalEndAddress - physicalStartAddress) % MMU_SECTION_ENTRY_SIZE) > 0)
+    {
+        masterEntryCount++;
+    }
+
+    // map the addresses directly (as sections)
+    masterEntryIndex = MMU_VIRTUAL_TO_MASTER_TABLE_ENTRY(physicalStartAddress);
+    currentTableEntry = masterTable + masterEntryIndex;
+    for (i = 0; i < masterEntryCount; i++)
+    {
+        *currentTableEntry = (masterEntryIndex << 20) | MMU_SECTION_ENTRY_KERNEL_INITIAL;
+
+        masterEntryIndex++;
+        currentTableEntry++;
+    }
+}
+
+void mmu_create_address_mapping_range(mmu_table_pointer_t masterTable, uint32_t virtualStartAddress,
+        uint32_t physicalStartAddress, uint32_t physicalEndAddress, uint8_t domain)
+{
+    // create mappings in l2 table steps
+    uint32_t i;
+    uint32_t l2EntryCount;
+    // mark page as reserved
+    l2EntryCount = (physicalEndAddress - physicalStartAddress) / MMU_L2_PAGE_SIZE;
+    // if there is still a little space, reserve one more
+    if (((physicalEndAddress - physicalStartAddress) % MMU_L2_PAGE_SIZE) > 0)
+    {
+        l2EntryCount++;
+    }
+
+    // map the addresses directly (as sections)
+    for(i = 0; i < l2EntryCount; i++)
+    {
+        mmu_create_address_mapping(masterTable,
+                virtualStartAddress + (i * MMU_L2_PAGE_SIZE),
+                physicalStartAddress + (i* MMU_L2_PAGE_SIZE),
+                domain
+        );
+
+    }
 }
 
 void mmu_create_address_mapping(mmu_table_pointer_t masterTable, uint32_t virtualAddress, uint32_t physicalAddress,
@@ -249,27 +303,14 @@ mmu_table_pointer_t mmu_get_or_create_l2_table(mmu_table_pointer_t masterTable, 
 void mmu_init_process(process_t* process)
 {
     // map the kernel pages in all memories
-    uint32_t pageNumber;
-    uint32_t pageCount;
     memorytype_t t;
     mem_memory_t* m;
-    uint32_t i, j;
+    uint32_t i;
     for (t = 0; t < memory_count; t++)
     {
         m = mem_get(t);
-        pageCount = (m->userStartAddress - m->globalStartAddress) / MMU_MASTER_TABLE_PAGE_SIZE;
-        // if there is still a little space, reserve one more
-        if (((m->userStartAddress - m->globalStartAddress) % MMU_MASTER_TABLE_PAGE_SIZE) > 0)
-        {
-            pageCount++;
-        }
 
-        for (i = 0; i < pageCount; i++)
-        {
-            // map kernel code 1:1
-            mmu_create_address_mapping(process->masterTable, (m->globalStartAddress + (i * MMU_MASTER_TABLE_PAGE_SIZE)),
-                    (m->globalStartAddress + (i * MMU_MASTER_TABLE_PAGE_SIZE)), 0);
-        }
+        mmu_create_direct_mapping_range(process->masterTable, m->globalStartAddress, m->userStartAddress, 0);
     }
 
     //
@@ -277,41 +318,13 @@ void mmu_init_process(process_t* process)
     mmu_table_pointer_t currentTableEntry;
     for (i = 0; i < device_memory_count; i++)
     {
-        // mark page as reserved
-        pageCount = device_memories[i].size / MMU_SECTION_ENTRY_SIZE;
-        // if there is still a little space, reserve one more
-        if ((device_memories[i].size % MMU_SECTION_ENTRY_SIZE) > 0)
-        {
-            pageCount++;
-        }
-
-        // map the addresses directly (as sections)
-        pageNumber = MMU_VIRTUAL_TO_MASTER_TABLE_ENTRY(device_memories[i].startAddress);
-        currentTableEntry = process->masterTable + pageNumber;
-        for (j = 0; j < pageCount; j++)
-        {
-            *currentTableEntry = (pageNumber << 20) | MMU_SECTION_ENTRY_KERNEL_INITIAL;
-
-            pageNumber++;
-            currentTableEntry++;
-        }
+        mmu_create_direct_mapping_range(process->masterTable, device_memories[i].startAddress,
+                device_memories[i].startAddress + device_memories[i].size, 0);
     }
 
     //
     // map interrupt handlers
-    pageCount = intvecs_size / MMU_SECTION_ENTRY_SIZE;
-    if ((intvecs_size % MMU_SECTION_ENTRY_SIZE) > 0)
-    {
-        pageCount++;
-    }
-    pageNumber = MMU_VIRTUAL_TO_MASTER_TABLE_ENTRY(intvecs_start);
-    currentTableEntry = process->masterTable + (pageNumber);
-    for (i = 0; i < pageCount; i++)
-    {
-        *currentTableEntry = (pageNumber << 20) | MMU_SECTION_ENTRY_KERNEL_INITIAL;
-        pageNumber++;
-        currentTableEntry++;
-    }
+    mmu_create_direct_mapping_range(process->masterTable, intvecs_start, intvecs_start + intvecs_size, 0);
 }
 
 bool_t mmu_is_legal(uint32_t accessedAddress, uint32_t faultState)
@@ -458,7 +471,7 @@ uint32_t mmu_virtual_to_physical(mmu_table_pointer_t masterTable, uint32_t virtu
             }
         }
         // is this a section entry?
-        else if((masterTableEntryValue & 0x02) == 0x02)
+        else if ((masterTableEntryValue & 0x02) == 0x02)
         {
             // upper 12 bits of entry (entry index) | lower 20 bits of virtual address
             return (masterTableEntryValue & 0xFFF00000) | (virtualAddress & 0xFFFFF);

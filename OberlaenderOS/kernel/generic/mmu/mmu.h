@@ -80,7 +80,12 @@ bool_t mmu_handle_prefetch_abort();
 
 mmu_table_pointer_t mmu_create_master_table(void);
 void mmu_create_page_mapping(mmu_table_pointer_t masterTable, uint32_t virtualAddress, uint8_t domain);
+void mmu_create_direct_mapping_range(mmu_table_pointer_t masterTable,
+        uint32_t physicalStartAddress, uint32_t physicalEndAddress,
+        uint8_t domain);
 void mmu_create_address_mapping(mmu_table_pointer_t masterTable, uint32_t virtualAddress, uint32_t physicalAddress, uint8_t domain);
+void mmu_create_address_mapping_range(mmu_table_pointer_t masterTable, uint32_t virtualStartAddress,
+        uint32_t physicalStartAddress, uint32_t physicalEndAddress, uint8_t domain);
 mmu_table_pointer_t mmu_get_or_create_l2_table(mmu_table_pointer_t masterTable, uint32_t masterTableEntry, uint8_t domain);
 
 bool_t mmu_is_legal(uint32_t accessedAddress, uint32_t faultState);

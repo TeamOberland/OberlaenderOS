@@ -105,31 +105,6 @@ void scheduler_add_process_from_elf_data(scheduler_t* scheduler, uint32_t length
     __enable_interrupts();
 }
 
-void scheduler_add_process_from_intel_hex(scheduler_t* scheduler, const char* data)
-{
-    irq_disable();
-    __disable_interrupts();
-
-    node_t* node = (node_t*) malloc(sizeof(node_t));
-    node_initialize(node);
-
-    process_t* process = (process_t*) malloc(sizeof(process_t));
-    process->id = scheduler->nextProcessId;
-    process->masterTable = mmu_create_master_table();
-    mmu_init_process(process);
-    node->member = process;
-
-    __context_init(process);
-
-    loader_load_intel_from_string(process, data);
-
-    scheduler->nextProcessId++;
-    list_append(node, scheduler->processes);
-
-    irq_enable();
-    __enable_interrupts();
-}
-
 //void scheduler_add_process(scheduler_t* scheduler, process_callback_t callback)
 //{
 //    irq_disable();
