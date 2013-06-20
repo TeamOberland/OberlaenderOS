@@ -6,9 +6,11 @@
  */
 
 #include <oos/types.h>
+#include <oos/device.h>
 #include "gpio_driver.h"
 #include "../../kernel/generic/io/gpio.h"
 #include "../../kernel/generic/driver/device_manager.h"
+
 
 driver_t gpio_driver = { NULL, DEVICE_TYPE_GPIO, gpio_driver_init, gpio_driver_open, gpio_driver_close, gpio_driver_read,
         gpio_driver_write, gpio_driver_ioctl };

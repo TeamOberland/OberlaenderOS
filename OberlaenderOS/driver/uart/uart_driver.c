@@ -10,6 +10,7 @@
 #include "../../kernel/generic/driver/device_manager.h"
 #include "../../kernel/generic/io/uart.h"
 #include <oos/uart.h>
+#include <oos/device.h>
 
 driver_t uart_driver = {
     NULL,
@@ -24,7 +25,7 @@ driver_t uart_driver = {
 
 static registered_uart_t registered_uarts[MAX_UART_DEVICES];
 
-static registered_uart_t* uart_get_registered(device_id_t device)
+registered_uart_t* uart_get_registered(device_id_t device)
 {
     int i;
     for (i = 0; i < MAX_UART_DEVICES; i++)
@@ -49,8 +50,6 @@ void uart_driver_init(void)
         registered_uarts[i].initialized = FALSE;
         registered_uarts[i].device= id;
         registered_uarts[i].uart_port=i+1;
-
-
     }
 }
 

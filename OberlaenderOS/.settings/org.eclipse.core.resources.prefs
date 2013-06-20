@@ -1,6 +1,8 @@
 eclipse.preferences.version=1
 encoding//Debug/api/subdir_rules.mk=UTF-8
 encoding//Debug/api/subdir_vars.mk=UTF-8
+encoding//Debug/driver/dmx/subdir_rules.mk=UTF-8
+encoding//Debug/driver/dmx/subdir_vars.mk=UTF-8
 encoding//Debug/driver/fs/lib/subdir_rules.mk=UTF-8
 encoding//Debug/driver/fs/lib/subdir_vars.mk=UTF-8
 encoding//Debug/driver/gpio/subdir_rules.mk=UTF-8
@@ -15,6 +17,8 @@ encoding//Debug/driver/video/subdir_rules.mk=UTF-8
 encoding//Debug/driver/video/subdir_vars.mk=UTF-8
 encoding//Debug/drivers/subdir_rules.mk=UTF-8
 encoding//Debug/drivers/subdir_vars.mk=UTF-8
+encoding//Debug/kernel/arch/omap3530/dmx/subdir_rules.mk=UTF-8
+encoding//Debug/kernel/arch/omap3530/dmx/subdir_vars.mk=UTF-8
 encoding//Debug/kernel/arch/omap3530/gpio/subdir_rules.mk=UTF-8
 encoding//Debug/kernel/arch/omap3530/gpio/subdir_vars.mk=UTF-8
 encoding//Debug/kernel/arch/omap3530/interrupts/subdir_rules.mk=UTF-8

@@ -5,8 +5,9 @@
  *      Author: Manuel
  */
 
-#include "../../genarch/uart/uart.h"
+
 #include <oos/uart.h>
+#include "uart.h"
 
 /*
 * Returns 1 if uart transmission fifo queue is empty.

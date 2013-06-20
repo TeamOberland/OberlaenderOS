@@ -26,6 +26,6 @@ uint32_t __uart_write(uint8_t uartPort, uint8_t* buffer);
 /* reads one character from the UART device */
 uint32_t __uart_read(uint8_t uartPort, uint8_t* buffer);
 bool_t __uart_is_valid_port(uint8_t uartPort);
-bool_t __uart_init(uint8_t uartPort,uint8_t uartMode, uart_protocol_format_t *config);
+bool_t __uart_init(uint8_t uartPort,uint8_t uartMode, uart_protocol_format_t* config);
 
 #endif /* UART_H_Genarch */

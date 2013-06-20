@@ -23,6 +23,11 @@ typedef int8_t bool_t;
 #define NULL 0
 #endif
 
+#define SET_BIT(addr, offset) *addr |= (1 << offset);
+#define CLEAR_BIT(addr, offset) *addr &= ~(1 << offset);
+#define TOGGLE_BIT(addr, offset) *(addr) ^= (1 << offset);
+#define READ_BIT(addr, offset) (*(addr) & (1 << offset));
+
 typedef uint8_t driver_id_t;
 typedef uint8_t device_id_t;
 typedef union device_id

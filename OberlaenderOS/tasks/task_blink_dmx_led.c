@@ -58,7 +58,7 @@ void task_blink_dmx_led(void)
 
     device_id_t uartDevice = api_device_build_id(DEVICE_TYPE_UART, UART_2);
     device_handle_t handle= api_device_open(uartDevice);
-    api_device_ioctl(handle,UART_DRIVER_INIT,(uint32_t)&uart_protocol_rs232);
+//    api_device_ioctl(handle,UART_DRIVER_INIT,(uint32_t)&uart_protocol_rs232);
     char* message = "\r\n welcome to oberlaenderOS\r\n\0";
 
     while(TRUE)

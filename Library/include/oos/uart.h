@@ -8,6 +8,8 @@
 #ifndef UART_LIB_H_
 #define UART_LIB_H_
 
+#include "types.h"
+
 #define UART_DRIVER_INIT 0x01
 
 #define UART_PROTOCOL_BAUDRATE_16X115_2 0x001A
@@ -55,13 +57,13 @@ typedef struct uart_protocol_format_t {
  * FLOW CONTROL: none (Critical)
  */
 
-static struct uart_protocol_format_t uart_protocol_rs232 = {
-  UART_PROTOCOL_BAUDRATE_16X115_2,
-  UART_PROTOCOL_DATA_LENGTH_8,
-  UART_PROTOCOL_NB_STOP_1,
-  UART_PROTOCOL_PARITY_NONE,
-  UART_FLOW_CONTROL_DISABLE_FLAG
-};
+//static struct uart_protocol_format_t uart_protocol_rs232 = {
+//  UART_PROTOCOL_BAUDRATE_16X115_2,
+//  UART_PROTOCOL_DATA_LENGTH_8,
+//  UART_PROTOCOL_NB_STOP_1,
+//  UART_PROTOCOL_PARITY_NONE,
+//  UART_FLOW_CONTROL_DISABLE_FLAG
+//};
 
 static struct uart_protocol_format_t uart_protocol_dmx = {
         UART_PROTOCOL_BAUDRATE_DMX,

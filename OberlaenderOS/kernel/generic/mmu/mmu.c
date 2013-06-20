@@ -10,6 +10,7 @@
 #include "../scheduler/scheduler.h"
 #include <stdlib.h>
 #include <string.h>
+#include <oos/types.h>
 
 mmu_table_pointer_t kernel_master_table;
 

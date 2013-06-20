@@ -8,27 +8,26 @@
 #include "kernel/generic/kernel.h"
 
 #include "kernel/generic/scheduler/scheduler.h"
-#include "lib/scheduler.h"
+#include <oos/scheduler.h>
 #include "kernel/generic/driver/driver.h"
 #include "kernel/generic/driver/device_manager.h"
+#include <oos/dmx.h>
 
 #include "driver/gpio/gpio_driver.h"
-#include "driver/uart/uart_driver.h"
+#include "driver/dmx/dmx_driver.h"
 #include "kernel/genarch/io/expansion.h"
-#include "lib/logger.h"
-#include "lib/device.h"
+#include <oos/device.h>
+#include <oos/uart.h>
+#include "kernel/generic/log/logger.h"
 #include <string.h>
 
 extern void task_blink_led0(void);
 extern void task_blink_led1(void);
-extern void task_console(void);
 extern void task_gpio_led0(void);
 
 extern void task_ipc_server(void);
 extern void task_ipc_client(void);
 extern void task_blink_dmx_led(void);
-
-
 
 void setup_device_manager()
 {
@@ -37,7 +36,19 @@ void setup_device_manager()
     // load drivers
     device_manager_register_driver(global_device_manager, &gpio_driver);
     device_manager_register_driver(global_device_manager, &uart_driver);
+    device_manager_register_driver(global_device_manager, &dmx_driver);
 }
+
+typedef struct dmx_protocol_par_complex_t {
+    uint8_t pan;
+    uint8_t til;
+    uint8_t colorWheel;
+    uint8_t shutter;
+    uint8_t goboWheel;
+    uint8_t goboRotation;
+} dmx_protocol_par_complex_t;
+
+
 
 void dmx_wait(uint32_t bits)
 {
@@ -45,87 +56,160 @@ void dmx_wait(uint32_t bits)
     {
     }
 }
-
+#define DEVICE_TYPE_GPIO  0x0001
+#define DEVICE_TYPE_UART  0x0002
+#define DEVICE_TYPE_VIDEO 0x0003
+#define DEVICE_TYPE_RS232  0x0004
+#define DEVICE_TYPE_DMX  0x0005
 
 void dmx_sending_signal()
 {
-    int i,a;
-    i=a=0;
-    uint8_t channels[6];
-    device_id_t uart_pin11 = gpio_export(135);
-    device_id_t uart_pin6 = gpio_export(146);
-    device_handle_t uart_pin11_handle = device_open(global_device_manager,uart_pin11);
-     device_handle_t uart_pin6_handle = device_open(global_device_manager,uart_pin6);
-//
-    device_ioctl(global_device_manager,uart_pin11_handle, GPIO_DRV_IOCTL_SET_DIR, GPIO_DRV_IOCTL_DIR_OUT);
-    device_ioctl(global_device_manager,uart_pin6_handle, GPIO_DRV_IOCTL_SET_DIR, GPIO_DRV_IOCTL_DIR_OUT);
-//
-//    device_ioctl(global_device_manager,uart_pin11_handle, GPIO_DRV_IOCTL_SET_EXPPIN_MODE, 0);
-//    device_ioctl(global_device_manager,uart_pin6_handle, GPIO_DRV_IOCTL_SET_EXPPIN_MODE, 0);
-    __set_expansion_pin_mode(6,MODE_GPIO);
-    __set_expansion_pin_mode(11,MODE_GPIO);
-
-    uint8_t one = 1;
-    uint8_t cero =0;
-    device_write(global_device_manager,uart_pin11_handle, &one, 1);
-    device_write(global_device_manager,uart_pin6_handle, &one, 1);
-
-    __set_expansion_pin_mode(6,MODE_UART);
-    //__set_expansion_pin_mode(11,MODE_UART);
 
 
-
-    device_id_t uartDevice = api_device_build_id(DEVICE_TYPE_UART, 2);
+    uint8_t i;
+    dmx_protocol_par_t data;
+    dmx_protocol_par_complex_t dataComplex;
+    device_id_t uartDevice = api_device_build_id(DEVICE_TYPE_DMX, 1);
     device_handle_t handle= device_open(global_device_manager,uartDevice);
     device_ioctl(global_device_manager,handle,UART_DRIVER_INIT,(uint32_t)&uart_protocol_dmx);
-    __set_expansion_pin_mode(6,MODE_UART);
-    while(one==1)
+
+    data.mode=0x2;
+    data.function=0;
+
+
+    uint32_t j = 0;
+    while(TRUE)
     {
-        __set_expansion_pin_mode(6,MODE_GPIO);
-        //reset
-        device_write(global_device_manager,uart_pin6_handle, &cero, 1);
-        a = 2400; //~204 microseconds during testing
-        for(i = 0; i < a; i++);
-        a = 100; //~10 microseconds
-        device_write(global_device_manager,uart_pin6_handle, &one, 1);
-        for(i = 0; i < a; i++);
+        dataComplex.colorWheel=j%120;
+        dataComplex.goboRotation=j%120;
+        dataComplex.goboWheel=j%120;
+        dataComplex.pan=j%120;
+        dataComplex.shutter=j%120;
+        dataComplex.til=j%120;
+        j++;
+        device_write(global_device_manager,handle,&dataComplex, sizeof(dataComplex));
+    }
+
+    int red;
+    int blue;
+    int green;
+    while(TRUE)
+    {
+
+        for (green = 0; green < 255; ++green) {
+            data.green = green;  //green
+            device_write(global_device_manager,handle,&data, sizeof(data));
+        }
+        data.green = 0;  //green
+        for (blue = 0; blue < 255; ++blue) {
+            data.blue = blue;  //blue
+            device_write(global_device_manager,handle,&data, 5);
+        }
+        data.blue = 0;//blue
+        for (red = 0; red < 255; ++red) {
+            data.red = red;  //red
+            device_write(global_device_manager,handle,&data, 5);
+        }
+        data.red = 0;  //red
+
+        for (green = 0; green < 255; ++green) {
+            data.green = green;  //green
+            device_write(global_device_manager,handle,&data, 5);
+            for (i = 0; i < 2000; ++i) {
+
+            }
+        }
+        for (blue = 0; blue < 255; ++blue) {
+            data.blue = blue;  //red
+            device_write(global_device_manager,handle,&data, 5);
+            for (i = 0; i < 2000; ++i) {
+
+            }
+        }
+        for (red = 0; red < 255; ++red) {
+            data.red = red;  //red
+            device_write(global_device_manager,handle,&data, 5);
+            for (i = 0; i < 2000; ++i) {
+
+            }
+        }
 
 
-        __set_expansion_pin_mode(6,MODE_UART);
 
-//        //Omap3530x.pdf, modes on page 780
-//        //Chosen modes: page 96 in BBSRM_latest.pdf
-//        unsigned int scm_rx_tx = *((volatile unsigned int*)0x48002178);
-//        scm_rx_tx &= ~0x70007;
-//        scm_rx_tx |= 0;
-//        scm_rx_tx |= (1 << 16);
-//        *((volatile unsigned int*)0x48002178) = scm_rx_tx;
+        data.blue=255;
+        data.red =255;
+        data.green=255;
+
+
+
+        uint32_t j = 0;
+        while(TRUE)
+        {
+            dataComplex.colorWheel=j;
+            dataComplex.goboRotation=j;
+            dataComplex.goboWheel=j;
+            dataComplex.pan=j;
+            dataComplex.shutter=j;
+            dataComplex.til=j;
+            j++;
+            device_write(global_device_manager,handle,&dataComplex, sizeof(dataComplex));
+        }
+
+
+
+        device_write(global_device_manager,handle,&data, 5);
+
+//        for (i = 0; i < 100000; ++i) {
 //
-//        unsigned int scm_rts_cts = *((volatile unsigned int*)0x48002174);
-//        scm_rts_cts &= ~0x70007;
-//        scm_rts_cts |= 0;
-//        scm_rts_cts |= (0 << 16);
-//        *((volatile unsigned int*)0x48002174) = scm_rts_cts;
-
-
-        channels[0] = 0x0;  //start byte
-        channels[1] = 0x2;  //set to RGB
-        channels[2] = 0;  //red
-        channels[3] = 0x11;  //green
-        channels[4] = 255;  //blue
-        channels[5] = 0x0;  //no function - no speed
-
-
-        for (i = 0; i < 6; i++) {
-            device_write(global_device_manager,handle,&channels, 6);
-        }
-
-        for (i = 0; i < 100000; ++i) {
-
-        }
+//        }
     }
 }
 
+void task_console_no_swi(void)
+{
+    char toRead[64];
+    memset(&toRead,0,64);
+    device_id_t uartDevice = api_device_build_id(DEVICE_TYPE_UART, 3);
+    device_handle_t handle= device_open(global_device_manager,uartDevice);
+    char* message = "\r\n welcome to oberlaenderOS\r\n\0";
+    device_write(global_device_manager,handle,message,strlen(message));
+    message="possible commands are:\r\n\0";
+    device_write(global_device_manager,handle,message,strlen(message));
+    message ="echo\r\n pwd\r\n\0";
+    device_write(global_device_manager,handle,message,strlen(message));
+    uint8_t i = 0;
+    uint32_t j = 0;
+    while(TRUE)
+    {
+        if(i>=64)
+        {
+            i=0;
+        }
+
+
+        device_read(global_device_manager,handle,&toRead[i],1);
+
+        //line ending
+        if(i>0&&toRead[i-1]==13&&toRead[i]==10)
+        {
+            message="trying to execute your command:\r\n\0";
+            device_write(global_device_manager,handle,message,strlen(message));
+        }
+        i++;
+
+        device_write(global_device_manager,handle,&toRead[i-1],1);
+//
+//        for (j = 0; j < 1000; ++j) {
+//
+//        }
+    }
+
+
+
+
+    device_close(global_device_manager,handle);
+    while(TRUE);
+}
 
 
 
@@ -140,7 +224,8 @@ void main_manuel(void)
 
     log_debug("\r\n\r\nSystem init...");
 
-    dmx_sending_signal();
+    task_console_no_swi();
+    //dmx_sending_signal();
 
 //    __enable_interrupts();
 //    __switch_to_user_mode();

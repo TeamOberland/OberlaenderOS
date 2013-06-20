@@ -13,6 +13,8 @@
 #define DEVICE_TYPE_GPIO  0x0001
 #define DEVICE_TYPE_UART  0x0002
 #define DEVICE_TYPE_VIDEO 0x0003
+//#define DEVICE_TYPE_RS232  0x0004
+#define DEVICE_TYPE_DMX  0x0005
 
 typedef int16_t device_handle_t;
 

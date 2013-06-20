@@ -21,12 +21,12 @@ void setup_kernel()
     __disable_interrupts();
     irq_disable();
     irq_init();
-    scheduler_init();
+//    scheduler_init();
     /* timer_init(); */
     ipc_init();
     irq_enable();
 
-    mmu_init();
+//    mmu_init();
 }
 
 

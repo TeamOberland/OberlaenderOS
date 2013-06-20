@@ -81,7 +81,13 @@ inline uint32_t omap_uart_get_baseadress(uint8_t uartPort);
 inline void omap_uart_waitfor_resetdone(uint8_t uartPort);
 inline void omap_uart_set_mode(uint8_t uartPort,uint32_t mode);
 void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_protocol_format_t *configuration);
-
-
+memory_mapped_io_t omap_uart_get_register(uint8_t uartPort, uint32_t offset);
+void omap_uart_disable(uint8_t uartPort);
+void omap_uart_set_mode(uint8_t uartPort,uint32_t mode);
+uint32_t omap_uart_switch_to_config_mode_b(uint8_t uartPort);
+uint32_t omap_uart_switch_to_config_mode_a(uint8_t uartPort);
+void omap_uart_software_reset(uint8_t uartPort);
+void omap_uart_waitfor_resetdone(uint8_t uartPort);
+uint32_t omap_uart_get_baseadress(uint8_t uartPort);
 
 #endif

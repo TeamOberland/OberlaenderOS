@@ -289,7 +289,6 @@ void swi_dispatch(syscall_data_t* data)
             swi_device_read((device_handle_t) data->arg1, (void*) data->arg2, data->arg3);
             break;
         case SYSCALL_DEVICE_WRITE:
-            break;
             swi_device_write((device_handle_t) data->arg1, (void*) data->arg2, data->arg3);
             break;
         case SYSCALL_DEVICE_IOCTL:
