@@ -33,6 +33,4 @@ SECTIONS
    .sysmem     > sysmem_memory {
       sysmem = .;
    }
-
-
 }

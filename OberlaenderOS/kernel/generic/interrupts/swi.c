@@ -29,6 +29,7 @@
 
 void swi_ipc_register(const char* ns)
 {
+    ns = mmu_current_process_to_kernel(ns);
     process_t* proc = scheduler_current_process(global_scheduler);
     if (proc != NULL)
     {
@@ -38,6 +39,7 @@ void swi_ipc_register(const char* ns)
 
 void swi_ipc_unregister(const char* ns)
 {
+    ns = mmu_current_process_to_kernel(ns);
     process_t* proc = scheduler_current_process(global_scheduler);
     if (proc != NULL)
     {
@@ -47,6 +49,9 @@ void swi_ipc_unregister(const char* ns)
 
 void swi_ipc_send(const char* ns, ipc_message_data_t* message)
 {
+    ns = mmu_current_process_to_kernel(ns);
+    message = mmu_current_process_to_kernel(message);
+
     process_t* proc = scheduler_current_process(global_scheduler);
     if (proc != NULL)
     {
@@ -56,6 +61,9 @@ void swi_ipc_send(const char* ns, ipc_message_data_t* message)
 
 void swi_ipc_receive(const char* ns, ipc_message_data_t** message)
 {
+    ns = mmu_current_process_to_kernel(ns);
+    message = mmu_current_process_to_kernel(message);
+
     process_t* proc = scheduler_current_process(global_scheduler);
     if (proc != NULL)
     {
@@ -70,6 +78,7 @@ void swi_ipc_receive(const char* ns, ipc_message_data_t** message)
 
 void swi_ipc_wait(const char* ns)
 {
+    ns = mmu_current_process_to_kernel(ns);
     process_t* proc = scheduler_current_process(global_scheduler);
     if (proc != NULL)
     {
@@ -94,6 +103,7 @@ void swi_scheduler_run(void)
 
 void swi_gpio_export(uint32_t gpio, device_id_t* deviceId)
 {
+    deviceId = mmu_current_process_to_kernel(deviceId);
     *deviceId = gpio_export(gpio);
 }
 
@@ -103,6 +113,7 @@ void swi_gpio_export(uint32_t gpio, device_id_t* deviceId)
 
 void swi_device_open(device_id_t deviceId, device_handle_t* handle)
 {
+    handle = mmu_current_process_to_kernel(handle);
     *handle = device_open(global_device_manager, deviceId);
 }
 
@@ -113,18 +124,19 @@ void swi_device_close(device_handle_t handle)
 
 void swi_device_read(device_handle_t handle, void* buffer, uint32_t count)
 {
+    buffer = mmu_current_process_to_kernel(buffer);
     device_read(global_device_manager,handle, buffer, count);
 }
 
 void swi_device_write(device_handle_t handle, void* buffer, uint32_t count)
 {
-    log_debug("swi_device_write start");
+    buffer = mmu_current_process_to_kernel(buffer);
     device_write(global_device_manager,handle, buffer, count);
-    log_debug("swi_device_write end");
 }
 
 void swi_device_ioctl(device_handle_t handle, uint32_t cmd, uint32_t arg, int32_t* res)
 {
+    res = mmu_current_process_to_kernel(res);
     *res = device_ioctl(global_device_manager, handle, cmd, arg);
 }
 
@@ -133,6 +145,7 @@ void swi_device_ioctl(device_handle_t handle, uint32_t cmd, uint32_t arg, int32_
 //
 void swi_file_open(const char* path, const char* mode, file_handle_t* handle)
 {
+    path = mmu_current_process_to_kernel(path);
     *handle = mount_open(path, mode);
 }
 
@@ -143,91 +156,123 @@ void swi_file_close(file_handle_t handle)
 
 void swi_file_flush(file_handle_t handle, int32_t* result)
 {
+    result = mmu_current_process_to_kernel(result);
     *result = mount_flush(handle);
 }
 
 void swi_file_getc(file_handle_t handle, int32_t* result)
 {
+    result = mmu_current_process_to_kernel(result);
     *result = mount_getc(handle);
 }
 
 void swi_file_gets(char* s, int32_t length,  file_handle_t handle,  char** result)
 {
+    s = mmu_current_process_to_kernel(s);
+    result = mmu_current_process_to_kernel(result);
     *result = mount_gets(s, length, handle);
 }
 
 void swi_file_putc(int32_t c, file_handle_t handle,  int32_t* result)
 {
+    result = mmu_current_process_to_kernel(result);
     *result = mount_putc(c, handle);
 }
 
 void swi_file_puts(char* s, file_handle_t handle,  int32_t* result)
 {
+    s = mmu_current_process_to_kernel(s);
+    result = mmu_current_process_to_kernel(result);
     *result = mount_puts(s, handle);
 }
 
 void swi_file_write(void* buffer, int32_t size, int32_t count, file_handle_t handle, int32_t* result)
 {
+    buffer = mmu_current_process_to_kernel(buffer);
+    result = mmu_current_process_to_kernel(result);
+
     *result = mount_write(buffer, size, count, handle);
 }
 
 void swi_file_read(void* buffer, int32_t size, int32_t count, file_handle_t handle, int32_t* result)
 {
+    buffer = mmu_current_process_to_kernel(buffer);
+    result = mmu_current_process_to_kernel(result);
+
     *result = mount_read(buffer, size, count, handle);
 }
 
 void swi_file_seek(file_handle_t handle, int32_t offset, int32_t origin, int32_t* result)
 {
+    result = mmu_current_process_to_kernel(result);
     *result = mount_seek(handle, offset, origin);
 }
 
 void swi_file_getpos(file_handle_t handle, uint32_t* position, int32_t* result)
 {
+    position = mmu_current_process_to_kernel(position);
+    result = mmu_current_process_to_kernel(result);
+
     *result = mount_getpos(handle, position);
 }
 
 void swi_file_tell(file_handle_t handle, int32_t* result)
 {
+    result = mmu_current_process_to_kernel(result);
+
     *result = mount_tell(handle);
 }
 
 void swi_file_eof(file_handle_t handle, int32_t* result)
 {
+    result = mmu_current_process_to_kernel(result);
     *result = mount_eof(handle);
 }
 
 void swi_file_remove(const char* filename, int32_t* result)
 {
+    filename = mmu_current_process_to_kernel(filename);
+    result = mmu_current_process_to_kernel(result);
     *result = mount_remove(filename);
 }
 
 void swi_file_opendir(const char* path, dir_handle_t* result)
 {
-    *result = mount_opendir(path);
+    result = mmu_current_process_to_kernel(result);
+   *result = mount_opendir(path);
 }
 
 void swi_file_readdir(dir_handle_t dirls, api_file_direntry_t* entry, int32_t* result)
 {
+    result = mmu_current_process_to_kernel(result);
+    entry = mmu_current_process_to_kernel(entry);
     *result = mount_readdir(dirls, entry);
 }
 
 void swi_file_closedir(dir_handle_t dir, int32_t* result)
 {
+    result = mmu_current_process_to_kernel(result);
     *result = mount_closedir(dir);
 }
 
 void swi_file_createdir(const char* path, int32_t* result)
 {
+    path = mmu_current_process_to_kernel(path);
+    result = mmu_current_process_to_kernel(result);
     *result = mount_createdir(path);
 }
 
 void swi_file_isdir(const char* path, int32_t* result)
 {
+    path = mmu_current_process_to_kernel(path);
+    result = mmu_current_process_to_kernel(result);
+
     *result = mount_isdir(path);
 }
 
 void swi_stdio_printf(const char* text)
 {
+    text = mmu_current_process_to_kernel(text);
     printf(text);
 }
 
@@ -378,6 +423,7 @@ interrupt void swi_handle(syscall_data_t* data)
     asm(" LDMFD R13!, {R12, R14}"); // restore R12 and R14 from stack
 
 
+    data = (syscall_data_t*)mmu_current_process_to_kernel(data);
     log_debug("2 swiHandle dispatch");
     swi_dispatch(data);
 

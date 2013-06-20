@@ -26,14 +26,14 @@ extern volatile uint32_t last_interrupt_source;
 //
 // Master Table (4 pages)
 //
-#define MMU_MASTER_TABLE_PAGE_SIZE 0x1000
+#define MMU_PAGE_SIZE 0x1000
 #define MMU_MASTER_TABLE_PAGE_COUNT 4
-#define MMU_MASTER_TABLE_SIZE MMU_MASTER_TABLE_PAGE_SIZE * MMU_MASTER_TABLE_PAGE_COUNT
+#define MMU_MASTER_TABLE_SIZE MMU_PAGE_SIZE * MMU_MASTER_TABLE_PAGE_COUNT
 
 // the upper 12 bits of a virtual address are the index of the
 // L2 Pointer in the master table
 #define MMU_VIRTUAL_TO_MASTER_TABLE_ENTRY(v) ((v) >> 20)
-#define MMU_MASTER_TABLE_ENTRY_TO_L2_ADDRESS(e) ( (e) & ~0x7FF)
+#define MMU_MASTER_TABLE_ENTRY_TO_L2_ADDRESS(e) ( (e) & ~0x3FF)
 
 #define MMU_MAX_PROCESS_SPACE   0xFFF00000
 #define MMU_SECTION_ENTRY_SIZE  0x00100000
@@ -44,9 +44,9 @@ extern volatile uint32_t last_interrupt_source;
 //
 // L2 Table
 //
-#define MMU_L2_PAGE_SIZE 0x100
-#define MMU_L2_PAGE_COUNT 4
-#define MMU_L2_TABLE_SIZE MMU_L2_PAGE_SIZE * MMU_L2_PAGE_COUNT
+#define MMU_L2_ENTRY_SIZE 0x100
+#define MMU_L2_ENTRY_COUNT 4
+#define MMU_L2_TABLE_SIZE MMU_L2_ENTRY_SIZE * MMU_L2_ENTRY_COUNT
 
 
 // the upper 20 bits of the physical address represent the page address
@@ -71,6 +71,7 @@ void mmu_init(void);
 void mmu_set_kernel_table(mmu_table_pointer_t table);
 void mmu_set_process_table(mmu_table_pointer_t table);
 void mmu_switch_to_kernel();
+void* mmu_current_process_to_kernel(void* ptr);
 void mmu_switch_to_process(process_t* process);
 void mmu_init_process(process_t* process);
 

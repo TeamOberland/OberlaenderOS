@@ -12,10 +12,8 @@
 
 typedef uint8_t memorytype_t;
 
-typedef struct {
-    bool_t occupied;
-    bool_t reserved;
-} mem_pagetable_lookup_t;
+#define MEM_LOOKUP_SIZE 8
+typedef bool_t mem_pagetable_lookup_t;
 
 typedef struct {
     uint32_t globalStartAddress;

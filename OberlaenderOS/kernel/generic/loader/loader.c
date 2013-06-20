@@ -44,13 +44,11 @@ bool_t elf_check(elf_header_t* header)
 void loader_load_elf_from_data(process_t* process, uint32_t length, uint8_t* data, uint32_t* entryPoint)
 {
     void* processMemory;
-    uint32_t virtual;
-    uint32_t physical;
     uint32_t pageCount;
 
     elf_header_t* header;
     elf_program_header_entry_t entry;
-    uint32_t i,j;
+    uint32_t i;
 
     header = (elf_header_t*) data;
 
@@ -66,8 +64,8 @@ void loader_load_elf_from_data(process_t* process, uint32_t length, uint8_t* dat
             if (entry.type == ELF_PT_LOAD)
             {
                 // allocate pages needed for this program header
-                pageCount = entry.filesz/ MMU_MASTER_TABLE_PAGE_SIZE;
-                if ((entry.filesz % MMU_MASTER_TABLE_PAGE_SIZE) > 0)
+                pageCount = entry.filesz/ MMU_PAGE_SIZE;
+                if ((entry.filesz % MMU_PAGE_SIZE) > 0)
                     pageCount++;
                 processMemory = mem_find_free(pageCount, FALSE, TRUE);
 

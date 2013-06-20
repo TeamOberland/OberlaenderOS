@@ -140,11 +140,11 @@ bool_t task_init(void)
 {
     device_id_t uartDevice = api_device_build_id(DEVICE_TYPE_UART, 3);
     out = api_device_open(uartDevice);
-    if (!out)
+    if(out)
     {
-        return FALSE;
+        return TRUE;
     }
-    return TRUE;
+    return FALSE;
 }
 
 void main(void)
