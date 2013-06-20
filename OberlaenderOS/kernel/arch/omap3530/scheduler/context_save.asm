@@ -1,11 +1,19 @@
 	.global __context_save
+	.global last_interrupt_source
 
 	.global current_context
 _current_context: .field current_context, 32
+_last_interrupt_source: .field last_interrupt_source, 32
 
 __context_save:
 	; Backup R14 of _context_save
 	STMFD R13!, {R14}
+
+	; Store source
+	LDR R12, [R13, #8]
+
+	LDR R14, _last_interrupt_source;
+	STMIA R14, {R12}
 
 	; Load context pointer into R14
 	LDR R14, _current_context

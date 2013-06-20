@@ -78,6 +78,7 @@ void mmu_set_kernel_table(mmu_table_pointer_t table)
     mmu_current_master_table = tableAddress;
     __mmu_flush_tlb();
     __mmu_set_kernel_table(tableAddress);
+    __mmu_set_process_table(tableAddress);
 }
 
 void mmu_set_process_table(mmu_table_pointer_t table)
@@ -118,9 +119,9 @@ bool_t mmu_handle_data_abort()
     __mmu_load_dabt_data();
 
     mmu_switch_to_kernel();
+    printf("data abort!\n");
 
     process_t* currentProcess = scheduler_current_process(global_scheduler);
-    printf("data abort!\n");
 
     if (currentProcess == NULL)
     {
@@ -133,12 +134,11 @@ bool_t mmu_handle_data_abort()
         {
             printf("create mapped page\n");
             mmu_create_page_mapping(currentProcess->masterTable, mmu_accessed_address, 0);
-            mmu_switch_to_process(currentProcess);
             return TRUE;
         }
         else
         {
-            printf("illegal accessed address (0x%x) bye bye pid %i\n", mmu_accessed_address, currentProcess->id);
+            printf("illegal accessed address (0x%x) at position (0x%x) bye bye pid %i\n", mmu_accessed_address, last_interrupt_source, currentProcess->id);
             scheduler_kill_current(global_scheduler);
             return FALSE;
         }

@@ -8,6 +8,7 @@
 #include <oos/ipc.h>
 #include <oos/device.h>
 #include <oos/file.h>
+#include "../mmu/mmu.h"
 #include "../ipc/ipc.h"
 #include "../scheduler/scheduler.h"
 #include "../../genarch/scheduler/context.h"
@@ -291,7 +292,6 @@ void swi_dispatch(syscall_data_t* data)
             swi_device_read((device_handle_t) data->arg1, (void*) data->arg2, data->arg3);
             break;
         case SYSCALL_DEVICE_WRITE:
-            break;
             swi_device_write((device_handle_t) data->arg1, (void*) data->arg2, data->arg3);
             break;
         case SYSCALL_DEVICE_IOCTL:
@@ -380,6 +380,12 @@ interrupt void swi_handle(syscall_data_t* data)
 
     log_debug("2 swiHandle dispatch");
     swi_dispatch(data);
+
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        mmu_switch_to_process(proc);
+    }
 
     log_debug("3 before context load");
     __context_load();

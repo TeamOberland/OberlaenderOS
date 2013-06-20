@@ -16,7 +16,7 @@
 #include "../../genarch/mmu/mem.h"
 
 extern volatile uint32_t mmu_current_master_table;
-
+extern volatile uint32_t last_interrupt_source;
 
 //
 // General

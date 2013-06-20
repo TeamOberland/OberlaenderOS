@@ -170,8 +170,8 @@ void scheduler_run(scheduler_t* scheduler)
     if (current != NULL)
     {
         current_context = current->context;
-        mmu_switch_to_process(current);
         current->state = PROCESS_RUNNING;
+        printf("Process %i activated\n", current->id);
     }
     else
     {

@@ -13,6 +13,7 @@
 #include "../mmu/mmu.h"
 
 static irq_listener irq_listeners[IRQ_COUNT];
+volatile uint32_t last_interrupt_source;
 
 /**
  * Initializes the IRQ environment.
@@ -77,6 +78,12 @@ interrupt void irq_handle()
 
     irq_dispatch();
 
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        mmu_switch_to_process(proc);
+    }
+
     __context_load();
 }
 
@@ -105,6 +112,12 @@ interrupt void pabt_handle()
         scheduler_run(global_scheduler);
     }
 
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        mmu_switch_to_process(proc);
+    }
+
     __context_load();
 }
 
@@ -123,6 +136,13 @@ interrupt void dabt_handle()
     {
         scheduler_run(global_scheduler);
     }
+
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        mmu_switch_to_process(proc);
+    }
+
 
     __context_load();
 }
