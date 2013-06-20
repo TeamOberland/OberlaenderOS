@@ -165,10 +165,20 @@ void dmx_sending_signal()
     }
 }
 
+typedef struct mouse_input_t
+{
+    int32_t x;
+    int32_t y;
+    int32_t mouse;
+} mouse_input_t;
+
 void task_console_no_swi(void)
 {
     char toRead[64];
     memset(&toRead,0,64);
+    mouse_input_t mouseInput;
+    memset(&mouseInput,0,sizeof(mouse_input_t));
+
     device_id_t uartDevice = api_device_build_id(DEVICE_TYPE_UART, 3);
     device_handle_t handle= device_open(global_device_manager,uartDevice);
     char* message = "\r\n welcome to oberlaenderOS\r\n\0";
@@ -198,14 +208,22 @@ void task_console_no_swi(void)
         i++;
 
         device_write(global_device_manager,handle,&toRead[i-1],1);
+
+        device_read(global_device_manager,handle,&mouseInput,sizeof(mouse_input_t));
+//
+//        if(mouseInput.mouse!=0)
+//        {
+//           printf("blub");
+//        }
+
+
+
+        //printf("%i\r\n",toRead[i]);
 //
 //        for (j = 0; j < 1000; ++j) {
 //
 //        }
     }
-
-
-
 
     device_close(global_device_manager,handle);
     while(TRUE);

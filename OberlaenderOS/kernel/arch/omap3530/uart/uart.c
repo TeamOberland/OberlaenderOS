@@ -47,9 +47,12 @@ void omap_uart_load_configuration(uint8_t uartPort,uint8_t uart_mode, uart_proto
         SET_BIT(tlr_reg,4);
         SET_BIT(tlr_reg,0) ;
 //        //fifo queue size
-//        *(tlr_reg)=0;
-//        CLEAR_BIT(fcr_reg,7);
-//        CLEAR_BIT(fcr_reg,6);
+
+        //enable trigger based on fcr_reg character register
+        *(tlr_reg)=0;
+        //drigger is 8 characters
+        CLEAR_BIT(fcr_reg,7);
+        CLEAR_BIT(fcr_reg,6);
 
         //testing old commit
            // memory_mapped_io_t tlr_reg = omap_uart_get_register(uartPort,UART_TLR_REG);
