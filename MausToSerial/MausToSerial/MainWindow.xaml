@@ -1,0 +1,12 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="MausToSerial.MainWindow"
+        Title="MainWindow" Width="500" Height="500" ResizeMode="NoResize" MouseMove="OnMouseMove" MouseLeftButtonDown="OnMouseLeftDown" MouseLeftButtonUp="OnMouseLeftUp" MouseRightButtonUp="OnMouseRightUp" MouseRightButtonDown="OnMouseRightDown">
+    <Grid x:Name="MainGrid" KeyDown="OnKeyDown" Margin="0,0,0,0">
+        <ComboBox x:Name="SerialPortList" Width="150" Height="24" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15" SelectionChanged="OnPortSelected"/>
+        <Label x:Name="Cooridnate" Margin="0, 100, 0, 0" Content="Difference"/>
+        
+    </Grid>
+
+</Window>
