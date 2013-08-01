@@ -10,6 +10,14 @@
 #include <oos/types.h>
 #include <oos/syscalls.h>
 
+void api_print_test(void)
+{
+	syscall_data_t data;
+	data.swiNumber = SYSCALL_STDIO_PRINT_TEST;
+
+    syscall(&data);
+}
+
 #define API_PRINTF_MAXLENGTH 255
 void api_printf(const char* format, ...)
 {

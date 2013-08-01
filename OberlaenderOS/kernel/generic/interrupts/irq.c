@@ -13,6 +13,7 @@
 #include "../mmu/mmu.h"
 
 static irq_listener irq_listeners[IRQ_COUNT];
+volatile uint32_t last_interrupt_source;
 
 /**
  * Initializes the IRQ environment.
@@ -70,13 +71,18 @@ void irq_dispatch()
 #pragma TASK(irq_handle)
 interrupt void irq_handle()
 {
-    asm(" SUB R14, R14, #4");
-    asm(" SUB R13, R13, #4");
-    asm(" STR R14, [R13]");
+    asm(" SUB R14, R14, #4"); // calculate address where we come from
+    asm(" STMFD R13!, {R12, R14}"); // store R12 and R14 on stack (R12 in case of tramping)
     __context_save();
-    asm(" ADD R13, R13, #4");
+    asm(" LDMFD R13!, {R12, R14}"); // restore R12 and R14 from stack
 
     irq_dispatch();
+
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        mmu_switch_to_process(proc);
+    }
 
     __context_load();
 }
@@ -96,15 +102,20 @@ interrupt void udef_handle()
 #pragma INTERRUPT(pabt_handle, PABT)
 interrupt void pabt_handle()
 {
-    asm(" SUB R14, R14, #4");
-    asm(" SUB R13, R13, #4");
-    asm(" STR R14, [R13]");
+    asm(" SUB R14, R14, #4"); // calculate address where we come from
+    asm(" STMFD R13!, {R12, R14}"); // store R12 and R14 on stack (R12 in case of tramping)
     __context_save();
-    asm(" ADD R13, R13, #4");
+    asm(" LDMFD R13!, {R12, R14}"); // restore R12 and R14 from stack
 
     if(!mmu_handle_prefetch_abort())
     {
         scheduler_run(global_scheduler);
+    }
+
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        mmu_switch_to_process(proc);
     }
 
     __context_load();
@@ -117,15 +128,21 @@ interrupt void pabt_handle()
 interrupt void dabt_handle()
 {
     asm(" SUB R14, R14, #8");
-    asm(" SUB R13, R13, #4");
-    asm(" STR R14, [R13]");
+    asm(" STMFD R13!, {R12, R14}");
     __context_save();
-    asm(" ADD R13, R13, #4");
+    asm(" LDMFD R13!, {R12, R14}");
 
     if(!mmu_handle_data_abort())
     {
         scheduler_run(global_scheduler);
     }
+
+    process_t* proc = scheduler_current_process(global_scheduler);
+    if(proc != NULL)
+    {
+        mmu_switch_to_process(proc);
+    }
+
 
     __context_load();
 }

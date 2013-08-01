@@ -79,6 +79,7 @@ void mmu_set_kernel_table(mmu_table_pointer_t table)
     mmu_current_master_table = tableAddress;
     __mmu_flush_tlb();
     __mmu_set_kernel_table(tableAddress);
+    __mmu_set_process_table(tableAddress);
 }
 
 void mmu_set_process_table(mmu_table_pointer_t table)
@@ -119,9 +120,9 @@ bool_t mmu_handle_data_abort()
     __mmu_load_dabt_data();
 
     mmu_switch_to_kernel();
+    printf("data abort!\n");
 
     process_t* currentProcess = scheduler_current_process(global_scheduler);
-    printf("data abort!\n");
 
     if (currentProcess == NULL)
     {
@@ -134,12 +135,12 @@ bool_t mmu_handle_data_abort()
         {
             printf("create mapped page\n");
             mmu_create_page_mapping(currentProcess->masterTable, mmu_accessed_address, 0);
-            mmu_switch_to_process(currentProcess);
             return TRUE;
         }
         else
         {
-            printf("illegal accessed address (0x%x) bye bye pid %i\n", mmu_accessed_address, currentProcess->id);
+            printf("illegal accessed address (0x%x) at position (0x%x) bye bye pid %i\n", mmu_accessed_address,
+                    last_interrupt_source, currentProcess->id);
             scheduler_kill_current(global_scheduler);
             return FALSE;
         }
@@ -175,6 +176,59 @@ void mmu_create_page_mapping(mmu_table_pointer_t masterTable, uint32_t virtualAd
     memset(physicalAddress, 0, MMU_MASTER_TABLE_PAGE_SIZE);
     // and map it to the given master table
     mmu_create_address_mapping(masterTable, virtualAddress, (uint32_t) physicalAddress, domain);
+}
+
+void mmu_create_direct_mapping_range(mmu_table_pointer_t masterTable, uint32_t physicalStartAddress,
+        uint32_t physicalEndAddress, uint8_t domain)
+{
+    uint32_t i;
+    uint32_t masterEntryCount;
+    uint32_t masterEntryIndex;
+    mmu_table_pointer_t currentTableEntry;
+    // mark page as reserved
+    masterEntryCount = (physicalEndAddress - physicalStartAddress) / MMU_SECTION_ENTRY_SIZE;
+    // if there is still a little space, reserve one more
+    if (((physicalEndAddress - physicalStartAddress) % MMU_SECTION_ENTRY_SIZE) > 0)
+    {
+        masterEntryCount++;
+    }
+
+    // map the addresses directly (as sections)
+    masterEntryIndex = MMU_VIRTUAL_TO_MASTER_TABLE_ENTRY(physicalStartAddress);
+    currentTableEntry = masterTable + masterEntryIndex;
+    for (i = 0; i < masterEntryCount; i++)
+    {
+        *currentTableEntry = (masterEntryIndex << 20) | MMU_SECTION_ENTRY_KERNEL_INITIAL;
+
+        masterEntryIndex++;
+        currentTableEntry++;
+    }
+}
+
+void mmu_create_address_mapping_range(mmu_table_pointer_t masterTable, uint32_t virtualStartAddress,
+        uint32_t physicalStartAddress, uint32_t physicalEndAddress, uint8_t domain)
+{
+    // create mappings in l2 table steps
+    uint32_t i;
+    uint32_t l2EntryCount;
+    // mark page as reserved
+    l2EntryCount = (physicalEndAddress - physicalStartAddress) / MMU_L2_PAGE_SIZE;
+    // if there is still a little space, reserve one more
+    if (((physicalEndAddress - physicalStartAddress) % MMU_L2_PAGE_SIZE) > 0)
+    {
+        l2EntryCount++;
+    }
+
+    // map the addresses directly (as sections)
+    for(i = 0; i < l2EntryCount; i++)
+    {
+        mmu_create_address_mapping(masterTable,
+                virtualStartAddress + (i * MMU_L2_PAGE_SIZE),
+                physicalStartAddress + (i* MMU_L2_PAGE_SIZE),
+                domain
+        );
+
+    }
 }
 
 void mmu_create_address_mapping(mmu_table_pointer_t masterTable, uint32_t virtualAddress, uint32_t physicalAddress,
@@ -250,40 +304,28 @@ mmu_table_pointer_t mmu_get_or_create_l2_table(mmu_table_pointer_t masterTable, 
 void mmu_init_process(process_t* process)
 {
     // map the kernel pages in all memories
-    uint32_t kernelPageCount;
     memorytype_t t;
     mem_memory_t* m;
     uint32_t i;
     for (t = 0; t < memory_count; t++)
     {
         m = mem_get(t);
-        kernelPageCount = (m->userStartAddress - m->globalStartAddress) / MMU_MASTER_TABLE_PAGE_SIZE;
-        // if there is still a little space, reserve one more
-        if (((m->userStartAddress - m->globalStartAddress) % MMU_MASTER_TABLE_PAGE_SIZE) > 0)
-        {
-            kernelPageCount++;
-        }
 
-        for (i = 0; i < kernelPageCount; i++)
-        {
-            // map kernel code 1:1
-            mmu_create_address_mapping(process->masterTable, (m->globalStartAddress + (i * MMU_MASTER_TABLE_PAGE_SIZE)),
-                    (m->globalStartAddress + (i * MMU_MASTER_TABLE_PAGE_SIZE)), 0);
-        }
+        mmu_create_direct_mapping_range(process->masterTable, m->globalStartAddress, m->userStartAddress, 0);
+    }
+
+    //
+    // map memory mapped ios
+    mmu_table_pointer_t currentTableEntry;
+    for (i = 0; i < device_memory_count; i++)
+    {
+        mmu_create_direct_mapping_range(process->masterTable, device_memories[i].startAddress,
+                device_memories[i].startAddress + device_memories[i].size, 0);
     }
 
     //
     // map interrupt handlers
-    kernelPageCount = intvecs_size / MMU_MASTER_TABLE_PAGE_SIZE;
-    if ((intvecs_size % MMU_MASTER_TABLE_PAGE_SIZE) > 0)
-    {
-        kernelPageCount++;
-    }
-    for (i = 0; i < kernelPageCount; i++)
-    {
-        mmu_create_address_mapping(process->masterTable, (intvecs_start + (i * MMU_MASTER_TABLE_PAGE_SIZE)),
-                (intvecs_start + (i * MMU_MASTER_TABLE_PAGE_SIZE)), 0);
-    }
+    mmu_create_direct_mapping_range(process->masterTable, intvecs_start, intvecs_start + intvecs_size, 0);
 }
 
 bool_t mmu_is_legal(uint32_t accessedAddress, uint32_t faultState)
@@ -370,7 +412,7 @@ void mmu_delete_process_memory(process_t* proc)
         if (l2Table != NULL)
         {
             // cleanup pages for all l2 entries
-            for (l2TableEntry = 0; l2TableEntry < MMU_L2_PAGE_COUNT; l2TableEntry++)
+            for (l2TableEntry = 0; l2TableEntry < MMU_L2_PAGE_SIZE; l2TableEntry++)
             {
                 // cleanup page for l2Entry
                 pageAddress = MMU_L2_TABLE_ENTRY_TO_PAGE( (*(l2Table+ l2TableEntry)) );
@@ -400,6 +442,7 @@ uint32_t mmu_virtual_to_physical(mmu_table_pointer_t masterTable, uint32_t virtu
 {
     // lookup master table entry
     uint32_t masterTableEntry = MMU_VIRTUAL_TO_MASTER_TABLE_ENTRY(virtualAddress);
+    uint32_t masterTableEntryValue;
 
     mmu_table_pointer_t l2Table;
     uint32_t l2TableEntry;
@@ -409,19 +452,30 @@ uint32_t mmu_virtual_to_physical(mmu_table_pointer_t masterTable, uint32_t virtu
     if (masterTableEntry < MMU_MASTER_TABLE_PAGE_SIZE)
     {
         // load L2 Table address
-        l2Table = (mmu_table_pointer_t) MMU_MASTER_TABLE_ENTRY_TO_L2_ADDRESS((*(masterTable + masterTableEntry)));
-        if (l2Table != NULL)
+        masterTableEntryValue = (*(masterTable + masterTableEntry));
+
+        // is this a page entry?
+        if ((masterTableEntryValue & 0x01) == 0x01)
         {
-            // lookup L2 Entry
-            l2TableEntry = MMU_VIRTUAL_TO_L2_TABLE_ENTRY(virtualAddress);
-            if (l2TableEntry < MMU_L2_PAGE_COUNT)
+            l2Table = (mmu_table_pointer_t) MMU_MASTER_TABLE_ENTRY_TO_L2_ADDRESS(masterTableEntryValue);
+            if (l2Table != NULL)
             {
-                // load page address
-                pageAddress = MMU_L2_TABLE_ENTRY_TO_PAGE( *(l2Table + l2TableEntry) );
+                // lookup L2 Entry
+                l2TableEntry = MMU_VIRTUAL_TO_L2_TABLE_ENTRY(virtualAddress);
+                if (l2TableEntry < MMU_L2_PAGE_SIZE)
+                {
+                    // load page address
+                    pageAddress = MMU_L2_TABLE_ENTRY_TO_PAGE( *(l2Table + l2TableEntry) );
 
-                return pageAddress;
+                    return pageAddress;
+                }
             }
-
+        }
+        // is this a section entry?
+        else if ((masterTableEntryValue & 0x02) == 0x02)
+        {
+            // upper 12 bits of entry (entry index) | lower 20 bits of virtual address
+            return (masterTableEntryValue & 0xFFF00000) | (virtualAddress & 0xFFFFF);
         }
     }
 

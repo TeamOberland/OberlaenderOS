@@ -14,7 +14,7 @@
 #include "scheduler.h"
 
 
-
+extern volatile uint32_t mmu_current_master_table;
 
 struct _scheduler;
 typedef void (*scheduler_algorithm)(struct _scheduler* scheduler);

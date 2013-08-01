@@ -16,6 +16,9 @@ uint32_t intvecs_size;
 uint8_t memory_count;
 mem_memory_t* memories;
 
+uint8_t device_memory_count;
+mem_devicememory_t* device_memories;
+
 // Two booleans for each entry
 mem_memory_t* mem_get(memorytype_t t)
 {

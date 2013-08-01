@@ -19,8 +19,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <oos/oosio.h>
 #include "tasks/task_blink.h"
 #include "tasks/task_hello_world.h"
+#include "tasks/task_terminal.h"
 
 //void idle_task()
 //{
@@ -277,7 +279,7 @@ void main_daniel(void)
     __enable_interrupts();
     __switch_to_user_mode();
 
-        scheduler_add_process_from_elf_data(global_scheduler, task_hello_world_length, task_hello_world);
+        scheduler_add_process_from_elf_data(global_scheduler, task_terminal_length, task_terminal);
 //    scheduler_add_process_from_intel_hex(global_scheduler, task_hello_world_hex);
 //    scheduler_add_process(global_scheduler, task_file);
 //    scheduler_add_process(global_scheduler, task_blink_led0);
