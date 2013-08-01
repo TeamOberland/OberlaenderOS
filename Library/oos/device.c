@@ -37,7 +37,7 @@ void api_device_close(device_handle_t handle)
 {
     log_debug("api_device_close start");
     syscall_data_t data;
-    data.swiNumber=SYSCALL_DEVICE_OPEN;
+    data.swiNumber=SYSCALL_DEVICE_CLOSE;
     data.arg1 = (uint32_t) handle;
     data.arg2 = 0;
     data.arg3= 0;

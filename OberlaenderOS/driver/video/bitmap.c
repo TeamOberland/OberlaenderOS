@@ -135,15 +135,49 @@ static void rastport_draw_line(rastport_t* rast, video_element_t* elm)
     x2 = elm->data.line.x2;
     y2 = elm->data.line.y2;
 
-    dx = abs(x1 - x2);
-    dy = abs(y1 - y2);
+    dx = (x2 > x1) ? (x2 - x1) : (x1 - x2);
+    dy = (y2 > y1) ? (y2 - y1) : (y1 - y2);
 
-    stepX = (x1 < x2) ? 1 : -1;
-    stepY = (y1 < y2) ? 1 : -1;
+    uint32_t x = (x1 < x2) ? x1 : x2;
+    uint32_t y = (y1 < y2) ? y1 : y2;
 
-    rastport_move_to(rast, x1, y2);
+    uint32_t xend = x + dx;
+    uint32_t yend = y + dy;
 
-    while (x1 != x2 || y1 != y2)
+    rastport_move_to(rast, x, y);
+    rastport_set_color(rast->currentPixel, elm->color);
+    uint32_t error = dx / 2;
+
+    while((dx > 0 && x < xend) || (dy > 0 && y < yend)){
+        if(dx > 0){
+            x = x + 1;
+            error =  error - dy;
+            if(error < 0){
+                y = y + 1;
+                error = error + dx;
+            }
+        }
+        else if(dy > 0){
+            y = y + 1;
+            error =  error - dx;
+            if(error < 0){
+                x = x + 1;
+                error = error + dy;
+            }
+        }
+        rastport_move_to(rast, x, y);
+        rastport_set_color(rast->currentPixel, elm->color);
+    }
+
+    //dx = abs(x1 - x2);
+    //dy = abs(y1 - y2);
+
+    //stepX = (x1 == x2) ? 0 : (x1 < x2) ? 1 : -1;
+    //stepY = (y1 == y2) ? 0 : (y1 < y2) ? 1 : -1;
+
+    //rastport_move_to(rast, x1, y2);
+
+    /*while (x1 != x2 || y1 != y2)
     {
         rastport_move_to(rast, x1, y1);
         rastport_set_color(rast->currentPixel, elm->color);
@@ -161,7 +195,7 @@ static void rastport_draw_line(rastport_t* rast, video_element_t* elm)
             err += dx;
             y1 = stepY;
         }
-    }
+    }*/
 }
 
 void rastport_draw(rastport_t* rast, video_element_t* elm)
